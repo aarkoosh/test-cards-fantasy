@@ -1,1 +1,2845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tavern Legends</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Source+Sans+3:wght@400;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d5;font-family:'Source Sans 3',sans-serif;user-select:none}
+#gameCanvas{position:fixed;inset:0;display:block}
+#ui{position:fixed;inset:0;pointer-events:none;z-index:10;display:flex;flex-direction:column}
+#ui>*{pointer-events:none}
+#ui button,#ui .opp,#ui #opponents,#ui #peekPanel,#ui #controls,#ui #tavernControls,#ui #heroPowerHover,#ui #topRightActions,#ui #historyPanel,#ui #goldPanel,#ui #btnEnd,#ui #playerHeroFrame,#ui #tavernMasterFrame,#ui #combatEnemyFrame,#ui #stagePortraitSlot{pointer-events:auto}
+.panel{background:rgba(12,16,24,.82);border:1px solid rgba(212,175,90,.35);backdrop-filter:blur(6px);border-radius:10px;padding:10px 14px}
+#topStack{position:relative;z-index:12;display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 12px 0;width:100%;flex:0 0 auto}
+#topRightActions{position:fixed;top:12px;right:14px;z-index:17;display:flex;gap:8px;align-items:center}
+#historyPanel{position:fixed;top:52px;right:14px;z-index:17;width:min(300px,42vw);max-height:min(52vh,480px);overflow:auto;display:none;font-size:12px;color:#d7cbb0;line-height:1.4}
+#historyPanel.open{display:block}
+#historyPanel .empty{color:#b9a888;font-style:italic}
+#historyPanel .entry{margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(212,175,90,.15)}
+#historyPanel .entry:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+#codexOverlay{position:fixed;inset:0;background:rgba(5,7,12,.9);display:none;align-items:center;justify-content:center;z-index:25;padding:18px}
+#codexOverlay.open{display:flex}
+.codexBox{width:min(1100px,96vw);max-height:92vh;display:flex;flex-direction:column;background:radial-gradient(circle at top,#2a2114 0%,#12161f 55%,#0b0e14 100%);border:1px solid rgba(212,175,90,.45);border-radius:14px;overflow:hidden}
+.codexHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid rgba(212,175,90,.25);flex-wrap:wrap}
+.codexHeader h1{font-family:Cinzel,serif;font-size:28px;color:#e0b85a;margin:0}
+.codexTabs{display:flex;gap:8px;align-items:center}
+.codexTabs button.active{box-shadow:inset 0 0 0 1px #e0b85a;color:#e0b85a;border-color:#e0b85a}
+#codexBody{overflow:auto;padding:16px 18px 22px;text-align:left}
+.codexRace{margin-bottom:22px}
+.codexRace:last-child{margin-bottom:0}
+.codexRace h2{font-family:Cinzel,serif;font-size:18px;color:#e0b85a;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(212,175,90,.22);display:flex;align-items:baseline;gap:10px}
+.codexRace h2 span{font-family:'Source Sans 3',sans-serif;font-size:12px;color:#b9a888;font-weight:600}
+.codexGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
+.codexCard{border:1px solid rgba(212,175,90,.28);border-radius:10px;background:rgba(14,18,28,.92);overflow:hidden;display:flex;flex-direction:column;min-height:210px}
+.codexCard .art{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#1a2230}
+.codexCard .body{padding:8px 9px 10px;display:flex;flex-direction:column;gap:4px;flex:1}
+.codexCard .name{font-family:Cinzel,serif;color:#e0b85a;font-size:13px;line-height:1.2}
+.codexCard .meta{font-size:11px;color:#9fd8ff;font-weight:700}
+.codexCard .text{font-size:11px;color:#d7cbb0;line-height:1.3;margin-top:2px}
+.codexHeroCard{border:1px solid rgba(212,175,90,.28);border-radius:10px;background:rgba(14,18,28,.92);overflow:hidden;display:flex;flex-direction:column}
+.codexHeroCard .art{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#1a2230}
+.codexHeroCard .body{padding:10px 11px 12px}
+.codexHeroCard .name{font-family:Cinzel,serif;color:#e0b85a;font-size:15px;margin-bottom:4px}
+.codexHeroCard .meta{font-size:12px;color:#b9a888;margin-bottom:8px}
+.codexHeroCard .powerName{font-size:12px;color:#9fd8ff;font-weight:700;margin-bottom:3px}
+.codexHeroCard .text{font-size:12px;color:#eee2cb;line-height:1.35}
+#opponents{position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:14;display:flex;flex-direction:column;gap:10px;align-items:center;max-height:min(78vh,720px);overflow-y:auto;overflow-x:visible;padding:6px 8px;pointer-events:auto;scrollbar-width:thin}
+.opp{pointer-events:auto;cursor:pointer;position:relative;width:68px;height:68px;padding:0;border-radius:14px;background:rgba(18,22,32,.95);border:2px solid rgba(212,175,90,.35);overflow:hidden;flex:0 0 auto;transition:border-color .15s,transform .15s,box-shadow .15s}
+.opp:hover{border-color:#e0b85a;transform:translateX(3px) scale(1.04);box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.opp.dead{opacity:.38;filter:grayscale(.85);pointer-events:auto}
+.opp.self{border-color:#6ec6ff}
+.opp.combat{border-color:#ff6b5a;box-shadow:0 0 0 2px rgba(255,107,90,.45)}
+.opp.peeking{border-color:#9fd8ff;box-shadow:0 0 0 2px rgba(159,216,255,.45)}
+.opp .portrait{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.opp .rank{position:absolute;top:4px;left:4px;min-width:22px;height:20px;padding:0 5px;border-radius:8px;background:rgba(10,12,18,.82);border:1px solid rgba(212,175,90,.45);color:#e0b85a;font-family:Cinzel,serif;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.opp .hpBar{position:absolute;left:0;right:0;bottom:0;height:8px;background:rgba(8,10,16,.75);pointer-events:none}
+.opp .hpBarFill{height:100%;width:100%;background:linear-gradient(90deg,#2f8f5b,#7dcea0);box-shadow:0 0 8px rgba(125,206,160,.35)}
+.opp.dead .hpBarFill{background:linear-gradient(90deg,#5a2420,#a05048);box-shadow:none;width:0%!important}
+#oppHover{position:fixed;z-index:16;display:none;width:240px;padding:12px 14px;pointer-events:none!important;background:rgba(12,16,24,.96);border:1px solid rgba(212,175,90,.45);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.5)}
+#oppHover.show{display:block}
+#oppHover .title{font-family:Cinzel,serif;color:#e0b85a;font-size:15px;margin-bottom:4px}
+#oppHover .rankLine{font-size:11px;color:#9fd8ff;margin-bottom:8px;letter-spacing:.04em}
+#oppHover .line{font-size:12px;color:#eee2cb;line-height:1.4;margin-bottom:3px}
+#oppHover .muted{color:#b9a888}
+#oppHover .power{margin-top:8px;padding-top:8px;border-top:1px solid rgba(212,175,90,.22);font-size:12px;color:#d7cbb0;line-height:1.35}
+#phaseRow{display:none;flex-direction:column;align-items:center;gap:2px;min-height:2.4em;pointer-events:none}
+#phaseRow.show{display:flex}
+#phaseBanner{font-family:Cinzel,serif;font-size:18px;color:#e0b85a;text-shadow:0 2px 12px rgba(0,0,0,.8);text-align:center}
+#combatLog{font-size:13px;color:#f2e8d5;text-shadow:0 2px 8px rgba(0,0,0,.9);text-align:center;min-height:1.1em}
+#playfield{position:relative;flex:1 1 auto;min-height:0;width:100%}
+#tavernControls{position:absolute;left:50%;top:148px;transform:translateX(-50%);z-index:12;display:none;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;pointer-events:auto}
+#tavernControls.show{display:flex}
+.heroFrame{width:102px;pointer-events:auto}
+.heroFrame .portraitWrap{position:relative;width:102px;height:102px;border-radius:18px;overflow:hidden;isolation:isolate;border:2px solid rgba(212,175,90,.45);background:rgba(18,22,32,.95);box-shadow:0 8px 22px rgba(0,0,0,.4)}
+.heroFrame .portraitWrap img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:16px}
+.heroFrame .frameLabel{margin-top:6px;text-align:center;font-family:Cinzel,serif;font-size:11px;color:#e0b85a;line-height:1.2;text-shadow:0 2px 8px rgba(0,0,0,.85)}
+.heroFrame .frameSub{text-align:center;font-size:10px;color:#b9a888;margin-top:2px;text-shadow:0 2px 8px rgba(0,0,0,.85)}
+#stagePortraitSlot{position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:12;width:102px;pointer-events:auto}
+#playerHeroFrame{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:14}
+#playerHeroFrame .portraitWrap{border-color:#6ec6ff}
+#tavernMasterFrame,#combatEnemyFrame{display:none}
+#tavernMasterFrame.show,#combatEnemyFrame.show{display:block}
+#tavernMasterFrame .portraitWrap{border-color:rgba(224,184,90,.65)}
+#combatEnemyFrame .portraitWrap{border-color:#ff6b5a}
+#frozenBanner{position:absolute;left:50%;top:188px;transform:translateX(-50%);font-family:Cinzel,serif;color:#9fd8ff;font-size:12px;letter-spacing:.14em;pointer-events:none;opacity:0;z-index:11;text-shadow:0 0 12px rgba(110,198,255,.6);padding:4px 10px;border:1px solid rgba(110,198,255,.35);border-radius:8px;background:rgba(10,18,28,.65)}
+#frozenBanner.show{opacity:1}
+#peekPanel{position:absolute;top:52px;right:12px;width:260px;max-height:calc(100% - 60px);overflow:auto;z-index:13;display:none;pointer-events:auto}
+#peekPanel.show{display:block}
+#peekPanel h3{font-family:Cinzel,serif;color:#e0b85a;margin-bottom:8px;font-size:15px}
+#peekPanel .meta{font-size:12px;color:#b9a888;margin-bottom:10px}
+.peekMinion{border:1px solid rgba(212,175,90,.25);border-radius:8px;padding:8px;margin-bottom:6px;background:rgba(8,10,16,.55)}
+.peekMinion .title{color:#f2e8d5;font-weight:700;font-size:13px}
+.peekMinion .stats{color:#e0b85a;font-size:12px;margin-top:2px}
+.peekMinion .text{color:#b9a888;font-size:11px;margin-top:4px;line-height:1.3}
+#bottomStack{position:fixed;left:50%;bottom:148px;transform:translateX(-50%);z-index:12;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;width:auto;flex:0 0 auto;pointer-events:none}
+#controls{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:96vw;pointer-events:auto}
+#goldPanel{position:fixed;right:14px;bottom:14px;z-index:15;min-width:92px;text-align:center;pointer-events:auto}
+#goldPanel .label{color:#d4af5a;font-family:Cinzel,serif;font-size:11px;letter-spacing:.08em}
+#goldPanel .value{font-size:28px;font-weight:700;line-height:1.1;color:#f2e8d5;margin-top:2px}
+#btnEnd{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:15;padding:14px 18px;font-size:13px;min-width:108px}
+#heroPowerHover{position:fixed;z-index:18;display:none;width:260px;padding:12px 14px;pointer-events:none;background:rgba(12,16,24,.96);border:1px solid rgba(212,175,90,.45);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.5)}
+#heroPowerHover.show{display:block}
+#heroPowerHover .title{font-family:Cinzel,serif;color:#e0b85a;font-size:15px;margin-bottom:4px}
+#heroPowerHover .cost{font-size:12px;color:#9fd8ff;margin-bottom:8px}
+#heroPowerHover .text{font-size:13px;color:#eee2cb;line-height:1.4}
+button{font-family:Cinzel,serif;font-weight:700;letter-spacing:.04em;border:1px solid rgba(212,175,90,.55);background:linear-gradient(180deg,#3a2a14,#1c140a);color:#f2e8d5;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:11px}
+button:hover:not(:disabled){filter:brightness(1.15)}
+button:disabled{opacity:.4;cursor:default}
+button.primary{background:linear-gradient(180deg,#5a3d12,#2a1a08);border-color:#e0b85a}
+button.active{box-shadow:inset 0 0 0 1px #6ec6ff;color:#9fd8ff;border-color:#6ec6ff}
+button.warn{border-color:#c97b4a}
+#toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);z-index:30;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;background:rgba(40,18,14,.95);border:1px solid rgba(255,140,90,.55);color:#ffe1cf;padding:10px 16px;border-radius:8px;font-weight:600;font-size:14px}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+#overlay{position:fixed;inset:0;background:rgba(5,7,12,.88);display:flex;align-items:center;justify-content:center;z-index:20}
+#overlay.hidden{display:none}
+.overlayBox{width:min(920px,94vw);max-height:90vh;overflow:auto;background:radial-gradient(circle at top,#2a2114 0%,#12161f 55%,#0b0e14 100%);border:1px solid rgba(212,175,90,.45);border-radius:14px;padding:28px;text-align:center}
+.overlayBox h1{font-family:Cinzel,serif;font-size:34px;color:#e0b85a;margin-bottom:8px}
+.overlayBox p{color:#c9b896;margin-bottom:18px;line-height:1.45}
+.heroGrid,.discoverGrid{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.heroCard,.discoverCard{width:200px;padding:14px;border-radius:10px;background:rgba(20,24,34,.9);border:1px solid rgba(212,175,90,.35);cursor:pointer;text-align:left}
+.heroCard:hover,.discoverCard:hover{border-color:#e0b85a;transform:translateY(-2px)}
+.heroCard h3,.discoverCard h3{font-family:Cinzel,serif;color:#e0b85a;margin-bottom:6px;font-size:16px}
+.heroCard .meta,.discoverCard .meta{font-size:12px;color:#b9a888;margin-bottom:8px}
+.heroCard .power,.discoverCard .text{font-size:13px;color:#eee2cb;line-height:1.35}
+.hidden{display:none!important}
+@media (max-width:900px){
+  .opp{width:56px;height:56px;border-radius:12px}
+  #opponents{left:8px;gap:8px}
+  #tavernControls{top:128px}
+  #frozenBanner{top:168px}
+  #stagePortraitSlot,#playerHeroFrame{width:84px}
+  #stagePortraitSlot .portraitWrap,#playerHeroFrame .portraitWrap{width:84px;height:84px;border-radius:14px}
+  #playerHeroFrame{bottom:12px}
+  #bottomStack{bottom:128px}
+  #phaseBanner{font-size:15px}
+  #peekPanel{width:220px;top:52px}
+  #oppHover,#heroPowerHover{width:210px}
+  #historyPanel{width:min(260px,70vw)}
+  .codexHeader h1{font-size:22px}
+  .codexGrid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+}
+</style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<div id="ui" class="hidden">
+  <div id="topStack">
+    <div id="phaseRow">
+      <div id="phaseBanner">Recruit</div>
+      <div id="combatLog"></div>
+    </div>
+  </div>
+  <div id="topRightActions">
+    <button id="btnCodex">Codex</button>
+    <button id="btnHistory">History</button>
+  </div>
+  <div id="historyPanel" class="panel">
+    <div class="empty">No history yet.</div>
+  </div>
+  <div id="opponents"></div>
+  <div id="oppHover"></div>
+  <div id="heroPowerHover"></div>
+  <div id="playfield">
+    <div id="stagePortraitSlot">
+      <div id="tavernMasterFrame" class="heroFrame">
+        <div class="portraitWrap">
+          <img id="tavernMasterArt" src="" alt="Tavern Master">
+        </div>
+        <div class="frameLabel">Bartender Bob</div>
+        <div class="frameSub">Tavern Master</div>
+      </div>
+      <div id="combatEnemyFrame" class="heroFrame">
+        <div class="portraitWrap">
+          <img id="combatEnemyArt" src="" alt="Enemy Hero">
+        </div>
+        <div class="frameLabel" id="combatEnemyName">Enemy</div>
+        <div class="frameSub" id="combatEnemySub">Opponent</div>
+      </div>
+    </div>
+    <div id="tavernControls">
+      <button id="btnRefresh">Refresh (1)</button>
+      <button id="btnUpgrade">Upgrade</button>
+      <button id="btnFreeze">Freeze</button>
+    </div>
+    <div id="frozenBanner">FROZEN</div>
+    <div id="peekPanel" class="panel">
+      <h3 id="peekTitle">Opponent</h3>
+      <div class="meta" id="peekMeta"></div>
+      <div id="peekList"></div>
+      <button id="btnClosePeek" style="width:100%;margin-top:8px">Close</button>
+    </div>
+  </div>
+  <div id="playerHeroFrame" class="heroFrame">
+    <div class="portraitWrap">
+      <img id="playerHeroArt" src="" alt="Your Hero">
+    </div>
+    <div class="frameLabel" id="playerHeroName">Hero</div>
+    <div class="frameSub">Your Hero</div>
+  </div>
+  <div id="goldPanel" class="panel">
+    <div class="label">GOLD</div>
+    <div class="value" id="goldVal">0</div>
+  </div>
+  <button id="btnEnd" class="primary">End Turn</button>
+  <div id="bottomStack">
+    <div id="controls">
+      <button id="btnHeroPower">Hero Power</button>
+      <button id="btnSell" class="warn">Sell Selected (+1)</button>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<div id="overlay">
+  <div class="overlayBox" id="overlayContent"></div>
+</div>
+<div id="codexOverlay">
+  <div class="codexBox">
+    <div class="codexHeader">
+      <h1>Codex</h1>
+      <div class="codexTabs">
+        <button id="codexTabUnits" class="active">Units</button>
+        <button id="codexTabHeroes">Heroes</button>
+      </div>
+      <button id="btnCloseCodex">Close</button>
+    </div>
+    <div id="codexBody"></div>
+  </div>
+</div>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.170.0/build/three.module.js"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
 
+const ART_A = 'Gemini_Generated_Image_bti4bfbti4bfbti4.png';
+const ART_B = 'Gemini_Generated_Image_xdwagyxdwagyxdwa.png';
+const SHOP_SIZE = [0, 3, 4, 4, 5, 5, 6];
+const UPGRADE_BASE = [0, 0, 5, 7, 8, 10, 10];
+const COPY_COUNTS = [0, 16, 15, 13, 11, 9, 7];
+const BUY_COST = 3;
+const REFRESH_COST = 1;
+const MAX_GOLD = 10;
+const MAX_BOARD = 7;
+const MAX_HAND = 10;
+const START_HP = 30;
+const TRIBES = ['Beast', 'Demon', 'Dragon', 'Elemental', 'Mech', 'Murloc', 'Naga', 'Pirate', 'Quilboar', 'Undead', 'Neutral'];
+const KEYWORDS = ['Taunt', 'DivineShield', 'Reborn', 'Poisonous', 'Windfury'];
+
+const NAME_PARTS = {
+  Beast: [['Wild', 'Feral', 'Thorn', 'Moss', 'Ironhide'], ['Wolf', 'Boar', 'Raptor', 'Bear', 'Stalker']],
+  Demon: [['Fel', 'Abyssal', 'Crimson', 'Void', 'Spite'], ['Fiend', 'Imp', 'Brute', 'Hound', 'Tyrant']],
+  Dragon: [['Storm', 'Ember', 'Azure', 'Scale', 'Nether'], ['Whelp', 'Drake', 'Wyrm', 'Guardian', 'Scion']],
+  Elemental: [['Molten', 'Frost', 'Thunder', 'Ashen', 'Tide'], ['Spark', 'Golem', 'Spirit', 'Wisp', 'Colossus']],
+  Mech: [['Cog', 'Iron', 'Clock', 'Bolt', 'Scrap'], ['Bot', 'Tank', 'Drone', 'Walker', 'Core']],
+  Murloc: [['Murky', 'Tide', 'Gill', 'Coral', 'Brack'], ['Fin', 'Oracle', 'Scout', 'Raider', 'King']],
+  Naga: [['Deep', 'Pearl', 'Siren', 'Reef', 'Salt'], ['Myrmidon', 'Witch', 'Guard', 'Seer', 'Lord']],
+  Pirate: [['Salt', 'Black', 'Cutlass', 'Storm', 'Rum'], ['Corsair', 'Gunner', 'Mate', 'Captain', 'Scallywag']],
+  Quilboar: [['Bristle', 'Tusk', 'Thorn', 'Blood', 'Spike'], ['Geomancer', 'Warrior', 'Shaman', 'Tusker', 'Warden']],
+  Undead: [['Grave', 'Bone', 'Pale', 'Wailing', 'Rot'], ['Ghoul', 'Knight', 'Mage', 'Shade', 'Lich']],
+  Neutral: [['Sun', 'Stone', 'Oath', 'Rune', 'Ash'], ['Knight', 'Acolyte', 'Guard', 'Champion', 'Warden']]
+};
+
+const EFFECT_CATALOG = {
+  buffSelf: (ctx, p) => { if (ctx.self) buffMinion(ctx.self, p.attack || 0, p.health || 0); },
+  buffFriendlyAll: (ctx, p) => { ctx.friendly.board.forEach(m => buffMinion(m, p.attack || 0, p.health || 0)); },
+  buffFriendlyTribe: (ctx, p) => {
+    for (const m of ctx.friendly.board) {
+      if (m.tribe === p.tribe) buffMinion(m, p.attack || 0, p.health || 0);
+    }
+  },
+  buffRandomFriendly: (ctx, p) => {
+    const live = ctx.friendly.board.filter(m => m.health > 0 && m !== ctx.self);
+    if (!live.length) return;
+    buffMinion(pick(live), p.attack || 0, p.health || 0);
+  },
+  giveKeywordFriendly: (ctx, p) => {
+    const targets = ctx.friendly.board.filter(m => m !== ctx.self);
+    if (!targets.length) return;
+    const t = p.all ? targets : [pick(targets)];
+    t.forEach(m => addKeyword(m, p.keyword));
+  },
+  giveKeywordSelf: (ctx, p) => { if (ctx.self) addKeyword(ctx.self, p.keyword); },
+  damageRandomEnemy: (ctx, p) => {
+    if (!ctx.enemy) return;
+    const live = ctx.enemy.board.filter(m => m.health > 0);
+    if (!live.length) return;
+    for (let i = 0; i < (p.times || 1); i++) {
+      const alive = ctx.enemy.board.filter(m => m.health > 0);
+      if (!alive.length) break;
+      dealDamageToMinion(pick(alive), p.damage || 1, ctx);
+    }
+  },
+  damageAllEnemy: (ctx, p) => {
+    if (!ctx.enemy) return;
+    [...ctx.enemy.board].forEach(m => { if (m.health > 0) dealDamageToMinion(m, p.damage || 1, ctx); });
+  },
+  summonToken: (ctx, p) => {
+    const count = p.count || 1;
+    for (let i = 0; i < count; i++) {
+      if (ctx.friendly.board.length >= MAX_BOARD) break;
+      const token = createTokenMinion(p.tokenId || 'token_1_1');
+      const base = ctx.selfIndex >= 0 ? ctx.selfIndex : ctx.friendly.board.length;
+      const idx = ctx.self ? base + 1 + i : base + i;
+      ctx.friendly.board.splice(Math.min(idx, ctx.friendly.board.length), 0, token);
+    }
+  },
+  gainGold: (ctx, p) => { if (!ctx.inCombat) ctx.friendly.gold = Math.min(MAX_GOLD, ctx.friendly.gold + (p.amount || 1)); },
+  refreshShop: (ctx) => { if (!ctx.inCombat) refreshShop(ctx.friendly, true); },
+  freezeShop: (ctx) => { if (!ctx.inCombat) ctx.friendly.frozen = true; },
+  buffShop: (ctx, p) => {
+    if (ctx.inCombat) return;
+    ctx.friendly.shop.forEach(m => { if (m) buffMinion(m, p.attack || 0, p.health || 0); });
+  },
+  discoverCurrentTier: (ctx) => {
+    if (ctx.inCombat) return;
+    queueDiscover(ctx.friendly, ctx.friendly.tavernTier, false);
+  },
+  healHero: (ctx, p) => { ctx.friendly.hp = Math.min(ctx.friendly.maxHp, ctx.friendly.hp + (p.amount || 1)); },
+  damageHero: (ctx, p) => { applyHeroDamage(ctx.enemy || ctx.friendly, p.amount || 1); },
+  avengeBuffSelf: (ctx, p) => { if (ctx.self) buffMinion(ctx.self, p.attack || 0, p.health || 0); },
+  startBuffAll: (ctx, p) => { ctx.friendly.board.forEach(m => buffMinion(m, p.attack || 0, p.health || 0)); }
+};
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+function uid() { return Math.random().toString(36).slice(2, 10); }
+function keywordLabel(kw) {
+  if (kw === 'DivineShield') return 'Divine Shield';
+  return kw;
+}
+
+function buffMinion(m, a, h) {
+  m.attack += a;
+  m.health += h;
+  m.maxHealth += h;
+}
+
+function addKeyword(m, kw) {
+  if (!m.keywords.includes(kw)) m.keywords.push(kw);
+}
+
+function hasKeyword(m, kw) {
+  return m.keywords.includes(kw);
+}
+
+function createCardDatabase() {
+  const cards = [];
+  const usedNames = new Set();
+  const tierTargets = [0, 36, 36, 34, 32, 32, 30];
+  let id = 1;
+  const effectPoolByTier = {
+    1: [
+      { battlecry: { id: 'buffSelf', params: { attack: 1, health: 0 } } },
+      { battlecry: { id: 'buffRandomFriendly', params: { attack: 1, health: 1 } } },
+      { deathrattle: { id: 'summonToken', params: { tokenId: 'token_1_1', count: 1 } } },
+      { keywords: ['Taunt'] },
+      { keywords: ['DivineShield'] },
+      { battlecry: { id: 'gainGold', params: { amount: 1 } } }
+    ],
+    2: [
+      { battlecry: { id: 'buffFriendlyTribe', params: { tribe: null, attack: 1, health: 1 } } },
+      { keywords: ['Reborn'] },
+      { keywords: ['Taunt', 'DivineShield'] },
+      { deathrattle: { id: 'buffFriendlyAll', params: { attack: 1, health: 0 } } },
+      { battlecry: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } } },
+      { startOfCombat: { id: 'buffSelf', params: { attack: 1, health: 1 } } }
+    ],
+    3: [
+      { keywords: ['Windfury'] },
+      { keywords: ['Poisonous'] },
+      { battlecry: { id: 'buffFriendlyTribe', params: { tribe: null, attack: 2, health: 2 } } },
+      { deathrattle: { id: 'summonToken', params: { tokenId: 'token_2_2', count: 2 } } },
+      { avenge: { count: 3, effect: { id: 'buffSelf', params: { attack: 1, health: 1 } } } },
+      { startOfCombat: { id: 'damageRandomEnemy', params: { damage: 2, times: 1 } } }
+    ],
+    4: [
+      { battlecry: { id: 'buffFriendlyAll', params: { attack: 2, health: 2 } } },
+      { deathrattle: { id: 'damageAllEnemy', params: { damage: 2 } } },
+      { keywords: ['DivineShield', 'Reborn'] },
+      { keywords: ['Taunt', 'Windfury'] },
+      { avenge: { count: 2, effect: { id: 'buffSelf', params: { attack: 2, health: 1 } } } },
+      { startOfCombat: { id: 'giveKeywordSelf', params: { keyword: 'DivineShield' } } }
+    ],
+    5: [
+      { battlecry: { id: 'buffFriendlyTribe', params: { tribe: null, attack: 3, health: 3 } } },
+      { deathrattle: { id: 'summonToken', params: { tokenId: 'token_5_5', count: 1 } } },
+      { keywords: ['Poisonous', 'DivineShield'] },
+      { startOfCombat: { id: 'buffFriendlyAll', params: { attack: 2, health: 2 } } },
+      { avenge: { count: 2, effect: { id: 'damageRandomEnemy', params: { damage: 3, times: 1 } } } },
+      { battlecry: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn', all: true } } }
+    ],
+    6: [
+      { battlecry: { id: 'buffFriendlyAll', params: { attack: 4, health: 4 } } },
+      { deathrattle: { id: 'summonToken', params: { tokenId: 'token_8_8', count: 1 } } },
+      { keywords: ['Windfury', 'DivineShield'] },
+      { startOfCombat: { id: 'damageAllEnemy', params: { damage: 3 } } },
+      { avenge: { count: 1, effect: { id: 'buffSelf', params: { attack: 3, health: 3 } } } },
+      { keywords: ['Taunt', 'Reborn', 'DivineShield'] }
+    ]
+  };
+
+  for (let tier = 1; tier <= 6; tier++) {
+    let made = 0;
+    while (made < tierTargets[tier]) {
+      const tribe = TRIBES[made % TRIBES.length];
+      const parts = NAME_PARTS[tribe];
+      let name = `${pick(parts[0])} ${pick(parts[1])}`;
+      let guard = 0;
+      while (usedNames.has(name) && guard++ < 50) name = `${pick(parts[0])} ${pick(parts[1])}`;
+      if (usedNames.has(name)) name = `${name} ${id}`;
+      usedNames.add(name);
+      const baseAtk = tier + Math.floor(made % 3);
+      const baseHp = tier + 1 + Math.floor((made + 1) % 3);
+      const template = effectPoolByTier[tier][made % effectPoolByTier[tier].length];
+      const keywords = [...(template.keywords || [])];
+      const battlecry = template.battlecry ? { ...template.battlecry, params: { ...template.battlecry.params } } : null;
+      if (battlecry && battlecry.id === 'buffFriendlyTribe') battlecry.params.tribe = tribe;
+      const deathrattle = template.deathrattle ? { ...template.deathrattle, params: { ...template.deathrattle.params } } : null;
+      const startOfCombat = template.startOfCombat ? { ...template.startOfCombat, params: { ...template.startOfCombat.params } } : null;
+      const avenge = template.avenge ? { count: template.avenge.count, effect: { ...template.avenge.effect, params: { ...template.avenge.effect.params } } } : null;
+      const goldenUpgrade = {
+        attackMult: 2,
+        healthMult: 2,
+        battlecry: battlecry ? scaleEffect(battlecry, 2) : null,
+        deathrattle: deathrattle ? scaleEffect(deathrattle, 2) : null,
+        startOfCombat: startOfCombat ? scaleEffect(startOfCombat, 2) : null,
+        avenge: avenge ? { count: avenge.count, effect: scaleEffect(avenge.effect, 2) } : null
+      };
+      cards.push({
+        id: `minion_${id++}`,
+        name,
+        tier,
+        tribe,
+        attack: baseAtk,
+        health: baseHp,
+        keywords,
+        battlecry,
+        deathrattle,
+        startOfCombat,
+        avenge,
+        goldenUpgrade,
+        art: tribe === 'Neutral' || TRIBES.indexOf(tribe) % 2 === 0 ? ART_A : ART_B,
+        isToken: false
+      });
+      made++;
+    }
+  }
+
+  const tokens = [
+    { id: 'token_1_1', name: 'Spawn', tier: 1, attack: 1, health: 1 },
+    { id: 'token_2_2', name: 'Whelp', tier: 1, attack: 2, health: 2 },
+    { id: 'token_5_5', name: 'Monstrosity', tier: 3, attack: 5, health: 5 },
+    { id: 'token_8_8', name: 'Titan Fragment', tier: 5, attack: 8, health: 8 }
+  ];
+  for (const t of tokens) {
+    cards.push({
+      id: t.id,
+      name: t.name,
+      tier: t.tier,
+      tribe: 'Neutral',
+      attack: t.attack,
+      health: t.health,
+      keywords: [],
+      battlecry: null,
+      deathrattle: null,
+      startOfCombat: null,
+      avenge: null,
+      goldenUpgrade: null,
+      art: ART_B,
+      isToken: true
+    });
+  }
+  return cards;
+}
+
+function scaleEffect(effect, mult) {
+  const params = { ...(effect.params || {}) };
+  const scaleKeys = new Set(['attack', 'health', 'damage', 'amount', 'count']);
+  for (const k of Object.keys(params)) {
+    if (typeof params[k] === 'number' && scaleKeys.has(k)) params[k] = params[k] * mult;
+  }
+  return { id: effect.id, params };
+}
+
+const CARD_DB = createCardDatabase();
+const CARD_BY_ID = Object.fromEntries(CARD_DB.map(c => [c.id, c]));
+
+const SPELL_DB = [
+  { id: 'sp_coin', name: 'Pocket Coin', tier: 1, cost: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' },
+  { id: 'sp_whet', name: 'Whetstone', tier: 1, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 1, health: 1 } }, text: 'Give a random friendly minion +1/+1.' },
+  { id: 'sp_reroll', name: 'Open Tab', tier: 1, cost: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' },
+  { id: 'sp_brace', name: 'Brace Up', tier: 2, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly minion Taunt.' },
+  { id: 'sp_feast', name: 'Shared Feast', tier: 2, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 1 } }, text: 'Give your minions +1/+1.' },
+  { id: 'sp_chill', name: 'Cold Storage', tier: 2, cost: 1, effect: { id: 'freezeShop', params: {} }, text: 'Freeze the Tavern.' },
+  { id: 'sp_shine', name: 'Polish Armor', tier: 3, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield' } }, text: 'Give a random friendly minion Divine Shield.' },
+  { id: 'sp_brood', name: 'Brood Call', tier: 3, cost: 3, effect: { id: 'summonToken', params: { tokenId: 'token_2_2', count: 2 } }, text: 'Summon two 2/2 Whelps.' },
+  { id: 'sp_surge', name: 'Battle Surge', tier: 3, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 0 } }, text: 'Give your minions +2 Attack.' },
+  { id: 'sp_study', name: 'Arcane Ledger', tier: 4, cost: 2, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a minion from your tier.' },
+  { id: 'sp_forge', name: 'Warforge', tier: 4, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 2 } }, text: 'Give your minions +2/+2.' },
+  { id: 'sp_reborn', name: 'Grave Pact', tier: 4, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn' } }, text: 'Give a random friendly minion Reborn.' },
+  { id: 'sp_storm', name: 'Storm Brand', tier: 5, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Windfury' } }, text: 'Give a random friendly minion Windfury.' },
+  { id: 'sp_titan', name: 'Titan Seed', tier: 5, cost: 5, effect: { id: 'summonToken', params: { tokenId: 'token_5_5', count: 1 } }, text: 'Summon a 5/5 Monstrosity.' },
+  { id: 'sp_rally', name: 'War Council', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 3, health: 3 } }, text: 'Give your minions +3/+3.' },
+  { id: 'sp_apex', name: 'Apex Decree', tier: 6, cost: 5, effect: { id: 'buffFriendlyAll', params: { attack: 4, health: 4 } }, text: 'Give your minions +4/+4.' },
+  { id: 'sp_colossus', name: 'Summon Colossus', tier: 6, cost: 6, effect: { id: 'summonToken', params: { tokenId: 'token_8_8', count: 1 } }, text: 'Summon an 8/8 Titan Fragment.' },
+  { id: 'sp_sanctum', name: 'Sanctum Ward', tier: 6, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield', all: true } }, text: 'Give your minions Divine Shield.' }
+];
+const SPELL_BY_ID = Object.fromEntries(SPELL_DB.map(s => [s.id, s]));
+const SPELL_COPIES = [0, 5, 7, 9, 11, 7, 5];
+
+const HERO_DB = [
+  { id: 'h1', name: 'Sunforged Regent', armor: 18, power: { name: 'Solar Boon', cost: 1, uses: 1, effect: { id: 'buffRandomFriendly', params: { attack: 2, health: 1 } }, text: 'Give a random friendly minion +2/+1.' } },
+  { id: 'h2', name: 'Ashen Corsair', armor: 15, power: { name: 'Loot Cache', cost: 1, uses: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' } },
+  { id: 'h3', name: 'Tide Oracle', armor: 13, power: { name: 'Reroll Tide', cost: 0, uses: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh Bob\'s Tavern.' } },
+  { id: 'h4', name: 'Grave Archivist', armor: 16, power: { name: 'Bone Study', cost: 2, uses: 1, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a minion from your tier.' } },
+  { id: 'h5', name: 'Felbrew Alchemist', armor: 14, power: { name: 'Volatile Mix', cost: 1, uses: 1, effect: { id: 'buffShop', params: { attack: 1, health: 1 } }, text: 'Give minions in the Tavern +1/+1.' } },
+  { id: 'h6', name: 'Ironclad Warden', armor: 20, power: { name: 'Bulwark', cost: 1, uses: 1, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly minion Taunt.' } },
+  { id: 'h7', name: 'Stormscale Seer', armor: 12, power: { name: 'Dragoncall', cost: 2, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Dragon', attack: 1, health: 1 } }, text: 'Give your Dragons +1/+1.' } },
+  { id: 'h8', name: 'Cogmaster Vex', armor: 17, power: { name: 'Tune Up', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Mech', attack: 1, health: 1 } }, text: 'Give your Mechs +1/+1.' } },
+  { id: 'h9', name: 'Bristle Prophet', armor: 15, power: { name: 'Thorn Blessing', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Quilboar', attack: 1, health: 1 } }, text: 'Give your Quilboar +1/+1.' } },
+  { id: 'h10', name: 'Deepwake Empress', armor: 14, power: { name: 'Siren Song', cost: 1, uses: 1, effect: { id: 'freezeShop', params: {} }, text: 'Freeze the Tavern.' } },
+  { id: 'h11', name: 'Pale Revenant', armor: 16, power: { name: 'Unholy Gift', cost: 2, uses: 1, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn' } }, text: 'Give a random friendly minion Reborn.' } },
+  { id: 'h12', name: 'Molten Heart', armor: 13, power: { name: 'Ember Feed', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Elemental', attack: 2, health: 0 } }, text: 'Give your Elementals +2 Attack.' } },
+  { id: 'h13', name: 'Murk Tidechief', armor: 12, power: { name: 'Schooling', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Murloc', attack: 1, health: 1 } }, text: 'Give your Murlocs +1/+1.' } },
+  { id: 'h14', name: 'Void Harvester', armor: 18, power: { name: 'Soul Sip', cost: 0, uses: 1, effect: { id: 'healHero', params: { amount: 2 } }, text: 'Restore 2 Health to your hero.' } },
+  { id: 'h15', name: 'Rune Knight Ael', armor: 19, power: { name: 'Oathbound', cost: 1, uses: 1, effect: { id: 'buffSelf', params: { attack: 0, health: 0 } }, text: 'Give your left-most minion +1/+2.', special: 'leftmost' } },
+  { id: 'h16', name: 'Scarlet Raider', armor: 15, power: { name: 'Boarding Pike', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Pirate', attack: 1, health: 0 } }, text: 'Give your Pirates +1 Attack.' } }
+];
+
+function describeCard(def) {
+  const bits = [];
+  if (def.keywords?.length) bits.push(def.keywords.map(keywordLabel).join(', '));
+  if (def.battlecry) bits.push(`Battlecry: ${effectText(def.battlecry)}`);
+  if (def.deathrattle) bits.push(`Deathrattle: ${effectText(def.deathrattle)}`);
+  if (def.startOfCombat) bits.push(`Start of Combat: ${effectText(def.startOfCombat)}`);
+  if (def.avenge) bits.push(`Avenge (${def.avenge.count}): ${effectText(def.avenge.effect)}`);
+  return bits.join(' | ') || 'No special ability.';
+}
+
+function describeMinion(minion) {
+  if (isSpell(minion)) return minion.text || effectText(minion.effect) || 'Tavern spell.';
+  const bits = [];
+  if (minion.keywords?.length) bits.push(minion.keywords.map(keywordLabel).join(', '));
+  if (minion.battlecry) bits.push(`Battlecry: ${effectText(minion.battlecry)}`);
+  if (minion.deathrattle) bits.push(`Deathrattle: ${effectText(minion.deathrattle)}`);
+  if (minion.startOfCombat) bits.push(`Start of Combat: ${effectText(minion.startOfCombat)}`);
+  if (minion.avenge) bits.push(`Avenge (${minion.avenge.count}): ${effectText(minion.avenge.effect)}`);
+  if (minion.golden) bits.push('Golden');
+  return bits.join(' | ') || 'No special ability.';
+}
+
+function effectText(effect) {
+  const p = effect.params || {};
+  switch (effect.id) {
+    case 'buffSelf': return `Gain +${p.attack || 0}/+${p.health || 0}.`;
+    case 'buffFriendlyAll': return `Give your minions +${p.attack || 0}/+${p.health || 0}.`;
+    case 'buffFriendlyTribe': return `Give your ${p.tribe}s +${p.attack || 0}/+${p.health || 0}.`;
+    case 'buffRandomFriendly': return `Give a random friendly minion +${p.attack || 0}/+${p.health || 0}.`;
+    case 'giveKeywordFriendly': return p.all ? `Give your minions ${keywordLabel(p.keyword)}.` : `Give a friendly minion ${keywordLabel(p.keyword)}.`;
+    case 'giveKeywordSelf': return `Gain ${keywordLabel(p.keyword)}.`;
+    case 'damageRandomEnemy': return `Deal ${p.damage} to a random enemy minion${p.times > 1 ? ` ${p.times} times` : ''}.`;
+    case 'damageAllEnemy': return `Deal ${p.damage} to all enemy minions.`;
+    case 'summonToken': {
+      const t = CARD_BY_ID[p.tokenId];
+      return `Summon ${p.count || 1} ${t ? t.name : 'token'}.`;
+    }
+    case 'gainGold': return `Gain ${p.amount} Gold.`;
+    case 'refreshShop': return 'Refresh the Tavern.';
+    case 'freezeShop': return 'Freeze the Tavern.';
+    case 'buffShop': return `Give Tavern minions +${p.attack || 0}/+${p.health || 0}.`;
+    case 'discoverCurrentTier': return 'Discover a minion from your tier.';
+    case 'healHero': return `Restore ${p.amount} Health.`;
+    default: return effect.id;
+  }
+}
+
+function giveMinionToHand(player, def) {
+  if (player.hand.length >= MAX_HAND) return false;
+  if ((state.pool[def.id] || 0) <= 0) return false;
+  takeFromPool(def.id);
+  player.hand.push(createMinionFromDef(def));
+  checkTriples(player);
+  return true;
+}
+
+function createMinionFromDef(def, opts = {}) {
+  const golden = !!opts.golden;
+  const gu = def.goldenUpgrade;
+  const attack = golden && gu ? def.attack * (gu.attackMult || 2) : def.attack;
+  const health = golden && gu ? def.health * (gu.healthMult || 2) : def.health;
+  return {
+    instanceId: uid(),
+    cardId: def.id,
+    name: golden ? `Golden ${def.name}` : def.name,
+    tier: def.tier,
+    tribe: def.tribe,
+    attack,
+    health,
+    maxHealth: health,
+    keywords: [...def.keywords],
+    battlecry: golden && gu?.battlecry ? gu.battlecry : (def.battlecry ? { ...def.battlecry, params: { ...def.battlecry.params } } : null),
+    deathrattle: golden && gu?.deathrattle ? gu.deathrattle : (def.deathrattle ? { ...def.deathrattle, params: { ...def.deathrattle.params } } : null),
+    startOfCombat: golden && gu?.startOfCombat ? gu.startOfCombat : (def.startOfCombat ? { ...def.startOfCombat, params: { ...def.startOfCombat.params } } : null),
+    avenge: golden && gu?.avenge ? gu.avenge : (def.avenge ? { count: def.avenge.count, effect: { ...def.avenge.effect, params: { ...def.avenge.effect.params } }, progress: 0 } : null),
+    art: def.art,
+    golden,
+    isToken: !!def.isToken,
+    divineShield: def.keywords.includes('DivineShield'),
+    rebornActive: def.keywords.includes('Reborn'),
+    attacksRemaining: def.keywords.includes('Windfury') ? 2 : 1
+  };
+}
+
+function createTokenMinion(tokenId) {
+  const def = CARD_BY_ID[tokenId] || CARD_BY_ID.token_1_1;
+  return createMinionFromDef(def);
+}
+
+function cloneMinion(m, freshId = false) {
+  return {
+    ...m,
+    keywords: [...m.keywords],
+    battlecry: m.battlecry ? { ...m.battlecry, params: { ...m.battlecry.params } } : null,
+    deathrattle: m.deathrattle ? { ...m.deathrattle, params: { ...m.deathrattle.params } } : null,
+    startOfCombat: m.startOfCombat ? { ...m.startOfCombat, params: { ...m.startOfCombat.params } } : null,
+    avenge: m.avenge ? { count: m.avenge.count, effect: { ...m.avenge.effect, params: { ...m.avenge.effect.params } }, progress: m.avenge.progress || 0 } : null,
+    instanceId: freshId ? uid() : m.instanceId
+  };
+}
+
+function cloneBoard(board) {
+  return board.map(cloneMinion);
+}
+
+let state = null;
+let discoverQueue = [];
+let pendingDiscover = null;
+let selected = null;
+let phase = 'boot';
+let combatAnim = null;
+let peekPlayerId = null;
+let toastTimer = null;
+
+const logs = [];
+let historyOpen = false;
+
+function renderHistoryPanel() {
+  const el = document.getElementById('historyPanel');
+  if (!el) return;
+  if (!logs.length) {
+    el.innerHTML = '<div class="empty">No history yet.</div>';
+    return;
+  }
+  el.innerHTML = logs.slice(0, 60).map(x => `<div class="entry">${x}</div>`).join('');
+}
+
+function log(msg) {
+  logs.unshift(msg);
+  if (logs.length > 80) logs.pop();
+  renderHistoryPanel();
+}
+
+function setHistoryOpen(open) {
+  historyOpen = !!open;
+  document.getElementById('historyPanel').classList.toggle('open', historyOpen);
+  document.getElementById('btnHistory').classList.toggle('active', historyOpen);
+  document.getElementById('btnHistory').textContent = historyOpen ? 'Close History' : 'History';
+}
+
+let codexTab = 'units';
+
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function renderCodexUnits() {
+  const units = CARD_DB.filter(c => !c.isToken).slice().sort((a, b) => {
+    if (a.tribe !== b.tribe) return TRIBES.indexOf(a.tribe) - TRIBES.indexOf(b.tribe);
+    if (a.tier !== b.tier) return a.tier - b.tier;
+    return a.name.localeCompare(b.name);
+  });
+  const byTribe = new Map();
+  for (const tribe of TRIBES) byTribe.set(tribe, []);
+  for (const card of units) {
+    if (!byTribe.has(card.tribe)) byTribe.set(card.tribe, []);
+    byTribe.get(card.tribe).push(card);
+  }
+  return [...byTribe.entries()].filter(([, list]) => list.length).map(([tribe, list]) => {
+    const cards = list.map(card => `
+      <div class="codexCard">
+        <img class="art" src="${card.art}" alt="${escapeHtml(card.name)}">
+        <div class="body">
+          <div class="name">${escapeHtml(card.name)}</div>
+          <div class="meta">${card.attack}/${card.health} · Tier ${card.tier}</div>
+          <div class="text">${escapeHtml(describeCard(card))}</div>
+        </div>
+      </div>
+    `).join('');
+    return `<section class="codexRace"><h2>${escapeHtml(tribe)} <span>${list.length}</span></h2><div class="codexGrid">${cards}</div></section>`;
+  }).join('');
+}
+
+function renderCodexHeroes() {
+  const cards = HERO_DB.map((hero, i) => {
+    const art = i % 2 === 0 ? ART_A : ART_B;
+    return `
+      <div class="codexHeroCard">
+        <img class="art" src="${art}" alt="${escapeHtml(hero.name)}">
+        <div class="body">
+          <div class="name">${escapeHtml(hero.name)}</div>
+          <div class="meta">Armor ${hero.armor}</div>
+          <div class="powerName">${escapeHtml(hero.power.name)} (${hero.power.cost} Gold)</div>
+          <div class="text">${escapeHtml(hero.power.text)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  return `<section class="codexRace"><h2>Heroes <span>${HERO_DB.length}</span></h2><div class="codexGrid">${cards}</div></section>`;
+}
+
+function renderCodexBody() {
+  const body = document.getElementById('codexBody');
+  body.innerHTML = codexTab === 'heroes' ? renderCodexHeroes() : renderCodexUnits();
+  document.getElementById('codexTabUnits').classList.toggle('active', codexTab === 'units');
+  document.getElementById('codexTabHeroes').classList.toggle('active', codexTab === 'heroes');
+}
+
+function openCodex(tab = 'units') {
+  codexTab = tab === 'heroes' ? 'heroes' : 'units';
+  setHistoryOpen(false);
+  renderCodexBody();
+  document.getElementById('codexOverlay').classList.add('open');
+  document.getElementById('btnCodex').classList.add('active');
+}
+
+function closeCodex() {
+  document.getElementById('codexOverlay').classList.remove('open');
+  document.getElementById('btnCodex').classList.remove('active');
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
+}
+
+function compactShop(player) {
+  player.shop = player.shop.filter(Boolean);
+}
+
+function queueDiscover(player, tier, fromTriple) {
+  if (player.hand.length >= MAX_HAND) {
+    if (player.isHuman) showToast('Hand is full — discover skipped.');
+    return;
+  }
+  if (!player.isHuman) {
+    const options = drawDiscoverOptions(tier, 3);
+    if (options.length) {
+      const choice = pick(options);
+      if (giveMinionToHand(player, choice)) log(`${player.name} discovered ${choice.name}.`);
+    }
+    return;
+  }
+  discoverQueue.push({ player, tier, fromTriple });
+  if (!pendingDiscover) showNextDiscover();
+}
+
+function drawDiscoverOptions(tier, count) {
+  const t = clamp(tier, 1, 6);
+  const options = [];
+  const available = [];
+  for (const [cardId, copies] of Object.entries(state.pool)) {
+    if (copies <= 0) continue;
+    const def = CARD_BY_ID[cardId];
+    if (!def || def.isToken || def.tier !== t) continue;
+    for (let i = 0; i < copies; i++) available.push(def);
+  }
+  for (let i = 0; i < count && available.length; i++) {
+    const idx = Math.floor(Math.random() * available.length);
+    const def = available.splice(idx, 1)[0];
+    if (!options.find(o => o.id === def.id)) options.push(def);
+    else i--;
+  }
+  return options;
+}
+
+function showNextDiscover() {
+  if (!discoverQueue.length) {
+    pendingDiscover = null;
+    return;
+  }
+  pendingDiscover = discoverQueue.shift();
+  if (pendingDiscover.player.hand.length >= MAX_HAND) {
+    pendingDiscover = null;
+    showNextDiscover();
+    return;
+  }
+  const options = drawDiscoverOptions(pendingDiscover.tier, 3).filter(def => (state.pool[def.id] || 0) > 0);
+  const box = document.getElementById('overlayContent');
+  document.getElementById('overlay').classList.remove('hidden');
+  box.innerHTML = `<h1>Discover</h1><p>${pendingDiscover.fromTriple ? 'Triple reward: choose a minion from the next Tavern Tier.' : 'Choose a minion.'}</p><div class="discoverGrid"></div>`;
+  const grid = box.querySelector('.discoverGrid');
+  options.forEach(def => {
+    const el = document.createElement('div');
+    el.className = 'discoverCard';
+    el.innerHTML = `<h3>${def.name}</h3><div class="meta">T${def.tier} ${def.tribe} · ${def.attack}/${def.health}</div><div class="text">${describeCard(def)}</div>`;
+    el.onclick = () => {
+      const p = pendingDiscover.player;
+      if (!giveMinionToHand(p, def)) {
+        showToast('Could not take that minion.');
+        return;
+      }
+      log(`Discovered ${def.name}.`);
+      document.getElementById('overlay').classList.add('hidden');
+      pendingDiscover = null;
+      syncUI();
+      renderCards();
+      showNextDiscover();
+    };
+    grid.appendChild(el);
+  });
+  if (!options.length) {
+    document.getElementById('overlay').classList.add('hidden');
+    pendingDiscover = null;
+    showNextDiscover();
+  }
+}
+
+function buildPool() {
+  const pool = {};
+  for (const c of CARD_DB) {
+    if (c.isToken) continue;
+    pool[c.id] = COPY_COUNTS[c.tier];
+  }
+  return pool;
+}
+
+function takeFromPool(cardId) {
+  if (state.pool[cardId] > 0) state.pool[cardId]--;
+}
+
+function returnToPool(card) {
+  if (!card || card.isToken || card.golden || card.kind === 'spell') return;
+  if (state.pool[card.cardId] !== undefined) state.pool[card.cardId]++;
+}
+
+function isSpell(card) {
+  return !!card && card.kind === 'spell';}
+
+function createSpellCard(def) {
+  return {
+    kind: 'spell',
+    instanceId: uid(),
+    cardId: def.id,
+    name: def.name,
+    tier: def.tier,
+    cost: def.cost,
+    attack: 0,
+    health: 0,
+    tribe: 'Spell',
+    keywords: [],
+    effect: { ...def.effect, params: { ...(def.effect.params || {}) } },
+    text: def.text,
+    art: def.tier % 2 === 0 ? ART_A : ART_B,
+    golden: false,
+    isToken: false
+  };
+}
+
+function weightedDrawSpell(maxTier) {
+  const bag = [];
+  for (const def of SPELL_DB) {
+    if (def.tier > maxTier) continue;
+    const copies = SPELL_COPIES[def.tier] || 1;
+    for (let i = 0; i < copies; i++) bag.push(def);
+  }
+  if (!bag.length) return null;
+  return createSpellCard(pick(bag));
+}
+
+function weightedDraw(maxTier) {
+  const bag = [];
+  for (const [cardId, copies] of Object.entries(state.pool)) {
+    if (copies <= 0) continue;
+    const def = CARD_BY_ID[cardId];
+    if (!def || def.isToken || def.tier > maxTier) continue;
+    for (let i = 0; i < copies; i++) bag.push(cardId);
+  }
+  if (!bag.length) return null;
+  const cardId = pick(bag);
+  takeFromPool(cardId);
+  return createMinionFromDef(CARD_BY_ID[cardId]);
+}
+
+function stockTavern(player, preserveFrozen = false) {
+  const size = SHOP_SIZE[player.tavernTier];
+  if (preserveFrozen && player.frozen) {
+    player.shop = player.shop.filter(Boolean);
+    const frozenSpell = player.shop.find(isSpell) || null;
+    player.shop = player.shop.filter(c => !isSpell(c));
+    while (player.shop.length < size) {
+      const m = weightedDraw(player.tavernTier);
+      if (!m) break;
+      player.shop.push(m);
+    }
+    if (frozenSpell) player.shop.push(frozenSpell);
+    else {
+      const spell = weightedDrawSpell(player.tavernTier);
+      if (spell) player.shop.push(spell);
+    }
+    player.frozen = false;
+    return;
+  }
+  for (const c of player.shop) if (c) returnToPool(c);
+  player.shop = [];
+  player.frozen = false;
+  while (player.shop.length < size) {
+    const m = weightedDraw(player.tavernTier);
+    if (!m) break;
+    player.shop.push(m);
+  }
+  const spell = weightedDrawSpell(player.tavernTier);
+  if (spell) player.shop.push(spell);
+}
+
+function refreshShop(player, free = false) {
+  if (!free) {
+    if (player.gold < REFRESH_COST) return false;
+    player.gold -= REFRESH_COST;
+  }
+  stockTavern(player, false);
+  return true;
+}
+
+function getTavernGoldForTurn(turn) {
+  return Math.min(MAX_GOLD, 2 + turn);
+}
+
+function replenishTavernGold(player) {
+  player.gold = getTavernGoldForTurn(state.turn);
+}
+
+function startRecruitForPlayer(player) {
+  replenishTavernGold(player);
+  if (state.turn > 1) player.upgradeCost = Math.max(0, player.upgradeCost - 1);
+  player.heroPowerUses = player.hero.power.uses;
+  stockTavern(player, true);
+}
+
+function upgradeTavern(player) {
+  if (player.tavernTier >= 6) return false;
+  if (player.gold < player.upgradeCost) return false;
+  player.gold -= player.upgradeCost;
+  player.tavernTier++;
+  player.upgradeCost = UPGRADE_BASE[player.tavernTier + 1] || 0;
+  log(`${player.name} upgraded to Tier ${player.tavernTier}.`);
+  return true;
+}
+
+function buyFromShop(player, shopIndex, quiet = false) {
+  const card = player.shop[shopIndex];
+  if (!card) return false;
+  const price = isSpell(card) ? card.cost : BUY_COST;
+  if (player.gold < price) {
+    if (!quiet && player.isHuman) showToast(`Not enough gold (need ${price}).`);
+    return false;
+  }
+  if (player.hand.length >= MAX_HAND) {
+    if (!quiet && player.isHuman) showToast('Your hand is already full.');
+    return false;
+  }
+  player.gold -= price;
+  player.shop.splice(shopIndex, 1);
+  compactShop(player);
+  player.hand.push(card);
+  if (!isSpell(card)) checkTriples(player);
+  return true;
+}
+
+function buyMinion(player, shopIndex, quiet = false) {
+  return buyFromShop(player, shopIndex, quiet);
+}
+
+function sellMinion(player, from, index, quiet = false) {
+  const arr = from === 'board' ? player.board : from === 'hand' ? player.hand : null;
+  if (!arr) {
+    if (!quiet && player.isHuman) showToast('Select a hand or board card to sell.');
+    return false;
+  }
+  const m = arr[index];
+  if (!m) return false;
+  if (from === 'board' && isSpell(m)) return false;
+  arr.splice(index, 1);
+  player.gold = Math.min(MAX_GOLD, player.gold + 1);
+  returnToPool(m);
+  return true;
+}
+
+function playSpell(player, handIndex, quiet = false) {
+  const spell = player.hand[handIndex];
+  if (!isSpell(spell)) return false;
+  if (spell.effect?.id === 'summonToken' && player.board.length >= MAX_BOARD) {
+    if (!quiet && player.isHuman) showToast('Board is full.');
+    return false;
+  }
+  if (spell.effect?.id === 'buffRandomFriendly' && !player.board.length) {
+    if (!quiet && player.isHuman) showToast('No minion to buff.');
+    return false;
+  }
+  if (spell.effect?.id === 'giveKeywordFriendly' && !player.board.length) {
+    if (!quiet && player.isHuman) showToast('No minion to enchant.');
+    return false;
+  }
+  player.hand.splice(handIndex, 1);
+  runEffect(spell.effect, {
+    friendly: player,
+    enemy: null,
+    self: null,
+    selfIndex: -1,
+    inCombat: false
+  });
+  return true;
+}
+
+function playMinion(player, handIndex, boardIndex = player.board.length, quiet = false) {
+  const m = player.hand[handIndex];
+  if (!m) return false;
+  if (isSpell(m)) return playSpell(player, handIndex, quiet);
+  if (player.board.length >= MAX_BOARD) {
+    if (!quiet && player.isHuman) showToast(`Board is full (${MAX_BOARD} minions).`);
+    return false;
+  }
+  player.hand.splice(handIndex, 1);
+  const idx = clamp(boardIndex, 0, player.board.length);
+  player.board.splice(idx, 0, m);
+  if (m.battlecry) {
+    runEffect(m.battlecry, {
+      friendly: player,
+      enemy: null,
+      self: m,
+      selfIndex: idx,
+      inCombat: false
+    });
+    if (!quiet && player.isHuman) {
+      const text = effectText(m.battlecry);
+      log(`${m.name} Battlecry: ${text}`);
+      showToast(`Battlecry: ${text}`);
+    }
+  } else if (!quiet && player.isHuman) {
+    log(`Played ${m.name} to the Board.`);
+  }
+  return true;
+}
+
+function checkTriples(player) {
+  const counts = {};
+  const locations = {};
+  const track = (m, where, index) => {
+    if (!m || m.golden || m.isToken || isSpell(m)) return;
+    counts[m.cardId] = (counts[m.cardId] || 0) + 1;
+    if (!locations[m.cardId]) locations[m.cardId] = [];
+    locations[m.cardId].push({ where, index, m });
+  };
+  player.board.forEach((m, i) => track(m, 'board', i));
+  player.hand.forEach((m, i) => track(m, 'hand', i));
+  for (const cardId of Object.keys(counts)) {
+    if (counts[cardId] < 3) continue;
+    if (player.hand.length >= MAX_HAND && player.board.length >= MAX_BOARD) {
+      if (player.isHuman) showToast('No room for golden triple — free a slot.');
+      continue;
+    }
+    const locs = locations[cardId].slice(0, 3).sort((a, b) => {
+      if (a.where !== b.where) return a.where === 'hand' ? -1 : 1;
+      return b.index - a.index;
+    });
+    let atkBonus = 0;
+    let hpBonus = 0;
+    const keywordSet = new Set();
+    for (const loc of locs) {
+      const base = CARD_BY_ID[cardId];
+      atkBonus += loc.m.attack - (base?.attack || loc.m.attack);
+      hpBonus += loc.m.health - (base?.health || loc.m.health);
+      loc.m.keywords.forEach(k => keywordSet.add(k));
+    }
+    for (const loc of locs) {
+      const arr = loc.where === 'board' ? player.board : player.hand;
+      const i = arr.findIndex(x => x && x.instanceId === loc.m.instanceId);
+      if (i >= 0) arr.splice(i, 1);
+    }
+    const golden = createMinionFromDef(CARD_BY_ID[cardId], { golden: true });
+    buffMinion(golden, atkBonus, hpBonus);
+    keywordSet.forEach(k => addKeyword(golden, k));
+    golden.divineShield = golden.keywords.includes('DivineShield');
+    golden.rebornActive = golden.keywords.includes('Reborn');
+    if (player.hand.length < MAX_HAND) player.hand.push(golden);
+    else if (player.isHuman) showToast('Hand full — golden triple stays unclaimed. Free a hand slot.');
+    log(`${player.name} crafted Golden ${CARD_BY_ID[cardId].name}!`);
+    const discoverTier = Math.min(6, player.tavernTier + 1);
+    queueDiscover(player, discoverTier, true);
+    return checkTriples(player);
+  }
+}
+
+function runEffect(effect, ctx) {
+  if (!effect) return;
+  const fn = EFFECT_CATALOG[effect.id];
+  if (!fn) return;
+  fn(ctx, effect.params || {});
+}
+
+function applyHeroDamage(player, amount) {
+  let dmg = amount;
+  if (player.armor > 0) {
+    const used = Math.min(player.armor, dmg);
+    player.armor -= used;
+    dmg -= used;
+  }
+  player.hp -= dmg;
+  if (player.hp < 0) player.hp = 0;
+  player.lastCombatDamage = (player.lastCombatDamage || 0) + amount;
+}
+
+function dealDamageToMinion(target, amount, ctx) {
+  if (!target || target.health <= 0 || amount <= 0) return;
+  if (target.divineShield || hasKeyword(target, 'DivineShield')) {
+    target.divineShield = false;
+    target.keywords = target.keywords.filter(k => k !== 'DivineShield');
+    return;
+  }
+  target.health -= amount;
+  if (target.health <= 0) killMinion(target, ctx);
+}
+
+function killMinion(minion, ctx) {
+  const owner = ctx.friendly.board.includes(minion) ? ctx.friendly : ctx.enemy;
+  if (!owner) return;
+  const opponent = owner === ctx.friendly ? ctx.enemy : ctx.friendly;
+  const board = owner.board;
+  const idx = board.indexOf(minion);
+  if (idx < 0) return;
+  const avengeIds = board.filter(m => m !== minion && m.avenge).map(m => m.instanceId);
+  board.splice(idx, 1);
+  if (minion.deathrattle) {
+    runEffect(minion.deathrattle, {
+      friendly: owner,
+      enemy: opponent,
+      self: null,
+      selfIndex: idx,
+      inCombat: true
+    });
+  }
+  let rebornId = null;
+  if (minion.rebornActive || hasKeyword(minion, 'Reborn')) {
+    if (board.length < MAX_BOARD) {
+      const reborn = cloneMinion(minion, true);
+      reborn.health = 1;
+      reborn.maxHealth = 1;
+      reborn.attack = minion.attack;
+      reborn.keywords = minion.keywords.filter(k => k !== 'Reborn' && k !== 'DivineShield');
+      reborn.rebornActive = false;
+      reborn.divineShield = false;
+      reborn.avenge = minion.avenge ? { count: minion.avenge.count, effect: { ...minion.avenge.effect, params: { ...minion.avenge.effect.params } }, progress: 0 } : null;
+      reborn.attacksRemaining = hasKeyword(reborn, 'Windfury') ? 2 : 1;
+      rebornId = reborn.instanceId;
+      board.splice(Math.min(idx, board.length), 0, reborn);
+    }
+  }
+  const pendingAvenge = [];
+  for (const m of board) {
+    if (!m.avenge) continue;
+    if (m.instanceId === rebornId) continue;
+    if (!avengeIds.includes(m.instanceId)) continue;
+    m.avenge.progress = (m.avenge.progress || 0) + 1;
+    if (m.avenge.progress >= m.avenge.count) {
+      m.avenge.progress = 0;
+      pendingAvenge.push(m);
+    }
+  }
+  for (const m of pendingAvenge) {
+    if (!board.includes(m) || m.health <= 0) continue;
+    runEffect(m.avenge.effect, {
+      friendly: owner,
+      enemy: opponent,
+      self: m,
+      selfIndex: board.indexOf(m),
+      inCombat: true
+    });
+  }
+}
+
+function getAttackTargets(attackerSide, defenderSide) {
+  const taunts = defenderSide.board.filter(m => m.health > 0 && hasKeyword(m, 'Taunt'));
+  if (taunts.length) return taunts;
+  return defenderSide.board.filter(m => m.health > 0);
+}
+
+function popDivineShield(minion) {
+  if (minion.divineShield || hasKeyword(minion, 'DivineShield')) {
+    minion.divineShield = false;
+    minion.keywords = minion.keywords.filter(k => k !== 'DivineShield');
+    return true;
+  }
+  return false;
+}
+
+function minionAttack(attacker, attackerSide, defenderSide) {
+  const targets = getAttackTargets(attackerSide, defenderSide);
+  if (!targets.length || attacker.health <= 0 || attacker.attack <= 0) return;
+  const target = pick(targets);
+  const ctxA = { friendly: attackerSide, enemy: defenderSide, self: attacker, selfIndex: attackerSide.board.indexOf(attacker), inCombat: true };
+  const ctxB = { friendly: defenderSide, enemy: attackerSide, self: target, selfIndex: defenderSide.board.indexOf(target), inCombat: true };
+  const atkDmg = attacker.attack;
+  const defDmg = target.attack;
+  if (atkDmg > 0) {
+    if (!popDivineShield(target)) {
+      target.health -= atkDmg;
+      if (hasKeyword(attacker, 'Poisonous')) target.health = 0;
+    }
+  }
+  if (defDmg > 0) {
+    if (!popDivineShield(attacker)) {
+      attacker.health -= defDmg;
+      if (hasKeyword(target, 'Poisonous')) attacker.health = 0;
+    }
+  }
+  const attackerDies = attacker.health <= 0;
+  const targetDies = target.health <= 0;
+  if (attackerDies && targetDies) {
+    const aIdx = attackerSide.board.indexOf(attacker);
+    const bIdx = defenderSide.board.indexOf(target);
+    if (aIdx >= 0) attackerSide.board.splice(aIdx, 1);
+    if (bIdx >= 0) defenderSide.board.splice(bIdx, 1);
+    const avengeA = attackerSide.board.filter(m => m.avenge).map(m => m.instanceId);
+    const avengeB = defenderSide.board.filter(m => m.avenge).map(m => m.instanceId);
+    if (attacker.deathrattle) runEffect(attacker.deathrattle, { friendly: attackerSide, enemy: defenderSide, self: null, selfIndex: aIdx, inCombat: true });
+    if (target.deathrattle) runEffect(target.deathrattle, { friendly: defenderSide, enemy: attackerSide, self: null, selfIndex: bIdx, inCombat: true });
+    const skipA = spawnReborn(attacker, attackerSide, aIdx);
+    const skipB = spawnReborn(target, defenderSide, bIdx);
+    applyAvengeForDeath(attackerSide, defenderSide, avengeA, skipA);
+    applyAvengeForDeath(defenderSide, attackerSide, avengeB, skipB);
+  } else {
+    if (attackerDies) killMinion(attacker, ctxA);
+    if (targetDies) killMinion(target, ctxB);
+  }
+}
+
+function spawnReborn(minion, side, idx) {
+  if (!(minion.rebornActive || hasKeyword(minion, 'Reborn'))) return null;
+  if (side.board.length >= MAX_BOARD) return null;
+  const reborn = cloneMinion(minion, true);
+  reborn.health = 1;
+  reborn.maxHealth = 1;
+  reborn.attack = minion.attack;
+  reborn.keywords = minion.keywords.filter(k => k !== 'Reborn' && k !== 'DivineShield');
+  reborn.rebornActive = false;
+  reborn.divineShield = false;
+  reborn.avenge = minion.avenge ? { count: minion.avenge.count, effect: { ...minion.avenge.effect, params: { ...minion.avenge.effect.params } }, progress: 0 } : null;
+  reborn.attacksRemaining = hasKeyword(reborn, 'Windfury') ? 2 : 1;
+  side.board.splice(Math.min(Math.max(idx, 0), side.board.length), 0, reborn);
+  return reborn.instanceId;
+}
+
+function applyAvengeForDeath(owner, opponent, avengeIds, skipId) {
+  const pending = [];
+  for (const m of owner.board) {
+    if (!m.avenge) continue;
+    if (skipId && m.instanceId === skipId) continue;
+    if (!avengeIds.includes(m.instanceId)) continue;
+    m.avenge.progress = (m.avenge.progress || 0) + 1;
+    if (m.avenge.progress >= m.avenge.count) {
+      m.avenge.progress = 0;
+      pending.push(m);
+    }
+  }
+  for (const m of pending) {
+    if (!owner.board.includes(m) || m.health <= 0) continue;
+    runEffect(m.avenge.effect, {
+      friendly: owner,
+      enemy: opponent,
+      self: m,
+      selfIndex: owner.board.indexOf(m),
+      inCombat: true
+    });
+  }
+}
+
+function snapshotSides(sideA, sideB) {
+  return { boardA: cloneBoard(sideA.board), boardB: cloneBoard(sideB.board) };
+}
+
+function resolveCombat(playerA, playerB) {
+  const sideA = { ...playerA, board: cloneBoard(playerA.board), isCombatClone: true };
+  const sideB = { ...playerB, board: cloneBoard(playerB.board), isCombatClone: true };
+  sideA.board.forEach(m => { m.divineShield = hasKeyword(m, 'DivineShield'); m.rebornActive = hasKeyword(m, 'Reborn'); if (m.avenge) m.avenge.progress = 0; });
+  sideB.board.forEach(m => { m.divineShield = hasKeyword(m, 'DivineShield'); m.rebornActive = hasKeyword(m, 'Reborn'); if (m.avenge) m.avenge.progress = 0; });
+
+  const frames = [];
+  const pushFrame = (text, attackerId = null) => {
+    frames.push({ text, attackerId, ...snapshotSides(sideA, sideB) });
+  };
+
+  for (const m of [...sideA.board]) {
+    if (m.startOfCombat) runEffect(m.startOfCombat, { friendly: sideA, enemy: sideB, self: m, selfIndex: sideA.board.indexOf(m), inCombat: true });
+  }
+  for (const m of [...sideB.board]) {
+    if (m.startOfCombat) runEffect(m.startOfCombat, { friendly: sideB, enemy: sideA, self: m, selfIndex: sideB.board.indexOf(m), inCombat: true });
+  }
+  pushFrame('Start of Combat');
+
+  const prepareAttacks = (side) => {
+    side.board.forEach(m => { m.attacksRemaining = hasKeyword(m, 'Windfury') ? 2 : 1; });
+    side.nextAttackIndex = 0;
+  };
+  prepareAttacks(sideA);
+  prepareAttacks(sideB);
+  let aFirst = sideA.board.length > sideB.board.length ? true : sideA.board.length < sideB.board.length ? false : Math.random() < 0.5;
+  let guard = 200;
+
+  const chooseAttacker = (side) => {
+    if (!side.board.length) return null;
+    if (!side.board.some(m => m.health > 0 && m.attack > 0 && (m.attacksRemaining || 0) > 0)) {
+      prepareAttacks(side);
+    }
+    let tries = side.board.length * 2;
+    while (tries-- > 0) {
+      if (side.nextAttackIndex >= side.board.length) side.nextAttackIndex = 0;
+      const m = side.board[side.nextAttackIndex];
+      side.nextAttackIndex++;
+      if (m && m.health > 0 && m.attack > 0 && (m.attacksRemaining || 0) > 0) return m;
+    }
+    return null;
+  };
+
+  while (guard-- > 0 && sideA.board.some(m => m.health > 0) && sideB.board.some(m => m.health > 0)) {
+    const active = aFirst ? sideA : sideB;
+    const other = aFirst ? sideB : sideA;
+    const attacker = chooseAttacker(active);
+    if (!attacker) {
+      aFirst = !aFirst;
+      continue;
+    }
+    const sideName = aFirst ? playerA.name : playerB.name;
+    const strikes = Math.max(1, attacker.attacksRemaining || 1);
+    for (let s = 0; s < strikes; s++) {
+      if (attacker.health <= 0 || !active.board.includes(attacker)) break;
+      if (!other.board.some(m => m.health > 0)) break;
+      attacker.attacksRemaining = Math.max(0, (attacker.attacksRemaining || 1) - 1);
+      minionAttack(attacker, active, other);
+      pushFrame(`${sideName}: ${attacker.name} attacks`, attacker.instanceId);
+    }
+    aFirst = !aFirst;
+  }
+
+  const aAlive = sideA.board.filter(m => m.health > 0);
+  const bAlive = sideB.board.filter(m => m.health > 0);
+  let winner = null;
+  let loser = null;
+  let damage = 0;
+  if (aAlive.length && !bAlive.length) {
+    winner = playerA; loser = playerB;
+    damage = playerA.tavernTier + aAlive.reduce((s, m) => s + m.tier, 0);
+    pushFrame(`${playerA.name} wins · ${damage} damage`);
+  } else if (bAlive.length && !aAlive.length) {
+    winner = playerB; loser = playerA;
+    damage = playerB.tavernTier + bAlive.reduce((s, m) => s + m.tier, 0);
+    pushFrame(`${playerB.name} wins · ${damage} damage`);
+  } else {
+    pushFrame('Tie');
+  }
+  return { winner, loser, damage, frames, sideA, sideB };
+}
+
+function heroPowerHasTarget(player) {
+  const power = player.hero.power;
+  const id = power.effect?.id;
+  if (power.special === 'leftmost') return player.board.length > 0;
+  if (id === 'buffRandomFriendly' || id === 'giveKeywordFriendly') return player.board.length > 0;
+  if (id === 'buffFriendlyTribe') return player.board.some(m => m.tribe === power.effect.params.tribe);
+  if (id === 'discoverCurrentTier') return player.hand.length < MAX_HAND;
+  return true;
+}
+
+function useHeroPower(player) {
+  if (player.heroPowerUses <= 0) return false;
+  const power = player.hero.power;
+  if (player.gold < power.cost) return false;
+  if (!heroPowerHasTarget(player)) {
+    if (player.isHuman) showToast('No valid target for hero power.');
+    return false;
+  }
+  player.gold -= power.cost;
+  player.heroPowerUses--;
+  if (power.special === 'leftmost') {
+    buffMinion(player.board[0], 1, 2);
+  } else {
+    runEffect(power.effect, { friendly: player, enemy: null, self: null, selfIndex: -1, inCombat: false });
+  }
+  log(`${player.name} used ${power.name}.`);
+  return true;
+}
+
+function createPlayer(hero, isHuman, index) {
+  return {
+    id: index,
+    name: isHuman ? 'You' : `AI ${index}`,
+    isHuman,
+    hero,
+    hp: START_HP,
+    maxHp: START_HP,
+    armor: hero.armor,
+    gold: 0,
+    tavernTier: 1,
+    upgradeCost: UPGRADE_BASE[2],
+    shop: [],
+    hand: [],
+    board: [],
+    frozen: false,
+    heroPowerUses: 0,
+    alive: true,
+    placement: null,
+    lastCombatBoard: []
+  };
+}
+
+function aiChooseHero(options) {
+  return options.slice().sort((a, b) => b.armor - a.armor)[0];
+}
+
+function aiRecruit(player) {
+  let safety = 40;
+  while (safety-- > 0) {
+    if (player.tavernTier < 6 && player.gold >= player.upgradeCost && player.gold - player.upgradeCost >= 3) {
+      upgradeTavern(player);
+      continue;
+    }
+    if (player.heroPowerUses > 0 && player.gold >= player.hero.power.cost && heroPowerHasTarget(player)) {
+      if (Math.random() < 0.55 && useHeroPower(player)) continue;
+    }
+    const tribeCounts = {};
+    player.board.forEach(m => { tribeCounts[m.tribe] = (tribeCounts[m.tribe] || 0) + 1; });
+    player.hand.forEach(m => { tribeCounts[m.tribe] = (tribeCounts[m.tribe] || 0) + 1; });
+    const mainTribe = Object.keys(tribeCounts).sort((a, b) => tribeCounts[b] - tribeCounts[a])[0];
+    let bestIdx = -1;
+    let bestScore = -999;
+    player.shop.forEach((m, i) => {
+      if (!m) return;
+      let score = 0;
+      if (isSpell(m)) {
+        score = 6 + m.tier * 2 - m.cost;
+        if (m.effect?.id === 'gainGold' || m.effect?.id === 'buffFriendlyAll') score += 3;
+        if (player.gold < m.cost) score = -999;
+      } else {
+        score = m.attack + m.health + m.tier * 2;
+        if (m.tribe === mainTribe) score += 4;
+        const owned = [...player.board, ...player.hand].filter(x => !isSpell(x) && x.cardId === m.cardId && !x.golden).length;
+        if (owned === 2) score += 12;
+        if (owned === 1) score += 3;
+      }
+      if (score > bestScore) { bestScore = score; bestIdx = i; }
+    });
+    if (bestIdx >= 0) {
+      const offer = player.shop[bestIdx];
+      if (!isSpell(offer)) {
+        const owned = [...player.board, ...player.hand].filter(x => !isSpell(x) && x.cardId === offer.cardId && !x.golden).length;
+        if (owned === 2 && (player.gold < BUY_COST || player.hand.length >= MAX_HAND)) {
+          player.frozen = true;
+          break;
+        }
+      }
+      const price = isSpell(offer) ? offer.cost : BUY_COST;
+      if (player.gold >= price && player.hand.length < MAX_HAND && bestScore > -100) {
+        buyFromShop(player, bestIdx, true);
+        continue;
+      }
+    }
+    const spellHand = player.hand.findIndex(isSpell);
+    if (spellHand >= 0 && playSpell(player, spellHand, true)) continue;
+    while (player.hand.some(c => !isSpell(c)) && player.board.length < MAX_BOARD) {
+      const idx = player.hand.findIndex(c => !isSpell(c));
+      if (idx < 0) break;
+      playMinion(player, idx, player.board.length, true);
+    }
+    if (player.board.length >= MAX_BOARD && player.gold >= BUY_COST) {
+      const weakIdx = player.board.reduce((wi, m, i, arr) => (m.attack + m.health < arr[wi].attack + arr[wi].health ? i : wi), 0);
+      if (player.board[weakIdx] && mainTribe && player.board[weakIdx].tribe !== mainTribe) {
+        sellMinion(player, 'board', weakIdx);
+        continue;
+      }
+    }
+    if (player.gold >= REFRESH_COST && player.tavernTier >= 2 && Math.random() < 0.35) {
+      refreshShop(player);
+      continue;
+    }
+    break;
+  }
+  while (player.hand.some(c => !isSpell(c)) && player.board.length < MAX_BOARD) {
+    const idx = player.hand.findIndex(c => !isSpell(c));
+    if (idx < 0) break;
+    playMinion(player, idx, player.board.length, true);
+  }
+  for (let i = player.hand.length - 1; i >= 0; i--) {
+    if (isSpell(player.hand[i])) playSpell(player, i, true);
+  }
+}
+
+function pairPlayers(alive) {
+  const shuffled = alive.slice().sort(() => Math.random() - 0.5);
+  const pairs = [];
+  const ghosts = [];
+  for (let i = 0; i < shuffled.length; i += 2) {
+    if (i + 1 < shuffled.length) pairs.push([shuffled[i], shuffled[i + 1]]);
+    else ghosts.push(shuffled[i]);
+  }
+  return { pairs, ghosts };
+}
+
+function applyCombatResult(result, a, b, { silent = false } = {}) {
+  if (a && a.lastCombatBoard !== undefined) a.lastCombatBoard = cloneBoard(a.board);
+  if (b && b.lastCombatBoard !== undefined) b.lastCombatBoard = cloneBoard(b.board);
+  if (result.winner && result.loser) {
+    applyHeroDamage(result.loser, result.damage);
+    if (!silent) log(`${result.winner.name} hits ${result.loser.name} for ${result.damage}.`);
+  } else if (!silent) {
+    log(`${a.name} tied with ${b?.name || 'Ghost'}.`);
+  }
+}
+
+function buildGhostOpponent(exclude, alive) {
+  const donor = pick(alive.filter(p => p !== exclude && p.lastCombatBoard && p.lastCombatBoard.length)) || pick(alive.filter(p => p !== exclude)) || exclude;
+  return {
+    id: -1,
+    name: `Ghost ${donor.hero?.name || donor.name}`,
+    hero: donor.hero,
+    tavernTier: donor.tavernTier,
+    board: cloneBoard(donor.lastCombatBoard.length ? donor.lastCombatBoard : donor.board),
+    isHuman: false
+  };
+}
+
+async function runCombatPhase() {
+  phase = 'combat';
+  document.getElementById('phaseRow').classList.add('show');
+  document.getElementById('phaseBanner').textContent = 'Combat';
+  document.getElementById('combatLog').textContent = 'Preparing for battle...';
+  setControlsEnabled(false);
+  closePeek();
+  hideHeroPowerHover();
+  for (const p of state.players) p.lastCombatDamage = 0;
+  syncUI();
+  renderCards();
+  await sleep(300);
+
+  const alive = state.players.filter(p => p.alive);
+  const { pairs, ghosts } = pairPlayers(alive);
+  const you = alive.find(p => p.isHuman) || human();
+  let yourFight = null;
+  const otherFights = [];
+
+  for (const [a, b] of pairs) {
+    if (a.isHuman || b.isHuman || (you && (a.id === you.id || b.id === you.id))) {
+      yourFight = { type: 'pair', a, b };
+    } else {
+      otherFights.push({ type: 'pair', a, b });
+    }
+  }
+  for (const g of ghosts) {
+    if (g.isHuman || (you && g.id === you.id)) yourFight = { type: 'ghost', a: g };
+    else otherFights.push({ type: 'ghost', a: g });
+  }
+  if (!yourFight && you) {
+    const foe = pick(alive.filter(p => p.id !== you.id));
+    yourFight = foe ? { type: 'pair', a: you, b: foe } : { type: 'ghost', a: you };
+  }
+
+  for (const fight of otherFights) {
+    if (fight.type === 'pair') {
+      const result = resolveCombat(fight.a, fight.b);
+      applyCombatResult(result, fight.a, fight.b, { silent: true });
+    } else {
+      const ghostPlayer = buildGhostOpponent(fight.a, alive);
+      const result = resolveCombat(fight.a, ghostPlayer);
+      fight.a.lastCombatBoard = cloneBoard(fight.a.board);
+      if (result.loser === fight.a) applyHeroDamage(fight.a, result.damage);
+    }
+  }
+
+  if (yourFight && you) {
+    if (yourFight.type === 'pair') {
+      const foe = yourFight.a.isHuman || yourFight.a.id === you.id ? yourFight.b : yourFight.a;
+      const left = yourFight.a.isHuman || yourFight.a.id === you.id ? yourFight.a : yourFight.b;
+      const right = foe;
+      highlightCombat(left, right);
+      await playVisibleCombat(left, right);
+      const result = resolveCombat(left, right);
+      await animateCombat(result, left, right);
+      applyCombatResult(result, left, right, { silent: false });
+    } else {
+      const ghostPlayer = buildGhostOpponent(you, alive);
+      highlightCombat(you, null);
+      await playVisibleCombat(you, ghostPlayer);
+      const result = resolveCombat(you, ghostPlayer);
+      await animateCombat(result, you, ghostPlayer);
+      you.lastCombatBoard = cloneBoard(you.board);
+      if (result.loser === you) {
+        applyHeroDamage(you, result.damage);
+        log(`Ghost hits you for ${result.damage}.`);
+      } else if (result.winner === you) {
+        log('You defeated a ghost.');
+      } else {
+        log('You tied with a ghost.');
+      }
+    }
+  } else {
+    log('No player combat found this round.');
+  }
+
+  combatAnim = null;
+  renderCards();
+
+  const newlyDead = state.players
+    .filter(p => p.alive && p.hp <= 0)
+    .sort((a, b) => (b.lastCombatDamage - a.lastCombatDamage) || (a.armor - b.armor) || (a.id - b.id));
+  let nextPlace = 8 - state.players.filter(p => !p.alive).length;
+  for (const p of newlyDead) {
+    p.alive = false;
+    p.hp = 0;
+    p.placement = nextPlace;
+    nextPlace++;
+    for (const m of [...p.board, ...p.hand, ...p.shop]) if (m) returnToPool(m);
+    p.board = []; p.hand = []; p.shop = [];
+    log(`${p.name} was eliminated! (#${p.placement})`);
+  }
+  document.getElementById('combatLog').textContent = '';
+  const stillAlive = state.players.filter(p => p.alive);
+  if (stillAlive.length <= 1) {
+    endMatch(stillAlive[0] || null);
+    return;
+  }
+  document.getElementById('phaseBanner').textContent = 'Returning to Tavern...';
+  showToast('Combat over — back to the Tavern.');
+  await sleep(800);
+  state.turn++;
+  beginRecruitPhase();
+}
+
+function highlightCombat(a, b) {
+  syncOpponents(a?.id, b?.id);
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function playVisibleCombat(player, enemy) {
+  const foeName = enemy.hero?.name || enemy.name;
+  phase = 'combat';
+  combatAnim = {
+    a: player,
+    b: enemy,
+    t: 0,
+    attackerId: null,
+    boardA: cloneBoard(player.board),
+    boardB: cloneBoard(enemy.board || [])
+  };
+  document.getElementById('phaseBanner').textContent = `You vs ${foeName}`;
+  document.getElementById('combatLog').textContent = 'Battle begins!';
+  syncHeroPortraits();
+  renderCards();
+  await sleep(1100);
+}
+
+async function animateCombat(result, a, b) {
+  phase = 'combat';
+  const frames = result.frames?.length ? result.frames : [{
+    text: 'Combat',
+    boardA: cloneBoard(result.sideA?.board || a.board || []),
+    boardB: cloneBoard(result.sideB?.board || b.board || [])
+  }];
+  const foeName = b.hero?.name || b.name;
+  const selfName = a.isHuman ? 'You' : (a.hero?.name || a.name);
+  for (let i = 0; i < frames.length; i++) {
+    const frame = frames[i];
+    combatAnim = {
+      a,
+      b,
+      t: 0,
+      frame,
+      attackerId: frame.attackerId,
+      boardA: frame.boardA || [],
+      boardB: frame.boardB || []
+    };
+    document.getElementById('combatLog').textContent = frame.text || '';
+    document.getElementById('phaseBanner').textContent = `${selfName} vs ${foeName}`;
+    syncHeroPortraits();
+    renderCards();
+    await sleep(i === 0 ? 700 : 850);
+  }
+  await sleep(500);
+  combatAnim = null;
+}
+
+function endMatch(winner) {
+  phase = 'end';
+  setControlsEnabled(false);
+  const human = state.players.find(p => p.isHuman);
+  const place = winner?.isHuman ? 1 : (human.placement || (state.players.filter(p => p.alive || p === human).length));
+  const box = document.getElementById('overlayContent');
+  document.getElementById('overlay').classList.remove('hidden');
+  document.getElementById('ui').classList.add('hidden');
+  box.innerHTML = `<h1>${winner?.isHuman ? 'Victory!' : 'Defeat'}</h1>
+    <p>${winner ? `${winner.name} wins the lobby.` : 'No survivors.'}<br>Your placement: #${winner?.isHuman ? 1 : human.placement || place}</p>
+    <button class="primary" id="btnAgain">Play Again</button>`;
+  document.getElementById('btnAgain').onclick = () => startHeroDraft();
+}
+
+function beginRecruitPhase() {
+  phase = 'recruit';
+  document.getElementById('phaseRow').classList.remove('show');
+  document.getElementById('phaseBanner').textContent = '';
+  document.getElementById('combatLog').textContent = '';
+  const visitGold = getTavernGoldForTurn(state.turn);
+  for (const p of state.players) {
+    if (!p.alive) continue;
+    startRecruitForPlayer(p);
+  }
+  selected = null;
+  setControlsEnabled(true);
+  syncUI();
+  renderCards();
+  const you = human();
+  log(`Turn ${state.turn}: Tavern visit — gold set to ${you ? you.gold : visitGold}.`);
+  if (you) showToast(`Gold replenished: ${you.gold}`);
+}
+
+function setControlsEnabled(on) {
+  ['btnRefresh', 'btnUpgrade', 'btnFreeze', 'btnHeroPower', 'btnSell', 'btnEnd'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = !on || phase !== 'recruit';
+  });
+}
+
+function human() { return state.players.find(p => p.isHuman); }
+
+function closePeek() {
+  peekPlayerId = null;
+  document.getElementById('peekPanel').classList.remove('show');
+  syncOpponents();
+}
+
+function openPeek(player) {
+  if (!player || !player.alive) return;
+  peekPlayerId = player.id;
+  const panel = document.getElementById('peekPanel');
+  panel.classList.add('show');
+  document.getElementById('peekTitle').textContent = player.isHuman ? 'Your Board' : player.hero.name;
+  document.getElementById('peekMeta').textContent = `HP ${player.hp}${player.armor ? ` · Armor ${player.armor}` : ''} · Tier ${player.tavernTier} · ${player.board.length}/7 minions`;
+  const list = document.getElementById('peekList');
+  if (!player.board.length) {
+    list.innerHTML = '<div class="peekMinion"><div class="title">Empty board</div></div>';
+  } else {
+    list.innerHTML = player.board.map((m, i) => {
+      return `<div class="peekMinion"><div class="title">${i + 1}. ${m.name}</div><div class="stats">${m.attack}/${m.health} · T${m.tier} ${m.tribe}${m.golden ? ' · Golden' : ''}</div><div class="text">${describeMinion(m)}</div></div>`;
+    }).join('');
+  }
+  syncOpponents();
+}
+
+function heroPortraitArt(hero) {
+  const idx = Math.max(0, HERO_DB.findIndex(h => h.id === hero.id));
+  return idx % 2 === 0 ? ART_A : ART_B;
+}
+
+function getCombatEnemy() {
+  if (!combatAnim) return null;
+  const you = human();
+  if (!you) return null;
+  if (combatAnim.a && (combatAnim.a.isHuman || combatAnim.a.id === you.id)) return combatAnim.b || null;
+  if (combatAnim.b && (combatAnim.b.isHuman || combatAnim.b.id === you.id)) return combatAnim.a || null;
+  return combatAnim.b || combatAnim.a || null;
+}
+
+function syncHeroPortraits() {
+  const p = human();
+  const heroFrame = document.getElementById('playerHeroFrame');
+  const bobFrame = document.getElementById('tavernMasterFrame');
+  const enemyFrame = document.getElementById('combatEnemyFrame');
+  if (!p) {
+    heroFrame.style.display = 'none';
+    bobFrame.classList.remove('show');
+    enemyFrame.classList.remove('show');
+    return;
+  }
+  heroFrame.style.display = 'block';
+  document.getElementById('playerHeroArt').src = heroPortraitArt(p.hero);
+  document.getElementById('playerHeroArt').alt = p.hero.name;
+  document.getElementById('playerHeroName').textContent = p.hero.name;
+  document.getElementById('tavernMasterArt').src = ART_B;
+  const showBob = phase === 'recruit';
+  const enemy = getCombatEnemy();
+  const showEnemy = phase === 'combat' && !!enemy;
+  bobFrame.classList.toggle('show', showBob);
+  enemyFrame.classList.toggle('show', showEnemy);
+  if (showEnemy) {
+    const name = enemy.hero?.name || enemy.name || 'Enemy';
+    document.getElementById('combatEnemyArt').src = enemy.hero ? heroPortraitArt(enemy.hero) : ART_A;
+    document.getElementById('combatEnemyArt').alt = name;
+    document.getElementById('combatEnemyName').textContent = name;
+    document.getElementById('combatEnemySub').textContent = enemy.hp != null
+      ? `${enemy.hp}${enemy.armor ? ` (+${enemy.armor})` : ''} HP`
+      : 'Opponent';
+  }
+  if (!showBob && !showEnemy) hideOppHover();
+}
+
+function syncUI() {
+  const p = human();
+  if (!p) return;
+  document.getElementById('goldVal').textContent = p.gold;
+  document.getElementById('btnUpgrade').textContent = p.tavernTier >= 6 ? 'Max Tier' : `Upgrade (${p.upgradeCost})`;
+  document.getElementById('btnFreeze').classList.toggle('active', p.frozen);
+  document.getElementById('frozenBanner').classList.toggle('show', !!p.frozen && phase === 'recruit');
+  document.getElementById('tavernControls').classList.toggle('show', phase === 'recruit');
+  document.getElementById('phaseRow').classList.toggle('show', phase === 'combat');
+  document.getElementById('btnHeroPower').textContent = `${p.hero.power.name} (${p.hero.power.cost})`;
+  document.getElementById('btnHeroPower').disabled = phase !== 'recruit' || p.heroPowerUses <= 0 || p.gold < p.hero.power.cost;
+  const canAct = phase === 'recruit';
+  document.getElementById('btnSell').disabled = !canAct || !selected || (selected.zone !== 'hand' && selected.zone !== 'board') || (selected && selected.zone === 'board' && isSpell(selected.minion));
+  document.getElementById('btnEnd').disabled = !canAct;
+  syncHeroPortraits();
+  syncOpponents();
+}
+
+function hideHeroPowerHover() {
+  document.getElementById('heroPowerHover').classList.remove('show');
+}
+
+function showHeroPowerHover(clientX, clientY) {
+  const p = human();
+  if (!p) return;
+  const tip = document.getElementById('heroPowerHover');
+  const power = p.hero.power;
+  const ready = phase === 'recruit' && p.heroPowerUses > 0 && p.gold >= power.cost;
+  tip.innerHTML = `
+    <div class="title">${power.name}</div>
+    <div class="cost">${power.cost} Gold · ${p.heroPowerUses > 0 ? 'Available' : 'Used this turn'}${ready ? '' : ' · Not ready'}</div>
+    <div class="text">${power.text}</div>
+  `;
+  tip.classList.add('show');
+  const pad = 12;
+  const tw = tip.offsetWidth || 260;
+  const th = tip.offsetHeight || 120;
+  let left = clientX - tw / 2;
+  let top = clientY - th - 16;
+  if (left < pad) left = pad;
+  if (left + tw > window.innerWidth - pad) left = window.innerWidth - tw - pad;
+  if (top < pad) top = clientY + 18;
+  tip.style.left = `${left}px`;
+  tip.style.top = `${top}px`;
+}
+
+function heroEffectiveHp(player) {
+  return (player.hp || 0) + (player.armor || 0);
+}
+
+function hideOppHover() {
+  const tip = document.getElementById('oppHover');
+  tip.classList.remove('show');
+  tip.style.display = 'none';
+}
+
+function positionOppHover(clientX, clientY) {
+  const tip = document.getElementById('oppHover');
+  const pad = 12;
+  const tw = tip.offsetWidth || 240;
+  const th = tip.offsetHeight || 160;
+  let left = clientX + 18;
+  let top = clientY - 20;
+  if (left + tw > window.innerWidth - pad) left = clientX - tw - 18;
+  if (top + th > window.innerHeight - pad) top = window.innerHeight - th - pad;
+  if (top < pad) top = pad;
+  tip.style.left = `${left}px`;
+  tip.style.top = `${top}px`;
+}
+
+function revealOppHover(clientX, clientY) {
+  const tip = document.getElementById('oppHover');
+  tip.style.display = 'block';
+  tip.classList.add('show');
+  positionOppHover(clientX, clientY);
+}
+
+function showBobHover(clientX, clientY) {
+  const p = human();
+  const tip = document.getElementById('oppHover');
+  const tier = p ? p.tavernTier : 1;
+  const upgrade = !p || p.tavernTier >= 6 ? 'Max tier' : `${p.upgradeCost} Gold`;
+  tip.innerHTML = `
+    <div class="title">Bartender Bob</div>
+    <div class="rankLine">Tavern Master</div>
+    <div class="line">Tavern Tier <strong>${tier}</strong></div>
+    <div class="line">Next Upgrade <strong>${upgrade}</strong></div>
+    <div class="line muted">Buy minions and spells from Bob's Tavern.</div>
+    <div class="line muted">Refresh, upgrade, and freeze are available during the Tavern phase.</div>
+  `;
+  revealOppHover(clientX, clientY);
+}
+
+function showPlayerHeroFrameHover(clientX, clientY) {
+  const p = human();
+  if (!p) return;
+  const tip = document.getElementById('oppHover');
+  tip.innerHTML = `
+    <div class="title">${p.hero.name}</div>
+    <div class="rankLine">Your Hero</div>
+    <div class="line">Health <strong>${p.hp}</strong>${p.armor ? ` · Armor <strong>${p.armor}</strong>` : ''} · Total <strong>${heroEffectiveHp(p)}</strong></div>
+    <div class="power"><strong>${p.hero.power.name}</strong> (${p.hero.power.cost} Gold)<br>${p.hero.power.text}</div>
+  `;
+  revealOppHover(clientX, clientY);
+}
+
+function showEndTurnHover(clientX, clientY) {
+  const tip = document.getElementById('oppHover');
+  const turn = state?.turn || 1;
+  tip.innerHTML = `
+    <div class="title">End Turn</div>
+    <div class="rankLine">Turn ${turn}</div>
+    <div class="line">Finish recruiting and send your Board into combat.</div>
+    <div class="line muted">Minions left in Hand will not fight.</div>
+  `;
+  revealOppHover(clientX, clientY);
+}
+
+function showCombatEnemyHover(clientX, clientY) {
+  const enemy = getCombatEnemy();
+  if (!enemy) return;
+  const tip = document.getElementById('oppHover');
+  const name = enemy.hero?.name || enemy.name || 'Enemy';
+  tip.innerHTML = `
+    <div class="title">${name}</div>
+    <div class="rankLine">Combat Opponent</div>
+    <div class="line">Health <strong>${enemy.hp ?? '?'}</strong>${enemy.armor ? ` · Armor <strong>${enemy.armor}</strong>` : ''}</div>
+    <div class="line muted">Tavern Tier ${enemy.tavernTier ?? '?'} · Board ${(enemy.board || combatAnim?.boardB || []).length}/${MAX_BOARD}</div>
+    ${enemy.hero?.power ? `<div class="power"><strong>${enemy.hero.power.name}</strong> (${enemy.hero.power.cost} Gold)<br>${enemy.hero.power.text}</div>` : ''}
+  `;
+  revealOppHover(clientX, clientY);
+}
+
+function showOppHover(player, rank, clientX, clientY) {
+  const tip = document.getElementById('oppHover');
+  const total = heroEffectiveHp(player);
+  const label = player.isHuman ? 'You' : player.hero.name;
+  const status = player.alive ? 'Alive' : `Eliminated${player.placement ? ` · #${player.placement}` : ''}`;
+  tip.innerHTML = `
+    <div class="title">${label}</div>
+    <div class="rankLine">Lobby rank #${rank} · ${status}</div>
+    <div class="line">Health <strong>${player.hp}</strong>${player.armor ? ` · Armor <strong>${player.armor}</strong>` : ''} · Total <strong>${total}</strong></div>
+    <div class="line muted">Tavern Tier ${player.tavernTier} · Board ${player.board.length}/${MAX_BOARD}</div>
+    <div class="line muted">Hand ${player.isHuman ? player.hand.length : '?'} · ${player.isHuman ? 'Your hero' : 'Opponent'}</div>
+    <div class="power"><strong>${player.hero.power.name}</strong> (${player.hero.power.cost} Gold)<br>${player.hero.power.text}</div>
+  `;
+  revealOppHover(clientX, clientY);
+}
+
+function syncOpponents(combatA, combatB) {
+  const el = document.getElementById('opponents');
+  if (!state) {
+    el.innerHTML = '';
+    hideOppHover();
+    return;
+  }
+  const ranked = state.players.slice().sort((a, b) => {
+    const aliveDiff = Number(b.alive) - Number(a.alive);
+    if (aliveDiff) return aliveDiff;
+    const hpDiff = heroEffectiveHp(b) - heroEffectiveHp(a);
+    if (hpDiff) return hpDiff;
+    return a.id - b.id;
+  });
+  el.innerHTML = ranked.map((p, i) => {
+    const rank = i + 1;
+    const cls = ['opp'];
+    if (!p.alive) cls.push('dead');
+    if (p.isHuman) cls.push('self');
+    if (p.id === combatA || p.id === combatB) cls.push('combat');
+    if (p.id === peekPlayerId) cls.push('peeking');
+    const art = (p.id % 2 === 0) ? ART_A : ART_B;
+    const name = p.isHuman ? 'You' : p.hero.name;
+    const maxPool = Math.max(1, (p.maxHp || START_HP) + (p.hero?.armor || 0));
+    const hpPct = p.alive ? clamp((heroEffectiveHp(p) / maxPool) * 100, 0, 100) : 0;
+    const rankHtml = rank <= 3 ? `<div class="rank">#${rank}</div>` : '';
+    return `<div class="${cls.join(' ')}" data-pid="${p.id}" data-rank="${rank}" title="">
+      <img class="portrait" src="${art}" alt="${name}">
+      ${rankHtml}
+      <div class="hpBar"><div class="hpBarFill" style="width:${hpPct.toFixed(1)}%"></div></div>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.opp').forEach(node => {
+    const pid = Number(node.getAttribute('data-pid'));
+    const rank = Number(node.getAttribute('data-rank'));
+    const player = state.players.find(x => x.id === pid);
+    if (!player) return;
+    node.onmouseenter = (e) => showOppHover(player, rank, e.clientX, e.clientY);
+    node.onmousemove = (e) => {
+      if (document.getElementById('oppHover').classList.contains('show')) {
+        positionOppHover(e.clientX, e.clientY);
+      }
+    };
+    node.onmouseleave = () => hideOppHover();
+    node.onclick = () => {
+      if (phase !== 'recruit' && phase !== 'combat') return;
+      if (peekPlayerId === pid) closePeek();
+      else openPeek(player);
+    };
+  });
+}
+
+const canvas = document.getElementById('gameCanvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b0e14);
+scene.fog = new THREE.Fog(0x0b0e14, 18, 42);
+
+const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 14.6, 17.2);
+camera.lookAt(0, 1.35, 0.8);
+
+const hemi = new THREE.HemisphereLight(0xb7c8ff, 0x2a1a10, 1.2);
+scene.add(hemi);
+const key = new THREE.DirectionalLight(0xffe2b0, 1.4);
+key.position.set(6, 14, 8);
+key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024);
+key.shadow.camera.near = 2;
+key.shadow.camera.far = 40;
+key.shadow.camera.left = -12;
+key.shadow.camera.right = 12;
+key.shadow.camera.top = 12;
+key.shadow.camera.bottom = -12;
+scene.add(key);
+const rimLight = new THREE.DirectionalLight(0x6ec6ff, 0.35);
+rimLight.position.set(-8, 6, -4);
+scene.add(rimLight);
+
+const table = new THREE.Mesh(
+  new THREE.BoxGeometry(24, 0.5, 16.5),
+  new THREE.MeshStandardMaterial({ color: 0x1a2330, roughness: 0.85, metalness: 0.15 })
+);
+table.position.y = -0.25;
+table.receiveShadow = true;
+scene.add(table);
+
+const tableRim = new THREE.Mesh(
+  new THREE.BoxGeometry(22.2, 0.08, 14.8),
+  new THREE.MeshStandardMaterial({ color: 0x8a6a2a, roughness: 0.55, metalness: 0.4 })
+);
+tableRim.position.y = 0.02;
+tableRim.receiveShadow = true;
+scene.add(tableRim);
+
+const felt = new THREE.Mesh(
+  new THREE.BoxGeometry(21.2, 0.06, 13.8),
+  new THREE.MeshStandardMaterial({ color: 0x243045, roughness: 0.9, metalness: 0.05 })
+);
+felt.position.y = 0.06;
+felt.receiveShadow = true;
+scene.add(felt);
+
+const cardGroup = new THREE.Group();
+scene.add(cardGroup);
+
+const textureLoader = new THREE.TextureLoader();
+function onCardArtLoaded(tex) {
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  if (state) renderCards();
+}
+const textures = {
+  [ART_A]: textureLoader.load(ART_A, onCardArtLoaded),
+  [ART_B]: textureLoader.load(ART_B, onCardArtLoaded)
+};
+
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+const cardMeshes = [];
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+const CARD_W = 2.45;
+const CARD_H = 3.42;
+const BOARD_S = 2.35;
+const CARD_D = 0.12;
+let hoveredCard = null;
+
+function isBoardZone(zone) {
+  return zone === 'board' || zone === 'enemy';
+}
+
+function cardSizeForZone(zone) {
+  if (isBoardZone(zone)) return { w: BOARD_S, h: BOARD_S };
+  return { w: CARD_W, h: CARD_H };
+}
+
+function frameColors(card, opts = {}) {
+  const frozenShop = !!opts.frozenShop;
+  let frameHex = isSpell(card) ? '#2a3a5c' : '#3a2f1c';
+  if (card.golden) frameHex = '#d4af37';
+  if (frozenShop) frameHex = '#6ec6ff';
+  if (opts.isSelected) frameHex = '#7ad0ff';
+  if (opts.isAttacker) frameHex = '#ff6b5a';
+  return frameHex;
+}
+
+function buildSquareBoardTexture(card, opts = {}) {
+  const canvas2d = document.createElement('canvas');
+  canvas2d.width = 512;
+  canvas2d.height = 512;
+  const ctx = canvas2d.getContext('2d');
+  const frameHex = frameColors(card, opts);
+  ctx.fillStyle = frameHex;
+  ctx.fillRect(0, 0, 512, 512);
+  ctx.fillStyle = '#120e18';
+  roundRect(ctx, 16, 16, 480, 480, 28);
+  ctx.fill();
+  const artImg = textures[card.art]?.image || textures[ART_A]?.image;
+  ctx.save();
+  roundRect(ctx, 28, 28, 456, 456, 22);
+  ctx.clip();
+  if (artImg && artImg.width) {
+    const scale = Math.max(456 / artImg.width, 456 / artImg.height);
+    const w = artImg.width * scale;
+    const h = artImg.height * scale;
+    ctx.drawImage(artImg, 28 + (456 - w) / 2, 28 + (456 - h) / 2, w, h);
+  } else {
+    ctx.fillStyle = '#2a3344';
+    ctx.fillRect(28, 28, 456, 456);
+  }
+  ctx.restore();
+  ctx.strokeStyle = card.golden ? '#ffd978' : 'rgba(212,175,90,0.55)';
+  ctx.lineWidth = 4;
+  roundRect(ctx, 28, 28, 456, 456, 22);
+  ctx.stroke();
+  const grad = ctx.createLinearGradient(0, 340, 0, 484);
+  grad.addColorStop(0, 'rgba(10,12,18,0)');
+  grad.addColorStop(0.45, 'rgba(10,12,18,0.55)');
+  grad.addColorStop(1, 'rgba(10,12,18,0.92)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(28, 340, 456, 144);
+  ctx.fillStyle = card.golden ? '#ffd978' : '#e0b85a';
+  ctx.font = 'bold 30px Cinzel, serif';
+  ctx.textAlign = 'center';
+  const name = card.name.length > 18 ? card.name.slice(0, 17) + '…' : card.name;
+  ctx.fillText(name, 256, 400);
+  const kws = (card.keywords || []).map(keywordLabel);
+  if (kws.length) {
+    ctx.fillStyle = '#9fd8ff';
+    ctx.font = 'bold 20px Source Sans 3, sans-serif';
+    ctx.fillText(kws.join(' · '), 256, 430);
+  }
+  ctx.beginPath();
+  ctx.arc(78, 448, 40, 0, Math.PI * 2);
+  ctx.fillStyle = '#5a2a1a';
+  ctx.fill();
+  ctx.strokeStyle = '#e0b85a';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.fillStyle = '#fff4d8';
+  ctx.font = 'bold 36px Source Sans 3, sans-serif';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(String(card.attack), 78, 450);
+  ctx.beginPath();
+  ctx.arc(434, 448, 40, 0, Math.PI * 2);
+  ctx.fillStyle = '#1a3a2a';
+  ctx.fill();
+  ctx.strokeStyle = '#7dcea0';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.fillStyle = '#e8fff2';
+  ctx.fillText(String(card.health), 434, 450);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  if (card.divineShield || hasKeyword(card, 'DivineShield')) {
+    ctx.strokeStyle = '#ffe08a';
+    ctx.lineWidth = 8;
+    roundRect(ctx, 10, 10, 492, 492, 30);
+    ctx.stroke();
+  }
+  const tex = new THREE.CanvasTexture(canvas2d);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  return tex;
+}
+
+function buildCardFrontTexture(card, opts = {}) {
+  if (opts.square) return buildSquareBoardTexture(card, opts);
+  const frozenShop = !!opts.frozenShop;
+  const spell = isSpell(card);
+  const canvas2d = document.createElement('canvas');
+  canvas2d.width = 512;
+  canvas2d.height = 716;
+  const ctx = canvas2d.getContext('2d');
+  const frameHex = frameColors(card, opts);
+  ctx.fillStyle = frameHex;
+  ctx.fillRect(0, 0, 512, 716);
+  ctx.fillStyle = spell ? '#101828' : '#120e18';
+  roundRect(ctx, 18, 18, 476, 680, 28);
+  ctx.fill();
+  if (spell) {
+    ctx.fillStyle = '#1b2b4a';
+    roundRect(ctx, 36, 36, 440, 280, 18);
+    ctx.fill();
+    ctx.strokeStyle = '#8eb7ff';
+    ctx.lineWidth = 4;
+    roundRect(ctx, 36, 36, 440, 280, 18);
+    ctx.stroke();
+    ctx.fillStyle = '#9fd8ff';
+    ctx.font = 'bold 34px Cinzel, serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('TAVERN SPELL', 256, 120);
+    ctx.fillStyle = '#e0b85a';
+    ctx.font = 'bold 64px Cinzel, serif';
+    ctx.fillText(`${card.cost}`, 256, 210);
+    ctx.fillStyle = '#b9a888';
+    ctx.font = 'bold 26px Source Sans 3, sans-serif';
+    ctx.fillText('GOLD', 256, 260);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(10,12,18,0.92)';
+    roundRect(ctx, 36, 340, 440, 340, 18);
+    ctx.fill();
+    ctx.fillStyle = '#9fd8ff';
+    ctx.font = 'bold 36px Cinzel, serif';
+    const spellName = card.name.length > 20 ? card.name.slice(0, 19) + '…' : card.name;
+    ctx.fillText(spellName, 56, 400);
+    ctx.fillStyle = '#b9a888';
+    ctx.font = 'bold 24px Source Sans 3, sans-serif';
+    ctx.fillText(`Tier ${card.tier} Spell`, 56, 440);
+    ctx.fillStyle = '#eee2cb';
+    ctx.font = '26px Source Sans 3, sans-serif';
+    const lines = wrapText(ctx, card.text || '', 400);
+    lines.slice(0, 5).forEach((line, i) => ctx.fillText(line, 56, 500 + i * 34));
+  } else {
+    const artImg = textures[card.art]?.image || textures[ART_A]?.image;
+    ctx.save();
+    roundRect(ctx, 36, 36, 440, 360, 18);
+    ctx.clip();
+    if (artImg && artImg.width) {
+      const scale = Math.max(440 / artImg.width, 360 / artImg.height);
+      const w = artImg.width * scale;
+      const h = artImg.height * scale;
+      ctx.drawImage(artImg, 36 + (440 - w) / 2, 36 + (360 - h) / 2, w, h);
+      if (frozenShop) {
+        ctx.fillStyle = 'rgba(110,198,255,0.22)';
+        ctx.fillRect(36, 36, 440, 360);
+      }
+    } else {
+      ctx.fillStyle = '#2a3344';
+      ctx.fillRect(36, 36, 440, 360);
+    }
+    ctx.restore();
+    ctx.strokeStyle = card.golden ? '#ffd978' : 'rgba(212,175,90,0.55)';
+    ctx.lineWidth = 4;
+    roundRect(ctx, 36, 36, 440, 360, 18);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(10,12,18,0.92)';
+    roundRect(ctx, 36, 410, 440, 270, 18);
+    ctx.fill();
+    ctx.fillStyle = card.golden ? '#ffd978' : '#e0b85a';
+    ctx.font = 'bold 36px Cinzel, serif';
+    const name = card.name.length > 20 ? card.name.slice(0, 19) + '…' : card.name;
+    ctx.fillText(name, 56, 460);
+    ctx.fillStyle = '#b9a888';
+    ctx.font = 'bold 24px Source Sans 3, sans-serif';
+    ctx.fillText(`T${card.tier}  ${card.tribe}`, 56, 500);
+    const kws = (card.keywords || []).map(keywordLabel);
+    if (kws.length) {
+      ctx.fillStyle = '#9fd8ff';
+      ctx.font = 'bold 22px Source Sans 3, sans-serif';
+      ctx.fillText(kws.join(' · '), 56, 536);
+    }
+    ctx.beginPath();
+    ctx.arc(90, 620, 48, 0, Math.PI * 2);
+    ctx.fillStyle = '#5a2a1a';
+    ctx.fill();
+    ctx.strokeStyle = '#e0b85a';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    ctx.fillStyle = '#fff4d8';
+    ctx.font = 'bold 44px Source Sans 3, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(card.attack), 90, 622);
+    ctx.beginPath();
+    ctx.arc(422, 620, 48, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a3a2a';
+    ctx.fill();
+    ctx.strokeStyle = '#7dcea0';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    ctx.fillStyle = '#e8fff2';
+    ctx.fillText(String(card.health), 422, 622);
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    if (card.divineShield || hasKeyword(card, 'DivineShield')) {
+      ctx.strokeStyle = '#ffe08a';
+      ctx.lineWidth = 8;
+      roundRect(ctx, 12, 12, 488, 692, 32);
+      ctx.stroke();
+    }
+    if (card.golden) {
+      ctx.fillStyle = '#ffd978';
+      ctx.font = 'bold 20px Cinzel, serif';
+      ctx.fillText('GOLDEN', 56, 660);
+    }
+  }
+  const tex = new THREE.CanvasTexture(canvas2d);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  return tex;
+}
+
+function wrapText(ctx, text, maxWidth) {
+  const words = String(text).split(' ');
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else line = test;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function makeCardMesh(card, zone, index, opts = {}) {
+  const group = new THREE.Group();
+  const isSelected = selected && selected.minion && selected.minion.instanceId === card.instanceId;
+  const isAttacker = opts.attackerId && opts.attackerId === card.instanceId;
+  const frozenShop = !!opts.frozenShop;
+  const square = isBoardZone(zone);
+  const { w, h } = cardSizeForZone(zone);
+  let edgeColor = isSpell(card) ? 0x2a3a5c : 0x3a2f1c;
+  if (card.golden) edgeColor = 0xd4af37;
+  if (frozenShop) edgeColor = 0x6ec6ff;
+  if (isSelected) edgeColor = 0x7ad0ff;
+  if (isAttacker) edgeColor = 0xff6b5a;
+  const frontTex = buildCardFrontTexture(card, { frozenShop, isSelected, isAttacker, square });
+  const edgeMat = new THREE.MeshStandardMaterial({
+    color: edgeColor,
+    roughness: 0.45,
+    metalness: card.golden ? 0.55 : 0.2
+  });
+  const frontMat = new THREE.MeshStandardMaterial({
+    map: frontTex,
+    roughness: 0.42,
+    metalness: card.golden ? 0.28 : 0.08
+  });
+  const backMat = new THREE.MeshStandardMaterial({
+    color: 0x1a1424,
+    roughness: 0.7,
+    metalness: 0.05
+  });
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(w, h, CARD_D),
+    [edgeMat, edgeMat, edgeMat, edgeMat, frontMat, backMat]
+  );
+  body.castShadow = true;
+  body.receiveShadow = true;
+  group.add(body);
+  if (isSelected || isAttacker) {
+    const glow = new THREE.Mesh(
+      new THREE.BoxGeometry(w + 0.16, h + 0.16, CARD_D + 0.02),
+      new THREE.MeshBasicMaterial({
+        color: isAttacker ? 0xff4020 : 0x4aa8ff,
+        transparent: true,
+        opacity: 0.22,
+        depthWrite: false
+      })
+    );
+    glow.position.z = -0.01;
+    group.add(glow);
+  }
+  group.userData = { minion: card, zone, index, cardW: w, cardH: h };
+  return group;
+}
+
+function layoutRow(items, z, y, spacing, rotX = -0.52) {
+  const start = -((items.length - 1) * spacing) / 2;
+  items.forEach((mesh, i) => {
+    mesh.position.set(start + i * spacing, y, z);
+    mesh.rotation.x = rotX;
+    mesh.rotation.y = 0;
+    mesh.rotation.z = 0;
+    mesh.userData.baseY = y;
+    mesh.userData.baseZ = z;
+    mesh.userData.baseRotX = rotX;
+    mesh.userData.baseRotY = 0;
+  });
+}
+
+function clearCardHover() {
+  if (!hoveredCard) return;
+  hoveredCard.rotation.x = hoveredCard.userData.baseRotX ?? hoveredCard.rotation.x;
+  hoveredCard.rotation.y = hoveredCard.userData.baseRotY ?? 0;
+  hoveredCard.position.y = hoveredCard.userData.baseY ?? hoveredCard.position.y;
+  hoveredCard = null;
+}
+
+function applyCardHoverTilt(card, point) {
+  const local = card.worldToLocal(point.clone());
+  const halfW = (card.userData.cardW || CARD_W) * 0.5;
+  const halfH = (card.userData.cardH || CARD_H) * 0.5;
+  const tiltY = clamp(local.x / halfW, -1, 1) * 0.22;
+  const tiltX = clamp(-local.y / halfH, -1, 1) * 0.14;
+  card.rotation.x = (card.userData.baseRotX ?? -0.52) + tiltX;
+  card.rotation.y = tiltY;
+  card.position.y = (card.userData.baseY ?? card.position.y) + 0.18;
+}
+
+function makeBoardSlotMesh(index) {
+  const group = new THREE.Group();
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(BOARD_S, BOARD_S, CARD_D * 0.45),
+    new THREE.MeshStandardMaterial({
+      color: 0x152030,
+      transparent: true,
+      opacity: 0.5,
+      roughness: 0.92,
+      metalness: 0.08
+    })
+  );
+  body.castShadow = false;
+  body.receiveShadow = true;
+  group.add(body);
+  const edge = new THREE.Mesh(
+    new THREE.BoxGeometry(BOARD_S + 0.08, BOARD_S + 0.08, CARD_D * 0.2),
+    new THREE.MeshBasicMaterial({
+      color: 0x8a6a2a,
+      transparent: true,
+      opacity: 0.35,
+      depthWrite: false
+    })
+  );
+  edge.position.z = -0.02;
+  group.add(edge);
+  group.userData = { zone: 'boardSlot', index, cardW: BOARD_S, cardH: BOARD_S, isSlot: true };
+  return group;
+}
+
+function renderHandRow(player, z = 4.4, y = 2.15) {
+  const handMeshes = [];
+  player.hand.forEach((m, i) => {
+    const mesh = makeCardMesh(m, 'hand', i);
+    handMeshes.push(mesh);
+    cardMeshes.push(mesh);
+    cardGroup.add(mesh);
+  });
+  layoutRow(handMeshes, z, y, 2.3, -0.3);
+}
+
+function renderBoardRow(cards, zone, z, y, opts = {}) {
+  const meshes = [];
+  cards.forEach((m, i) => {
+    const mesh = makeCardMesh(m, zone, i, opts);
+    meshes.push(mesh);
+    cardMeshes.push(mesh);
+    cardGroup.add(mesh);
+  });
+  if (zone === 'board' && phase === 'recruit' && opts.showSlots !== false) {
+    for (let i = cards.length; i < MAX_BOARD; i++) {
+      const slot = makeBoardSlotMesh(i);
+      meshes.push(slot);
+      cardMeshes.push(slot);
+      cardGroup.add(slot);
+    }
+  }
+  layoutRow(meshes, z, y, 2.55, -0.42);
+}
+
+function renderCards() {
+  clearCardHover();
+  while (cardGroup.children.length) cardGroup.remove(cardGroup.children[0]);
+  cardMeshes.length = 0;
+  if (!state) return;
+  const p = human();
+  if (!p) return;
+  if (phase === 'combat' && combatAnim) {
+    const boardA = combatAnim.boardA || [];
+    const boardB = combatAnim.boardB || [];
+    const aIsYou = !!(combatAnim.a && (combatAnim.a.isHuman || combatAnim.a.id === p.id));
+    const bIsYou = !!(combatAnim.b && (combatAnim.b.isHuman || combatAnim.b.id === p.id));
+    let mine;
+    let theirs;
+    if (aIsYou) {
+      mine = boardA;
+      theirs = boardB;
+    } else if (bIsYou) {
+      mine = boardB;
+      theirs = boardA;
+    } else {
+      mine = boardA;
+      theirs = boardB;
+    }
+    renderBoardRow(theirs, 'enemy', -3.8, 2.05, { attackerId: combatAnim.attackerId, showSlots: false });
+    renderBoardRow(mine, 'board', 0.2, 1.95, { attackerId: combatAnim.attackerId, showSlots: false });
+    renderHandRow(p, 4.4, 2.1);
+    return;
+  }
+  const shopMeshes = [];
+  p.shop.forEach((m, i) => {
+    if (!m) return;
+    const mesh = makeCardMesh(m, 'shop', i, { frozenShop: p.frozen });
+    shopMeshes.push(mesh);
+    cardMeshes.push(mesh);
+    cardGroup.add(mesh);
+  });
+  layoutRow(shopMeshes, -4.5, p.frozen ? 2.3 : 2.2, 2.65, -0.48);
+  renderBoardRow(p.board, 'board', 0.15, 1.95);
+  renderHandRow(p, 4.4, 2.15);
+}
+
+function showTooltipFor() {}
+
+function resolveCardHit(hits) {
+  if (!hits.length) return null;
+  let obj = hits[0].object;
+  while (obj && !(obj.userData && (obj.userData.minion || obj.userData.isSlot))) obj = obj.parent;
+  return obj || null;
+}
+
+function tryPlaySelectedFromHand(player, boardIndex) {
+  if (!selected || selected.zone !== 'hand') return false;
+  const handIdx = player.hand.findIndex(m => m.instanceId === selected.minion.instanceId);
+  if (handIdx < 0) {
+    selected = null;
+    return false;
+  }
+  const card = player.hand[handIdx];
+  if (isSpell(card)) {
+    if (playSpell(player, handIdx)) {
+      log(`Cast ${card.name}.`);
+      selected = null;
+      return true;
+    }
+    return false;
+  }
+  if (playMinion(player, handIdx, boardIndex)) {
+    selected = null;
+    return true;
+  }
+  return false;
+}
+
+function onPointerMove(e) {
+  pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+  pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(cardMeshes, true);
+  const obj = resolveCardHit(hits);
+  if (!obj || obj.userData.isSlot) {
+    clearCardHover();
+    showTooltipFor(null);
+    return;
+  }
+  if (hoveredCard !== obj) {
+    clearCardHover();
+    hoveredCard = obj;
+  }
+  applyCardHoverTilt(obj, hits[0].point);
+  showTooltipFor(obj.userData.minion);
+}
+
+function onPointerDown(e) {
+  if (phase !== 'recruit' || pendingDiscover) return;
+  pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+  pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(cardMeshes, true);
+  const obj = resolveCardHit(hits);
+  if (!obj) { selected = null; syncUI(); renderCards(); return; }
+  const { minion, zone, index } = obj.userData;
+  const p = human();
+  if (zone === 'shop') {
+    if (buyFromShop(p, index)) {
+      log(isSpell(minion) ? `Bought spell ${minion.name} (${minion.cost} gold) into Hand.` : `Bought ${minion.name} into Hand.`);
+      showToast(`Added ${minion.name} to Hand.`);
+      selected = null;
+    }
+  } else if (zone === 'hand') {
+    if (selected && selected.zone === 'hand' && selected.minion.instanceId === minion.instanceId) {
+      if (isSpell(minion)) {
+        if (playSpell(p, index)) {
+          log(`Cast ${minion.name}.`);
+          selected = null;
+        }
+      } else {
+        selected = { zone: 'hand', index, minion };
+        showToast('Click the Board to play this minion.');
+      }
+    } else {
+      selected = { zone: 'hand', index, minion };
+      if (!isSpell(minion)) showToast('Selected from Hand — click Board to play.');
+    }
+  } else if (zone === 'boardSlot') {
+    tryPlaySelectedFromHand(p, index);
+  } else if (zone === 'board') {
+    if (selected && selected.zone === 'hand') {
+      tryPlaySelectedFromHand(p, index);
+    } else if (selected && selected.zone === 'board' && selected.index !== index) {
+      const tmp = p.board[selected.index];
+      p.board[selected.index] = p.board[index];
+      p.board[index] = tmp;
+      selected = { zone: 'board', index, minion: p.board[index] };
+      log('Reordered board.');
+    } else {
+      selected = { zone: 'board', index, minion };
+    }
+  }
+  syncUI();
+  renderCards();
+}
+
+function startHeroDraft() {
+  phase = 'draft';
+  document.getElementById('ui').classList.add('hidden');
+  document.getElementById('overlay').classList.remove('hidden');
+  const heroes = HERO_DB.slice().sort(() => Math.random() - 0.5);
+  const humanOptions = heroes.slice(0, 2);
+  const box = document.getElementById('overlayContent');
+  box.innerHTML = `<h1>Tavern Legends</h1><p>Choose your hero. You will face seven AI opponents in Bob's Tavern.</p><div class="heroGrid"></div>`;
+  const grid = box.querySelector('.heroGrid');
+  humanOptions.forEach(hero => {
+    const el = document.createElement('div');
+    el.className = 'heroCard';
+    el.innerHTML = `<h3>${hero.name}</h3><div class="meta">Armor ${hero.armor}</div><div class="power"><strong>${hero.power.name}</strong> (${hero.power.cost} Gold)<br>${hero.power.text}</div>`;
+    el.onclick = () => beginMatch(hero, heroes);
+    grid.appendChild(el);
+  });
+}
+
+function beginMatch(humanHero, allHeroes) {
+  const players = [];
+  players.push(createPlayer(humanHero, true, 0));
+  const remaining = allHeroes.filter(h => h.id !== humanHero.id).sort(() => Math.random() - 0.5);
+  for (let i = 0; i < 7; i++) {
+    const options = remaining.splice(0, 2);
+    const pool = options.length ? options : HERO_DB.filter(h => !players.some(p => p.hero.id === h.id)).slice(0, 2);
+    players.push(createPlayer(aiChooseHero(pool.length ? pool : HERO_DB), false, i + 1));
+  }
+  state = {
+    players,
+    pool: buildPool(),
+    turn: 1
+  };
+  discoverQueue = [];
+  pendingDiscover = null;
+  selected = null;
+  logs.length = 0;
+  setHistoryOpen(false);
+  closeCodex();
+  renderHistoryPanel();
+  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById('ui').classList.remove('hidden');
+  log('Match started. Buy minions, upgrade your tavern, and survive.');
+  beginRecruitPhase();
+}
+
+document.getElementById('btnRefresh').onclick = () => {
+  const p = human();
+  if (p.gold < REFRESH_COST) { showToast('Not enough gold to refresh.'); return; }
+  if (refreshShop(p)) { log('Refreshed the Tavern.'); syncUI(); renderCards(); }
+};
+document.getElementById('btnUpgrade').onclick = () => {
+  const p = human();
+  if (p.tavernTier >= 6) { showToast('Already at max tavern tier.'); return; }
+  if (p.gold < p.upgradeCost) { showToast(`Need ${p.upgradeCost} gold to upgrade.`); return; }
+  if (upgradeTavern(p)) { syncUI(); renderCards(); }
+};
+document.getElementById('btnFreeze').onclick = () => {
+  const p = human();
+  p.frozen = !p.frozen;
+  log(p.frozen ? 'Tavern frozen.' : 'Tavern unfrozen.');
+  showToast(p.frozen ? 'Tavern frozen for next turn.' : 'Tavern unfrozen.');
+  syncUI();
+  renderCards();
+};
+document.getElementById('btnHeroPower').onclick = () => {
+  const p = human();
+  if (p.heroPowerUses <= 0) { showToast('Hero power already used.'); return; }
+  if (p.gold < p.hero.power.cost) { showToast('Not enough gold for hero power.'); return; }
+  if (useHeroPower(p)) { syncUI(); renderCards(); }
+};
+const heroPowerBtn = document.getElementById('btnHeroPower');
+heroPowerBtn.onmouseenter = (e) => showHeroPowerHover(e.clientX, e.clientY);
+heroPowerBtn.onmousemove = (e) => {
+  if (document.getElementById('heroPowerHover').classList.contains('show')) {
+    showHeroPowerHover(e.clientX, e.clientY);
+  }
+};
+heroPowerBtn.onmouseleave = () => hideHeroPowerHover();
+document.getElementById('btnHistory').onclick = () => setHistoryOpen(!historyOpen);
+const playerHeroFrame = document.getElementById('playerHeroFrame');
+playerHeroFrame.addEventListener('mouseenter', (e) => showPlayerHeroFrameHover(e.clientX, e.clientY));
+playerHeroFrame.addEventListener('mousemove', (e) => {
+  if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
+});
+playerHeroFrame.addEventListener('mouseleave', () => hideOppHover());
+const tavernMasterFrame = document.getElementById('tavernMasterFrame');
+tavernMasterFrame.addEventListener('mouseenter', (e) => showBobHover(e.clientX, e.clientY));
+tavernMasterFrame.addEventListener('mousemove', (e) => {
+  if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
+});
+tavernMasterFrame.addEventListener('mouseleave', () => hideOppHover());
+const combatEnemyFrame = document.getElementById('combatEnemyFrame');
+combatEnemyFrame.addEventListener('mouseenter', (e) => showCombatEnemyHover(e.clientX, e.clientY));
+combatEnemyFrame.addEventListener('mousemove', (e) => {
+  if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
+});
+combatEnemyFrame.addEventListener('mouseleave', () => hideOppHover());
+const endTurnBtn = document.getElementById('btnEnd');
+endTurnBtn.addEventListener('mouseenter', (e) => showEndTurnHover(e.clientX, e.clientY));
+endTurnBtn.addEventListener('mousemove', (e) => {
+  if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
+});
+endTurnBtn.addEventListener('mouseleave', () => hideOppHover());
+document.getElementById('btnCodex').onclick = () => {
+  if (document.getElementById('codexOverlay').classList.contains('open')) closeCodex();
+  else openCodex(codexTab);
+};
+document.getElementById('btnCloseCodex').onclick = () => closeCodex();
+document.getElementById('codexTabUnits').onclick = () => {
+  codexTab = 'units';
+  renderCodexBody();
+};
+document.getElementById('codexTabHeroes').onclick = () => {
+  codexTab = 'heroes';
+  renderCodexBody();
+};
+document.getElementById('codexOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'codexOverlay') closeCodex();
+});
+document.getElementById('btnSell').onclick = () => {
+  const p = human();
+  if (!selected || (selected.zone !== 'hand' && selected.zone !== 'board')) {
+    showToast('Select a hand or board minion to sell.');
+    return;
+  }
+  const arr = selected.zone === 'board' ? p.board : p.hand;
+  const idx = arr.findIndex(m => m.instanceId === selected.minion.instanceId);
+  if (idx < 0) { selected = null; syncUI(); return; }
+  const name = selected.minion.name;
+  if (sellMinion(p, selected.zone, idx)) {
+    log(`Sold ${name}.`);
+    showToast(`Sold ${name} for 1 gold.`);
+    selected = null;
+    syncUI();
+    renderCards();
+  }
+};
+document.getElementById('btnClosePeek').onclick = () => closePeek();
+document.getElementById('btnEnd').onclick = async () => {
+  if (phase !== 'recruit' || pendingDiscover) return;
+  const you = human();
+  const unplayed = you ? you.hand.filter(c => !isSpell(c)).length : 0;
+  if (unplayed > 0) {
+    showToast(`${unplayed} minion(s) left in Hand — only Board minions fight.`);
+    await sleep(850);
+  }
+  phase = 'ending';
+  setControlsEnabled(false);
+  closePeek();
+  document.getElementById('phaseRow').classList.add('show');
+  document.getElementById('phaseBanner').textContent = 'Opponents recruiting...';
+  document.getElementById('combatLog').textContent = '';
+  document.getElementById('tavernControls').classList.remove('show');
+  document.getElementById('tavernMasterFrame').classList.remove('show');
+  document.getElementById('combatEnemyFrame').classList.remove('show');
+  showToast('AI opponents taking their turns...');
+  await sleep(350);
+  for (const p of state.players) {
+    if (!p.alive || p.isHuman) continue;
+    aiRecruit(p);
+  }
+  log('Opponents finished recruiting.');
+  await runCombatPhase();
+};
+
+window.addEventListener('pointermove', onPointerMove);
+window.addEventListener('pointerdown', onPointerDown);
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+function animate() {
+  requestAnimationFrame(animate);
+  if (combatAnim) {
+    combatAnim.t = (combatAnim.t || 0) + 0.08;
+    cardGroup.children.forEach((c) => {
+      if (c === hoveredCard) return;
+      const baseY = c.userData.baseY ?? c.position.y;
+      const baseZ = c.userData.baseZ ?? c.position.z;
+      if (combatAnim.attackerId && c.userData.minion?.instanceId === combatAnim.attackerId) {
+        c.position.y = baseY + Math.sin(combatAnim.t * 10) * 0.12;
+        c.position.z = baseZ + Math.sin(combatAnim.t * 10) * 0.35;
+      } else {
+        c.position.y = baseY;
+        c.position.z = baseZ;
+      }
+    });
+  }
+  renderer.render(scene, camera);
+}
+
+animate();
+startHeroDraft();
+</script>
+</body>
+</html>
