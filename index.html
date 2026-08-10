@@ -3,19 +3,31 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Tavern Legends</title>
+<title>Flag Bearer</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Source+Sans+3:wght@400;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d5;font-family:'Source Sans 3',sans-serif;user-select:none}
-#gameCanvas{position:fixed;inset:0;display:block}
+#gameCanvas{position:fixed;inset:0;display:block;z-index:1}
 #ui{position:fixed;inset:0;pointer-events:none;z-index:10;display:flex;flex-direction:column}
 #ui>*{pointer-events:none}
-#ui button,#ui .opp,#ui #opponents,#ui #peekPanel,#ui #controls,#ui #tavernControls,#ui #heroPowerHover,#ui #topRightActions,#ui #historyPanel,#ui #goldPanel,#ui #btnEnd,#ui #playerHeroFrame,#ui #tavernMasterFrame,#ui #combatEnemyFrame,#ui #stagePortraitSlot{pointer-events:auto}
+#ui button,#ui .opp,#ui #opponents,#ui #peekPanel,#ui #topRightActions,#ui #historyPanel,#ui #goldPanel,#ui #btnEnd,#ui #tavernMasterFrame,#ui #combatEnemyFrame,#ui #stagePortraitSlot,#ui .tavernSide{pointer-events:auto}
+#playerPortraitSlot{position:fixed;left:50%;bottom:168px;transform:translateX(-50%);z-index:12;width:102px;height:102px;pointer-events:none}
+#playerPortraitSlot .playerSide,#playerPortraitSlot #playerHeroFrame{pointer-events:auto}
+#handOverlay{position:fixed;inset:0;z-index:16;pointer-events:none;display:none}
+#handOverlay.show{display:block}
+.handOverlayCard{position:absolute;transform:translate(-50%,-50%);transform-origin:center center;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));z-index:1}
+.handOverlayCard.raised{filter:drop-shadow(0 16px 28px rgba(0,0,0,.55))}
+.handOverlayCard canvas{display:block;width:100%;height:100%;border-radius:12px;border:1px solid rgba(212,175,90,.4);background:#0c1018}
+#enemyHandOverlay{position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:16;display:none;pointer-events:none;flex-direction:row;align-items:flex-end;justify-content:center}
+#enemyHandOverlay.show{display:flex}
+.enemyHandOverlayCard{flex:0 0 auto;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));margin-left:0}
+.enemyHandOverlayCard + .enemyHandOverlayCard{margin-left:var(--enemy-hand-overlap, -40px)}
+.enemyHandOverlayCard canvas{display:block;width:100%;height:100%;border-radius:12px;border:1px solid rgba(212,175,90,.35);background:#0c1018}
 .panel{background:rgba(12,16,24,.82);border:1px solid rgba(212,175,90,.35);backdrop-filter:blur(6px);border-radius:10px;padding:10px 14px}
 #topStack{position:relative;z-index:12;display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 12px 0;width:100%;flex:0 0 auto}
 #topRightActions{position:fixed;top:12px;right:14px;z-index:17;display:flex;gap:8px;align-items:center}
-#historyPanel{position:fixed;top:52px;right:14px;z-index:17;width:min(300px,42vw);max-height:min(52vh,480px);overflow:auto;display:none;font-size:12px;color:#d7cbb0;line-height:1.4}
+#historyPanel{position:fixed;top:52px;right:14px;z-index:17;width:min(300px,42vw);max-height:min(52vh,480px);overflow-x:hidden;overflow-y:auto;display:none;font-size:12px;color:#d7cbb0;line-height:1.4;scrollbar-width:thin}
 #historyPanel.open{display:block}
 #historyPanel .empty{color:#b9a888;font-style:italic}
 #historyPanel .entry{margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(212,175,90,.15)}
@@ -46,6 +58,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 .codexHeroCard .meta{font-size:12px;color:#b9a888;margin-bottom:8px}
 .codexHeroCard .powerName{font-size:12px;color:#9fd8ff;font-weight:700;margin-bottom:3px}
 .codexHeroCard .text{font-size:12px;color:#eee2cb;line-height:1.35}
+.codexSpellArt{width:100%;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:radial-gradient(circle at 50% 30%,#2a3a5c 0%,#151c2c 55%,#0e1420 100%);border-bottom:1px solid rgba(142,183,255,.25)}
+.codexSpellArt .tag{font-family:Cinzel,serif;font-size:11px;letter-spacing:.08em;color:#9fd8ff}
+.codexSpellArt .cost{font-family:Cinzel,serif;font-size:36px;font-weight:800;color:#e0b85a;line-height:1}
+.codexSpellArt .costLabel{font-size:11px;font-weight:700;color:#b9a888;letter-spacing:.06em}
 #opponents{position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:14;display:flex;flex-direction:column;gap:10px;align-items:center;max-height:min(78vh,720px);overflow-y:auto;overflow-x:visible;padding:6px 8px;pointer-events:auto;scrollbar-width:thin}
 .opp{pointer-events:auto;cursor:pointer;position:relative;width:68px;height:68px;padding:0;border-radius:14px;background:rgba(18,22,32,.95);border:2px solid rgba(212,175,90,.35);overflow:hidden;flex:0 0 auto;transition:border-color .15s,transform .15s,box-shadow .15s}
 .opp:hover{border-color:#e0b85a;transform:translateX(3px) scale(1.04);box-shadow:0 6px 18px rgba(0,0,0,.45)}
@@ -58,7 +74,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 .opp .hpBar{position:absolute;left:0;right:0;bottom:0;height:8px;background:rgba(8,10,16,.75);pointer-events:none}
 .opp .hpBarFill{height:100%;width:100%;background:linear-gradient(90deg,#2f8f5b,#7dcea0);box-shadow:0 0 8px rgba(125,206,160,.35)}
 .opp.dead .hpBarFill{background:linear-gradient(90deg,#5a2420,#a05048);box-shadow:none;width:0%!important}
-#oppHover{position:fixed;z-index:16;display:none;width:240px;padding:12px 14px;pointer-events:none!important;background:rgba(12,16,24,.96);border:1px solid rgba(212,175,90,.45);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.5)}
+#oppHover{position:fixed;z-index:22;display:none;width:240px;padding:12px 14px;pointer-events:none!important;background:rgba(12,16,24,.96);border:1px solid rgba(212,175,90,.45);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.5)}
 #oppHover.show{display:block}
 #oppHover .title{font-family:Cinzel,serif;color:#e0b85a;font-size:15px;margin-bottom:4px}
 #oppHover .rankLine{font-size:11px;color:#9fd8ff;margin-bottom:8px;letter-spacing:.04em}
@@ -68,24 +84,26 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #phaseRow{display:none;flex-direction:column;align-items:center;gap:2px;min-height:2.4em;pointer-events:none}
 #phaseRow.show{display:flex}
 #phaseBanner{font-family:Cinzel,serif;font-size:18px;color:#e0b85a;text-shadow:0 2px 12px rgba(0,0,0,.8);text-align:center}
-#combatLog{font-size:13px;color:#f2e8d5;text-shadow:0 2px 8px rgba(0,0,0,.9);text-align:center;min-height:1.1em}
+#combatLog{display:none}
 #playfield{position:relative;flex:1 1 auto;min-height:0;width:100%}
-#tavernControls{position:absolute;left:50%;top:148px;transform:translateX(-50%);z-index:12;display:none;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;pointer-events:auto}
-#tavernControls.show{display:flex}
 .heroFrame{width:102px;pointer-events:auto}
 .heroFrame .portraitWrap{position:relative;width:102px;height:102px;border-radius:18px;overflow:hidden;isolation:isolate;border:2px solid rgba(212,175,90,.45);background:rgba(18,22,32,.95);box-shadow:0 8px 22px rgba(0,0,0,.4)}
 .heroFrame .portraitWrap img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:16px}
-.heroFrame .frameLabel{margin-top:6px;text-align:center;font-family:Cinzel,serif;font-size:11px;color:#e0b85a;line-height:1.2;text-shadow:0 2px 8px rgba(0,0,0,.85)}
-.heroFrame .frameSub{text-align:center;font-size:10px;color:#b9a888;margin-top:2px;text-shadow:0 2px 8px rgba(0,0,0,.85)}
-#stagePortraitSlot{position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:12;width:102px;pointer-events:auto}
-#playerHeroFrame{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:14}
+#stagePortraitSlot{position:absolute;left:50%;top:148px;transform:translateX(-50%);z-index:12;width:102px;height:102px;pointer-events:none}
+#stagePortraitCenter{position:relative;width:102px;height:102px;display:flex;align-items:center;justify-content:center;pointer-events:auto}
+.tavernSide{position:absolute;top:50%;transform:translateY(-50%);display:none;align-items:center;gap:8px;pointer-events:auto;white-space:nowrap}
+.tavernSide.show{display:flex}
+#tavernSideLeft{right:calc(100% + 14px)}
+#tavernSideRight{left:calc(100% + 14px);flex-direction:row}
+.playerSide{position:absolute;top:50%;right:calc(100% + 14px);transform:translateY(-50%);display:flex;align-items:center;pointer-events:auto;white-space:nowrap}
+#playerHeroFrame{position:relative;width:102px;height:102px;pointer-events:auto}
 #playerHeroFrame .portraitWrap{border-color:#6ec6ff}
 #tavernMasterFrame,#combatEnemyFrame{display:none}
 #tavernMasterFrame.show,#combatEnemyFrame.show{display:block}
-#tavernMasterFrame .portraitWrap{border-color:rgba(224,184,90,.65)}
+#tavernMasterFrame .portraitWrap{border-color:rgba(224,184,90,.65);transition:border-color .15s,box-shadow .15s}
+#tavernMasterFrame.sellTarget .portraitWrap{border-color:#7dcea0;box-shadow:0 0 0 2px rgba(125,206,160,.45),0 8px 22px rgba(0,0,0,.4)}
+#tavernMasterFrame.sellHot .portraitWrap{border-color:#ffe08a;box-shadow:0 0 0 3px rgba(255,224,138,.55),0 8px 22px rgba(0,0,0,.4)}
 #combatEnemyFrame .portraitWrap{border-color:#ff6b5a}
-#frozenBanner{position:absolute;left:50%;top:188px;transform:translateX(-50%);font-family:Cinzel,serif;color:#9fd8ff;font-size:12px;letter-spacing:.14em;pointer-events:none;opacity:0;z-index:11;text-shadow:0 0 12px rgba(110,198,255,.6);padding:4px 10px;border:1px solid rgba(110,198,255,.35);border-radius:8px;background:rgba(10,18,28,.65)}
-#frozenBanner.show{opacity:1}
 #peekPanel{position:absolute;top:52px;right:12px;width:260px;max-height:calc(100% - 60px);overflow:auto;z-index:13;display:none;pointer-events:auto}
 #peekPanel.show{display:block}
 #peekPanel h3{font-family:Cinzel,serif;color:#e0b85a;margin-bottom:8px;font-size:15px}
@@ -94,33 +112,31 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 .peekMinion .title{color:#f2e8d5;font-weight:700;font-size:13px}
 .peekMinion .stats{color:#e0b85a;font-size:12px;margin-top:2px}
 .peekMinion .text{color:#b9a888;font-size:11px;margin-top:4px;line-height:1.3}
-#bottomStack{position:fixed;left:50%;bottom:148px;transform:translateX(-50%);z-index:12;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;width:auto;flex:0 0 auto;pointer-events:none}
-#controls{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:96vw;pointer-events:auto}
 #goldPanel{position:fixed;right:14px;bottom:14px;z-index:15;min-width:92px;text-align:center;pointer-events:auto}
 #goldPanel .label{color:#d4af5a;font-family:Cinzel,serif;font-size:11px;letter-spacing:.08em}
 #goldPanel .value{font-size:28px;font-weight:700;line-height:1.1;color:#f2e8d5;margin-top:2px}
 #btnEnd{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:15;padding:14px 18px;font-size:13px;min-width:108px}
-#heroPowerHover{position:fixed;z-index:18;display:none;width:260px;padding:12px 14px;pointer-events:none;background:rgba(12,16,24,.96);border:1px solid rgba(212,175,90,.45);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.5)}
-#heroPowerHover.show{display:block}
-#heroPowerHover .title{font-family:Cinzel,serif;color:#e0b85a;font-size:15px;margin-bottom:4px}
-#heroPowerHover .cost{font-size:12px;color:#9fd8ff;margin-bottom:8px}
-#heroPowerHover .text{font-size:13px;color:#eee2cb;line-height:1.4}
+#cardTooltip{position:fixed;z-index:19;display:none;pointer-events:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.7))}
+#cardTooltip.show{display:block}
+#cardTooltip canvas{width:min(210px,46vw);height:auto;border-radius:14px;border:1px solid rgba(212,175,90,.45);background:#0c1018}
 button{font-family:Cinzel,serif;font-weight:700;letter-spacing:.04em;border:1px solid rgba(212,175,90,.55);background:linear-gradient(180deg,#3a2a14,#1c140a);color:#f2e8d5;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:11px}
 button:hover:not(:disabled){filter:brightness(1.15)}
 button:disabled{opacity:.4;cursor:default}
 button.primary{background:linear-gradient(180deg,#5a3d12,#2a1a08);border-color:#e0b85a}
 button.active{box-shadow:inset 0 0 0 1px #6ec6ff;color:#9fd8ff;border-color:#6ec6ff}
 button.warn{border-color:#c97b4a}
-#toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);z-index:30;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;background:rgba(40,18,14,.95);border:1px solid rgba(255,140,90,.55);color:#ffe1cf;padding:10px 16px;border-radius:8px;font-weight:600;font-size:14px}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
 #overlay{position:fixed;inset:0;background:rgba(5,7,12,.88);display:flex;align-items:center;justify-content:center;z-index:20}
 #overlay.hidden{display:none}
 .overlayBox{width:min(920px,94vw);max-height:90vh;overflow:auto;background:radial-gradient(circle at top,#2a2114 0%,#12161f 55%,#0b0e14 100%);border:1px solid rgba(212,175,90,.45);border-radius:14px;padding:28px;text-align:center}
 .overlayBox h1{font-family:Cinzel,serif;font-size:34px;color:#e0b85a;margin-bottom:8px}
+.overlayBox h1.titleLogo{font-size:52px;margin-bottom:28px;letter-spacing:.04em}
+.overlayBox h1.chooseLord{font-size:40px;margin-bottom:28px;text-align:center}
+.overlayBox .beginBtn{padding:14px 40px;font-size:16px;min-width:160px}
 .overlayBox p{color:#c9b896;margin-bottom:18px;line-height:1.45}
 .heroGrid,.discoverGrid{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-.heroCard,.discoverCard{width:200px;padding:14px;border-radius:10px;background:rgba(20,24,34,.9);border:1px solid rgba(212,175,90,.35);cursor:pointer;text-align:left}
+.heroCard,.discoverCard{width:220px;padding:14px;border-radius:10px;background:rgba(20,24,34,.9);border:1px solid rgba(212,175,90,.35);cursor:pointer;text-align:left}
 .heroCard:hover,.discoverCard:hover{border-color:#e0b85a;transform:translateY(-2px)}
+.heroCard .portrait{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;border-radius:14px;margin-bottom:12px;border:2px solid rgba(212,175,90,.4);background:#1a2230}
 .heroCard h3,.discoverCard h3{font-family:Cinzel,serif;color:#e0b85a;margin-bottom:6px;font-size:16px}
 .heroCard .meta,.discoverCard .meta{font-size:12px;color:#b9a888;margin-bottom:8px}
 .heroCard .power,.discoverCard .text{font-size:13px;color:#eee2cb;line-height:1.35}
@@ -128,23 +144,39 @@ button.warn{border-color:#c97b4a}
 @media (max-width:900px){
   .opp{width:56px;height:56px;border-radius:12px}
   #opponents{left:8px;gap:8px}
-  #tavernControls{top:128px}
-  #frozenBanner{top:168px}
-  #stagePortraitSlot,#playerHeroFrame{width:84px}
-  #stagePortraitSlot .portraitWrap,#playerHeroFrame .portraitWrap{width:84px;height:84px;border-radius:14px}
-  #playerHeroFrame{bottom:12px}
-  #bottomStack{bottom:128px}
+  #stagePortraitSlot,#stagePortraitCenter,#playerPortraitSlot,#playerHeroFrame{width:84px;height:84px}
+  #stagePortraitCenter .portraitWrap,#playerHeroFrame .portraitWrap{width:84px;height:84px;border-radius:14px}
+  #stagePortraitSlot{top:120px}
+  #tavernSideLeft,.playerSide{right:calc(100% + 10px)}
+  #tavernSideRight{left:calc(100% + 10px)}
+  #playerPortraitSlot{bottom:140px}
   #phaseBanner{font-size:15px}
   #peekPanel{width:220px;top:52px}
-  #oppHover,#heroPowerHover{width:210px}
+  #oppHover{width:210px}
+  #cardTooltip canvas{width:min(170px,48vw)}
   #historyPanel{width:min(260px,70vw)}
   .codexHeader h1{font-size:22px}
   .codexGrid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+  .overlayBox h1.titleLogo{font-size:40px}
+  .overlayBox h1.chooseLord{font-size:30px}
 }
 </style>
 </head>
 <body>
 <canvas id="gameCanvas"></canvas>
+<div id="playerPortraitSlot" class="hidden">
+  <div class="playerSide">
+    <button id="btnHeroPower">Lord Power</button>
+  </div>
+  <div id="playerHeroFrame" class="heroFrame">
+    <div class="portraitWrap">
+      <img id="playerHeroArt" src="" alt="Your Lord">
+    </div>
+  </div>
+</div>
+<div id="handOverlay"></div>
+<div id="enemyHandOverlay"></div>
+<div id="oppHover"></div>
 <div id="ui" class="hidden">
   <div id="topStack">
     <div id="phaseRow">
@@ -160,31 +192,29 @@ button.warn{border-color:#c97b4a}
     <div class="empty">No history yet.</div>
   </div>
   <div id="opponents"></div>
-  <div id="oppHover"></div>
-  <div id="heroPowerHover"></div>
+  <div id="cardTooltip"><canvas id="cardTooltipCanvas" width="512" height="716"></canvas></div>
   <div id="playfield">
     <div id="stagePortraitSlot">
-      <div id="tavernMasterFrame" class="heroFrame">
-        <div class="portraitWrap">
-          <img id="tavernMasterArt" src="" alt="Tavern Master">
-        </div>
-        <div class="frameLabel">Bartender Bob</div>
-        <div class="frameSub">Tavern Master</div>
+      <div id="tavernSideLeft" class="tavernSide">
+        <button id="btnUpgrade">Upgrade</button>
       </div>
-      <div id="combatEnemyFrame" class="heroFrame">
-        <div class="portraitWrap">
-          <img id="combatEnemyArt" src="" alt="Enemy Hero">
+      <div id="stagePortraitCenter">
+        <div id="tavernMasterFrame" class="heroFrame">
+          <div class="portraitWrap">
+            <img id="tavernMasterArt" src="" alt="Tavern Master">
+          </div>
         </div>
-        <div class="frameLabel" id="combatEnemyName">Enemy</div>
-        <div class="frameSub" id="combatEnemySub">Opponent</div>
+        <div id="combatEnemyFrame" class="heroFrame">
+          <div class="portraitWrap">
+            <img id="combatEnemyArt" src="" alt="Enemy Lord">
+          </div>
+        </div>
+      </div>
+      <div id="tavernSideRight" class="tavernSide">
+        <button id="btnRefresh">Refresh (1)</button>
+        <button id="btnFreeze">Freeze</button>
       </div>
     </div>
-    <div id="tavernControls">
-      <button id="btnRefresh">Refresh (1)</button>
-      <button id="btnUpgrade">Upgrade</button>
-      <button id="btnFreeze">Freeze</button>
-    </div>
-    <div id="frozenBanner">FROZEN</div>
     <div id="peekPanel" class="panel">
       <h3 id="peekTitle">Opponent</h3>
       <div class="meta" id="peekMeta"></div>
@@ -192,26 +222,12 @@ button.warn{border-color:#c97b4a}
       <button id="btnClosePeek" style="width:100%;margin-top:8px">Close</button>
     </div>
   </div>
-  <div id="playerHeroFrame" class="heroFrame">
-    <div class="portraitWrap">
-      <img id="playerHeroArt" src="" alt="Your Hero">
-    </div>
-    <div class="frameLabel" id="playerHeroName">Hero</div>
-    <div class="frameSub">Your Hero</div>
-  </div>
   <div id="goldPanel" class="panel">
     <div class="label">GOLD</div>
     <div class="value" id="goldVal">0</div>
   </div>
   <button id="btnEnd" class="primary">End Turn</button>
-  <div id="bottomStack">
-    <div id="controls">
-      <button id="btnHeroPower">Hero Power</button>
-      <button id="btnSell" class="warn">Sell Selected (+1)</button>
-    </div>
-  </div>
 </div>
-<div id="toast"></div>
 <div id="overlay">
   <div class="overlayBox" id="overlayContent"></div>
 </div>
@@ -221,7 +237,8 @@ button.warn{border-color:#c97b4a}
       <h1>Codex</h1>
       <div class="codexTabs">
         <button id="codexTabUnits" class="active">Units</button>
-        <button id="codexTabHeroes">Heroes</button>
+        <button id="codexTabSpells">Spells</button>
+        <button id="codexTabHeroes">Lords</button>
       </div>
       <button id="btnCloseCodex">Close</button>
     </div>
@@ -280,7 +297,8 @@ const EFFECT_CATALOG = {
     buffMinion(pick(live), p.attack || 0, p.health || 0);
   },
   giveKeywordFriendly: (ctx, p) => {
-    const targets = ctx.friendly.board.filter(m => m !== ctx.self);
+    const board = ctx.friendly.board.filter(m => m && m.health > 0);
+    const targets = p.all ? board : board.filter(m => m !== ctx.self);
     if (!targets.length) return;
     const t = p.all ? targets : [pick(targets)];
     t.forEach(m => addKeyword(m, p.keyword));
@@ -315,7 +333,7 @@ const EFFECT_CATALOG = {
   freezeShop: (ctx) => { if (!ctx.inCombat) ctx.friendly.frozen = true; },
   buffShop: (ctx, p) => {
     if (ctx.inCombat) return;
-    ctx.friendly.shop.forEach(m => { if (m) buffMinion(m, p.attack || 0, p.health || 0); });
+    ctx.friendly.shop.forEach(m => { if (m && !isSpell(m)) buffMinion(m, p.attack || 0, p.health || 0); });
   },
   discoverCurrentTier: (ctx) => {
     if (ctx.inCombat) return;
@@ -528,7 +546,7 @@ const HERO_DB = [
   { id: 'h11', name: 'Pale Revenant', armor: 16, power: { name: 'Unholy Gift', cost: 2, uses: 1, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn' } }, text: 'Give a random friendly minion Reborn.' } },
   { id: 'h12', name: 'Molten Heart', armor: 13, power: { name: 'Ember Feed', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Elemental', attack: 2, health: 0 } }, text: 'Give your Elementals +2 Attack.' } },
   { id: 'h13', name: 'Murk Tidechief', armor: 12, power: { name: 'Schooling', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Murloc', attack: 1, health: 1 } }, text: 'Give your Murlocs +1/+1.' } },
-  { id: 'h14', name: 'Void Harvester', armor: 18, power: { name: 'Soul Sip', cost: 0, uses: 1, effect: { id: 'healHero', params: { amount: 2 } }, text: 'Restore 2 Health to your hero.' } },
+  { id: 'h14', name: 'Void Harvester', armor: 18, power: { name: 'Soul Sip', cost: 0, uses: 1, effect: { id: 'healHero', params: { amount: 2 } }, text: 'Restore 2 Health to your Lord.' } },
   { id: 'h15', name: 'Rune Knight Ael', armor: 19, power: { name: 'Oathbound', cost: 1, uses: 1, effect: { id: 'buffSelf', params: { attack: 0, health: 0 } }, text: 'Give your left-most minion +1/+2.', special: 'leftmost' } },
   { id: 'h16', name: 'Scarlet Raider', armor: 15, power: { name: 'Boarding Pike', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Pirate', attack: 1, health: 0 } }, text: 'Give your Pirates +1 Attack.' } }
 ];
@@ -645,7 +663,6 @@ let selected = null;
 let phase = 'boot';
 let combatAnim = null;
 let peekPlayerId = null;
-let toastTimer = null;
 
 const logs = [];
 let historyOpen = false;
@@ -653,24 +670,35 @@ let historyOpen = false;
 function renderHistoryPanel() {
   const el = document.getElementById('historyPanel');
   if (!el) return;
+  const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 48;
   if (!logs.length) {
     el.innerHTML = '<div class="empty">No history yet.</div>';
     return;
   }
-  el.innerHTML = logs.slice(0, 60).map(x => `<div class="entry">${x}</div>`).join('');
+  el.innerHTML = logs.map(x => `<div class="entry">${escapeHtml(x)}</div>`).join('');
+  if (nearBottom) el.scrollTop = el.scrollHeight;
 }
 
 function log(msg) {
-  logs.unshift(msg);
-  if (logs.length > 80) logs.pop();
+  if (!msg) return;
+  logs.push(msg);
+  if (logs.length > 80) logs.shift();
   renderHistoryPanel();
+}
+
+function logHint(msg) {
+  if (!msg) return;
+  if (logs.length && logs[logs.length - 1] === msg) return;
+  log(msg);
 }
 
 function setHistoryOpen(open) {
   historyOpen = !!open;
-  document.getElementById('historyPanel').classList.toggle('open', historyOpen);
+  const panel = document.getElementById('historyPanel');
+  panel.classList.toggle('open', historyOpen);
   document.getElementById('btnHistory').classList.toggle('active', historyOpen);
   document.getElementById('btnHistory').textContent = historyOpen ? 'Close History' : 'History';
+  if (historyOpen) panel.scrollTop = panel.scrollHeight;
 }
 
 let codexTab = 'units';
@@ -725,18 +753,51 @@ function renderCodexHeroes() {
       </div>
     `;
   }).join('');
-  return `<section class="codexRace"><h2>Heroes <span>${HERO_DB.length}</span></h2><div class="codexGrid">${cards}</div></section>`;
+  return `<section class="codexRace"><h2>Lords <span>${HERO_DB.length}</span></h2><div class="codexGrid">${cards}</div></section>`;
+}
+
+function renderCodexSpells() {
+  const spells = SPELL_DB.slice().sort((a, b) => {
+    if (a.tier !== b.tier) return a.tier - b.tier;
+    if (a.cost !== b.cost) return a.cost - b.cost;
+    return a.name.localeCompare(b.name);
+  });
+  const byTier = new Map();
+  for (const spell of spells) {
+    if (!byTier.has(spell.tier)) byTier.set(spell.tier, []);
+    byTier.get(spell.tier).push(spell);
+  }
+  return [...byTier.entries()].map(([tier, list]) => {
+    const cards = list.map(spell => `
+      <div class="codexCard">
+        <div class="codexSpellArt" aria-hidden="true">
+          <div class="tag">TAVERN SPELL</div>
+          <div class="cost">${spell.cost}</div>
+          <div class="costLabel">GOLD</div>
+        </div>
+        <div class="body">
+          <div class="name">${escapeHtml(spell.name)}</div>
+          <div class="meta">Tier ${spell.tier} · ${spell.cost} Gold</div>
+          <div class="text">${escapeHtml(spell.text || effectText(spell.effect) || 'Tavern spell.')}</div>
+        </div>
+      </div>
+    `).join('');
+    return `<section class="codexRace"><h2>Tier ${tier} <span>${list.length}</span></h2><div class="codexGrid">${cards}</div></section>`;
+  }).join('');
 }
 
 function renderCodexBody() {
   const body = document.getElementById('codexBody');
-  body.innerHTML = codexTab === 'heroes' ? renderCodexHeroes() : renderCodexUnits();
+  if (codexTab === 'heroes') body.innerHTML = renderCodexHeroes();
+  else if (codexTab === 'spells') body.innerHTML = renderCodexSpells();
+  else body.innerHTML = renderCodexUnits();
   document.getElementById('codexTabUnits').classList.toggle('active', codexTab === 'units');
+  document.getElementById('codexTabSpells').classList.toggle('active', codexTab === 'spells');
   document.getElementById('codexTabHeroes').classList.toggle('active', codexTab === 'heroes');
 }
 
 function openCodex(tab = 'units') {
-  codexTab = tab === 'heroes' ? 'heroes' : 'units';
+  codexTab = tab === 'heroes' || tab === 'spells' ? tab : 'units';
   setHistoryOpen(false);
   renderCodexBody();
   document.getElementById('codexOverlay').classList.add('open');
@@ -748,21 +809,13 @@ function closeCodex() {
   document.getElementById('btnCodex').classList.remove('active');
 }
 
-function showToast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
-}
-
 function compactShop(player) {
   player.shop = player.shop.filter(Boolean);
 }
 
 function queueDiscover(player, tier, fromTriple) {
   if (player.hand.length >= MAX_HAND) {
-    if (player.isHuman) showToast('Hand is full — discover skipped.');
+    if (player.isHuman) log('Hand is full — discover skipped.');
     return;
   }
   if (!player.isHuman) {
@@ -819,7 +872,7 @@ function showNextDiscover() {
     el.onclick = () => {
       const p = pendingDiscover.player;
       if (!giveMinionToHand(p, def)) {
-        showToast('Could not take that minion.');
+        log('Could not take that minion.');
         return;
       }
       log(`Discovered ${def.name}.`);
@@ -974,11 +1027,11 @@ function buyFromShop(player, shopIndex, quiet = false) {
   if (!card) return false;
   const price = isSpell(card) ? card.cost : BUY_COST;
   if (player.gold < price) {
-    if (!quiet && player.isHuman) showToast(`Not enough gold (need ${price}).`);
+    if (!quiet && player.isHuman) log(`Not enough gold (need ${price}).`);
     return false;
   }
   if (player.hand.length >= MAX_HAND) {
-    if (!quiet && player.isHuman) showToast('Your hand is already full.');
+    if (!quiet && player.isHuman) log('Your hand is already full.');
     return false;
   }
   player.gold -= price;
@@ -996,7 +1049,7 @@ function buyMinion(player, shopIndex, quiet = false) {
 function sellMinion(player, from, index, quiet = false) {
   const arr = from === 'board' ? player.board : from === 'hand' ? player.hand : null;
   if (!arr) {
-    if (!quiet && player.isHuman) showToast('Select a hand or board card to sell.');
+    if (!quiet && player.isHuman) logHint('Drag a hand or board card onto Bartender Bob to sell.');
     return false;
   }
   const m = arr[index];
@@ -1012,15 +1065,15 @@ function playSpell(player, handIndex, quiet = false) {
   const spell = player.hand[handIndex];
   if (!isSpell(spell)) return false;
   if (spell.effect?.id === 'summonToken' && player.board.length >= MAX_BOARD) {
-    if (!quiet && player.isHuman) showToast('Board is full.');
+    if (!quiet && player.isHuman) log('Board is full.');
     return false;
   }
   if (spell.effect?.id === 'buffRandomFriendly' && !player.board.length) {
-    if (!quiet && player.isHuman) showToast('No minion to buff.');
+    if (!quiet && player.isHuman) log('No minion to buff.');
     return false;
   }
   if (spell.effect?.id === 'giveKeywordFriendly' && !player.board.length) {
-    if (!quiet && player.isHuman) showToast('No minion to enchant.');
+    if (!quiet && player.isHuman) log('No minion to enchant.');
     return false;
   }
   player.hand.splice(handIndex, 1);
@@ -1039,7 +1092,7 @@ function playMinion(player, handIndex, boardIndex = player.board.length, quiet =
   if (!m) return false;
   if (isSpell(m)) return playSpell(player, handIndex, quiet);
   if (player.board.length >= MAX_BOARD) {
-    if (!quiet && player.isHuman) showToast(`Board is full (${MAX_BOARD} minions).`);
+    if (!quiet && player.isHuman) log(`Board is full (${MAX_BOARD} minions).`);
     return false;
   }
   player.hand.splice(handIndex, 1);
@@ -1056,7 +1109,6 @@ function playMinion(player, handIndex, boardIndex = player.board.length, quiet =
     if (!quiet && player.isHuman) {
       const text = effectText(m.battlecry);
       log(`${m.name} Battlecry: ${text}`);
-      showToast(`Battlecry: ${text}`);
     }
   } else if (!quiet && player.isHuman) {
     log(`Played ${m.name} to the Board.`);
@@ -1077,11 +1129,15 @@ function checkTriples(player) {
   player.hand.forEach((m, i) => track(m, 'hand', i));
   for (const cardId of Object.keys(counts)) {
     if (counts[cardId] < 3) continue;
-    if (player.hand.length >= MAX_HAND && player.board.length >= MAX_BOARD) {
-      if (player.isHuman) showToast('No room for golden triple — free a slot.');
+    const locs = locations[cardId].slice(0, 3);
+    const boardConsumed = locs.filter(l => l.where === 'board').length;
+    const handRoom = player.hand.length - (3 - boardConsumed) < MAX_HAND;
+    const boardRoom = player.board.length - boardConsumed < MAX_BOARD;
+    if (!handRoom && !boardRoom) {
+      if (player.isHuman) log('No room for golden triple — free a slot.');
       continue;
     }
-    const locs = locations[cardId].slice(0, 3).sort((a, b) => {
+    locs.sort((a, b) => {
       if (a.where !== b.where) return a.where === 'hand' ? -1 : 1;
       return b.index - a.index;
     });
@@ -1105,7 +1161,7 @@ function checkTriples(player) {
     golden.divineShield = golden.keywords.includes('DivineShield');
     golden.rebornActive = golden.keywords.includes('Reborn');
     if (player.hand.length < MAX_HAND) player.hand.push(golden);
-    else if (player.isHuman) showToast('Hand full — golden triple stays unclaimed. Free a hand slot.');
+    else player.board.push(golden);
     log(`${player.name} crafted Golden ${CARD_BY_ID[cardId].name}!`);
     const discoverTier = Math.min(6, player.tavernTier + 1);
     queueDiscover(player, discoverTier, true);
@@ -1397,7 +1453,7 @@ function useHeroPower(player) {
   const power = player.hero.power;
   if (player.gold < power.cost) return false;
   if (!heroPowerHasTarget(player)) {
-    if (player.isHuman) showToast('No valid target for hero power.');
+    if (player.isHuman) log('No valid target for Lord power.');
     return false;
   }
   player.gold -= power.cost;
@@ -1551,12 +1607,12 @@ function buildGhostOpponent(exclude, alive) {
 
 async function runCombatPhase() {
   phase = 'combat';
-  document.getElementById('phaseRow').classList.add('show');
-  document.getElementById('phaseBanner').textContent = 'Combat';
-  document.getElementById('combatLog').textContent = 'Preparing for battle...';
+  document.getElementById('phaseRow').classList.remove('show');
+  document.getElementById('phaseBanner').textContent = '';
+  log('Preparing for battle...');
   setControlsEnabled(false);
   closePeek();
-  hideHeroPowerHover();
+  hideOppHover();
   for (const p of state.players) p.lastCombatDamage = 0;
   syncUI();
   renderCards();
@@ -1564,24 +1620,20 @@ async function runCombatPhase() {
 
   const alive = state.players.filter(p => p.alive);
   const { pairs, ghosts } = pairPlayers(alive);
-  const you = alive.find(p => p.isHuman) || human();
+  const you = alive.find(p => p.isHuman) || null;
   let yourFight = null;
   const otherFights = [];
 
   for (const [a, b] of pairs) {
-    if (a.isHuman || b.isHuman || (you && (a.id === you.id || b.id === you.id))) {
+    if (you && (a.id === you.id || b.id === you.id)) {
       yourFight = { type: 'pair', a, b };
     } else {
       otherFights.push({ type: 'pair', a, b });
     }
   }
   for (const g of ghosts) {
-    if (g.isHuman || (you && g.id === you.id)) yourFight = { type: 'ghost', a: g };
+    if (you && g.id === you.id) yourFight = { type: 'ghost', a: g };
     else otherFights.push({ type: 'ghost', a: g });
-  }
-  if (!yourFight && you) {
-    const foe = pick(alive.filter(p => p.id !== you.id));
-    yourFight = foe ? { type: 'pair', a: you, b: foe } : { type: 'ghost', a: you };
   }
 
   for (const fight of otherFights) {
@@ -1605,7 +1657,7 @@ async function runCombatPhase() {
       await playVisibleCombat(left, right);
       const result = resolveCombat(left, right);
       await animateCombat(result, left, right);
-      applyCombatResult(result, left, right, { silent: false });
+      applyCombatResult(result, left, right, { silent: true });
     } else {
       const ghostPlayer = buildGhostOpponent(you, alive);
       highlightCombat(you, null);
@@ -1615,11 +1667,6 @@ async function runCombatPhase() {
       you.lastCombatBoard = cloneBoard(you.board);
       if (result.loser === you) {
         applyHeroDamage(you, result.damage);
-        log(`Ghost hits you for ${result.damage}.`);
-      } else if (result.winner === you) {
-        log('You defeated a ghost.');
-      } else {
-        log('You tied with a ghost.');
       }
     }
   } else {
@@ -1642,15 +1689,17 @@ async function runCombatPhase() {
     p.board = []; p.hand = []; p.shop = [];
     log(`${p.name} was eliminated! (#${p.placement})`);
   }
-  document.getElementById('combatLog').textContent = '';
   const stillAlive = state.players.filter(p => p.alive);
+  const humanPlayer = human();
   if (stillAlive.length <= 1) {
     endMatch(stillAlive[0] || null);
     return;
   }
-  document.getElementById('phaseBanner').textContent = 'Returning to Tavern...';
-  showToast('Combat over — back to the Tavern.');
-  await sleep(800);
+  if (humanPlayer && !humanPlayer.alive) {
+    endMatch(null);
+    return;
+  }
+  await sleep(400);
   state.turn++;
   beginRecruitPhase();
 }
@@ -1674,8 +1723,8 @@ async function playVisibleCombat(player, enemy) {
     boardA: cloneBoard(player.board),
     boardB: cloneBoard(enemy.board || [])
   };
-  document.getElementById('phaseBanner').textContent = `You vs ${foeName}`;
-  document.getElementById('combatLog').textContent = 'Battle begins!';
+  log(`You vs ${foeName}`);
+  log('Battle begins!');
   syncHeroPortraits();
   renderCards();
   await sleep(1100);
@@ -1688,8 +1737,6 @@ async function animateCombat(result, a, b) {
     boardA: cloneBoard(result.sideA?.board || a.board || []),
     boardB: cloneBoard(result.sideB?.board || b.board || [])
   }];
-  const foeName = b.hero?.name || b.name;
-  const selfName = a.isHuman ? 'You' : (a.hero?.name || a.name);
   for (let i = 0; i < frames.length; i++) {
     const frame = frames[i];
     combatAnim = {
@@ -1701,8 +1748,7 @@ async function animateCombat(result, a, b) {
       boardA: frame.boardA || [],
       boardB: frame.boardB || []
     };
-    document.getElementById('combatLog').textContent = frame.text || '';
-    document.getElementById('phaseBanner').textContent = `${selfName} vs ${foeName}`;
+    if (frame.text) log(frame.text);
     syncHeroPortraits();
     renderCards();
     await sleep(i === 0 ? 700 : 850);
@@ -1714,40 +1760,45 @@ async function animateCombat(result, a, b) {
 function endMatch(winner) {
   phase = 'end';
   setControlsEnabled(false);
-  const human = state.players.find(p => p.isHuman);
-  const place = winner?.isHuman ? 1 : (human.placement || (state.players.filter(p => p.alive || p === human).length));
+  const humanPlayer = state.players.find(p => p.isHuman);
+  const place = winner?.isHuman ? 1 : (humanPlayer?.placement || (state.players.filter(p => p.alive || p === humanPlayer).length));
+  let summary = 'No survivors.';
+  if (winner?.isHuman) summary = `${winner.name} wins the lobby.`;
+  else if (humanPlayer?.placement) summary = `You placed #${humanPlayer.placement}.`;
+  else if (winner) summary = `${winner.name} wins the lobby.`;
   const box = document.getElementById('overlayContent');
   document.getElementById('overlay').classList.remove('hidden');
-  document.getElementById('ui').classList.add('hidden');
+  setGameUiVisible(false);
   box.innerHTML = `<h1>${winner?.isHuman ? 'Victory!' : 'Defeat'}</h1>
-    <p>${winner ? `${winner.name} wins the lobby.` : 'No survivors.'}<br>Your placement: #${winner?.isHuman ? 1 : human.placement || place}</p>
+    <p>${summary}<br>Your placement: #${winner?.isHuman ? 1 : humanPlayer?.placement || place}</p>
     <button class="primary" id="btnAgain">Play Again</button>`;
-  document.getElementById('btnAgain').onclick = () => startHeroDraft();
+  document.getElementById('btnAgain').onclick = () => showTitleScreen();
 }
 
 function beginRecruitPhase() {
   phase = 'recruit';
   document.getElementById('phaseRow').classList.remove('show');
   document.getElementById('phaseBanner').textContent = '';
-  document.getElementById('combatLog').textContent = '';
   const visitGold = getTavernGoldForTurn(state.turn);
   for (const p of state.players) {
     if (!p.alive) continue;
     startRecruitForPlayer(p);
   }
   selected = null;
-  setControlsEnabled(true);
+  const you = human();
+  setControlsEnabled(!!(you && you.alive));
   syncUI();
   renderCards();
-  const you = human();
-  log(`Turn ${state.turn}: Tavern visit — gold set to ${you ? you.gold : visitGold}.`);
-  if (you) showToast(`Gold replenished: ${you.gold}`);
+  if (you && you.alive) log(`Turn ${state.turn}: Tavern visit — gold set to ${you.gold}.`);
+  else log(`Turn ${state.turn}: Tavern visit — gold set to ${visitGold}.`);
 }
 
 function setControlsEnabled(on) {
-  ['btnRefresh', 'btnUpgrade', 'btnFreeze', 'btnHeroPower', 'btnSell', 'btnEnd'].forEach(id => {
+  const you = human();
+  const canAct = !!on && phase === 'recruit' && !!(you && you.alive);
+  ['btnRefresh', 'btnUpgrade', 'btnFreeze', 'btnHeroPower', 'btnEnd'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.disabled = !on || phase !== 'recruit';
+    if (el) el.disabled = !canAct;
   });
 }
 
@@ -1791,21 +1842,27 @@ function getCombatEnemy() {
   return combatAnim.b || combatAnim.a || null;
 }
 
+function setGameUiVisible(visible) {
+  document.getElementById('ui').classList.toggle('hidden', !visible);
+  document.getElementById('playerPortraitSlot').classList.toggle('hidden', !visible);
+  if (!visible) {
+    hideHandOverlay();
+    hideEnemyHandOverlay();
+    hideOppHover();
+  }
+}
+
 function syncHeroPortraits() {
   const p = human();
-  const heroFrame = document.getElementById('playerHeroFrame');
   const bobFrame = document.getElementById('tavernMasterFrame');
   const enemyFrame = document.getElementById('combatEnemyFrame');
   if (!p) {
-    heroFrame.style.display = 'none';
     bobFrame.classList.remove('show');
     enemyFrame.classList.remove('show');
     return;
   }
-  heroFrame.style.display = 'block';
   document.getElementById('playerHeroArt').src = heroPortraitArt(p.hero);
   document.getElementById('playerHeroArt').alt = p.hero.name;
-  document.getElementById('playerHeroName').textContent = p.hero.name;
   document.getElementById('tavernMasterArt').src = ART_B;
   const showBob = phase === 'recruit';
   const enemy = getCombatEnemy();
@@ -1816,10 +1873,6 @@ function syncHeroPortraits() {
     const name = enemy.hero?.name || enemy.name || 'Enemy';
     document.getElementById('combatEnemyArt').src = enemy.hero ? heroPortraitArt(enemy.hero) : ART_A;
     document.getElementById('combatEnemyArt').alt = name;
-    document.getElementById('combatEnemyName').textContent = name;
-    document.getElementById('combatEnemySub').textContent = enemy.hp != null
-      ? `${enemy.hp}${enemy.armor ? ` (+${enemy.armor})` : ''} HP`
-      : 'Opponent';
   }
   if (!showBob && !showEnemy) hideOppHover();
 }
@@ -1830,44 +1883,13 @@ function syncUI() {
   document.getElementById('goldVal').textContent = p.gold;
   document.getElementById('btnUpgrade').textContent = p.tavernTier >= 6 ? 'Max Tier' : `Upgrade (${p.upgradeCost})`;
   document.getElementById('btnFreeze').classList.toggle('active', p.frozen);
-  document.getElementById('frozenBanner').classList.toggle('show', !!p.frozen && phase === 'recruit');
-  document.getElementById('tavernControls').classList.toggle('show', phase === 'recruit');
-  document.getElementById('phaseRow').classList.toggle('show', phase === 'combat');
+  document.querySelectorAll('.tavernSide').forEach(el => el.classList.toggle('show', phase === 'recruit'));
+  if (phase === 'combat') document.getElementById('phaseRow').classList.remove('show');
   document.getElementById('btnHeroPower').textContent = `${p.hero.power.name} (${p.hero.power.cost})`;
-  document.getElementById('btnHeroPower').disabled = phase !== 'recruit' || p.heroPowerUses <= 0 || p.gold < p.hero.power.cost;
-  const canAct = phase === 'recruit';
-  document.getElementById('btnSell').disabled = !canAct || !selected || (selected.zone !== 'hand' && selected.zone !== 'board') || (selected && selected.zone === 'board' && isSpell(selected.minion));
-  document.getElementById('btnEnd').disabled = !canAct;
+  document.getElementById('btnHeroPower').disabled = phase !== 'recruit' || !p.alive || p.heroPowerUses <= 0 || p.gold < p.hero.power.cost;
+  document.getElementById('btnEnd').disabled = phase !== 'recruit' || !p.alive;
   syncHeroPortraits();
   syncOpponents();
-}
-
-function hideHeroPowerHover() {
-  document.getElementById('heroPowerHover').classList.remove('show');
-}
-
-function showHeroPowerHover(clientX, clientY) {
-  const p = human();
-  if (!p) return;
-  const tip = document.getElementById('heroPowerHover');
-  const power = p.hero.power;
-  const ready = phase === 'recruit' && p.heroPowerUses > 0 && p.gold >= power.cost;
-  tip.innerHTML = `
-    <div class="title">${power.name}</div>
-    <div class="cost">${power.cost} Gold · ${p.heroPowerUses > 0 ? 'Available' : 'Used this turn'}${ready ? '' : ' · Not ready'}</div>
-    <div class="text">${power.text}</div>
-  `;
-  tip.classList.add('show');
-  const pad = 12;
-  const tw = tip.offsetWidth || 260;
-  const th = tip.offsetHeight || 120;
-  let left = clientX - tw / 2;
-  let top = clientY - th - 16;
-  if (left < pad) left = pad;
-  if (left + tw > window.innerWidth - pad) left = window.innerWidth - tw - pad;
-  if (top < pad) top = clientY + 18;
-  tip.style.left = `${left}px`;
-  tip.style.top = `${top}px`;
 }
 
 function heroEffectiveHp(player) {
@@ -1912,7 +1934,7 @@ function showBobHover(clientX, clientY) {
     <div class="line">Tavern Tier <strong>${tier}</strong></div>
     <div class="line">Next Upgrade <strong>${upgrade}</strong></div>
     <div class="line muted">Buy minions and spells from Bob's Tavern.</div>
-    <div class="line muted">Refresh, upgrade, and freeze are available during the Tavern phase.</div>
+    <div class="line muted">Drag a hand or board card here to sell it for 1 Gold.</div>
   `;
   revealOppHover(clientX, clientY);
 }
@@ -1923,9 +1945,23 @@ function showPlayerHeroFrameHover(clientX, clientY) {
   const tip = document.getElementById('oppHover');
   tip.innerHTML = `
     <div class="title">${p.hero.name}</div>
-    <div class="rankLine">Your Hero</div>
+    <div class="rankLine">Your Lord</div>
     <div class="line">Health <strong>${p.hp}</strong>${p.armor ? ` · Armor <strong>${p.armor}</strong>` : ''} · Total <strong>${heroEffectiveHp(p)}</strong></div>
     <div class="power"><strong>${p.hero.power.name}</strong> (${p.hero.power.cost} Gold)<br>${p.hero.power.text}</div>
+  `;
+  revealOppHover(clientX, clientY);
+}
+
+function showHeroPowerHover(clientX, clientY) {
+  const p = human();
+  if (!p) return;
+  const tip = document.getElementById('oppHover');
+  const power = p.hero.power;
+  const ready = phase === 'recruit' && p.heroPowerUses > 0 && p.gold >= power.cost;
+  tip.innerHTML = `
+    <div class="title">${power.name}</div>
+    <div class="rankLine">${power.cost} Gold · ${p.heroPowerUses > 0 ? 'Available' : 'Used this turn'}${ready ? '' : ' · Not ready'}</div>
+    <div class="line">${power.text}</div>
   `;
   revealOppHover(clientX, clientY);
 }
@@ -1967,7 +2003,7 @@ function showOppHover(player, rank, clientX, clientY) {
     <div class="rankLine">Lobby rank #${rank} · ${status}</div>
     <div class="line">Health <strong>${player.hp}</strong>${player.armor ? ` · Armor <strong>${player.armor}</strong>` : ''} · Total <strong>${total}</strong></div>
     <div class="line muted">Tavern Tier ${player.tavernTier} · Board ${player.board.length}/${MAX_BOARD}</div>
-    <div class="line muted">Hand ${player.isHuman ? player.hand.length : '?'} · ${player.isHuman ? 'Your hero' : 'Opponent'}</div>
+    <div class="line muted">Hand ${player.isHuman ? player.hand.length : '?'} · ${player.isHuman ? 'Your Lord' : 'Opponent'}</div>
     <div class="power"><strong>${player.hero.power.name}</strong> (${player.hero.power.cost} Gold)<br>${player.hero.power.text}</div>
   `;
   revealOppHover(clientX, clientY);
@@ -1994,7 +2030,7 @@ function syncOpponents(combatA, combatB) {
     if (p.isHuman) cls.push('self');
     if (p.id === combatA || p.id === combatB) cls.push('combat');
     if (p.id === peekPlayerId) cls.push('peeking');
-    const art = (p.id % 2 === 0) ? ART_A : ART_B;
+    const art = heroPortraitArt(p.hero);
     const name = p.isHuman ? 'You' : p.hero.name;
     const maxPool = Math.max(1, (p.maxHp || START_HP) + (p.hero?.armor || 0));
     const hpPct = p.alive ? clamp((heroEffectiveHp(p) / maxPool) * 100, 0, 100) : 0;
@@ -2112,7 +2148,19 @@ function roundRect(ctx, x, y, w, h, r) {
 
 const CARD_W = 2.45;
 const CARD_H = 3.42;
+const HAND_W = 2.05;
+const HAND_H = 2.86;
+const HAND_ROW_Z = 8.35;
+const HAND_ROW_Y = 1.45;
+const HAND_ROW_SPACING = 1.45;
+const HAND_ROW_ROTX = -0.82;
 const BOARD_S = 2.35;
+const SHOP_S = 2.7;
+const TAVERN_ROW_Z = -0.35;
+const TAVERN_ROW_Y = 2.15;
+const TAVERN_ROW_Y_FROZEN = 2.25;
+const TAVERN_ROW_SPACING = 3.0;
+const TAVERN_ROW_ROTX = -0.68;
 const CARD_D = 0.12;
 let hoveredCard = null;
 
@@ -2120,8 +2168,14 @@ function isBoardZone(zone) {
   return zone === 'board' || zone === 'enemy';
 }
 
+function isShortCardZone(zone) {
+  return isBoardZone(zone) || zone === 'shop';
+}
+
 function cardSizeForZone(zone) {
-  if (isBoardZone(zone)) return { w: BOARD_S, h: BOARD_S };
+  if (zone === 'shop' || zone === 'enemy') return { w: SHOP_S, h: SHOP_S };
+  if (zone === 'board') return { w: BOARD_S, h: BOARD_S };
+  if (zone === 'hand' || zone === 'enemyHand') return { w: HAND_W, h: HAND_H };
   return { w: CARD_W, h: CARD_H };
 }
 
@@ -2135,79 +2189,144 @@ function frameColors(card, opts = {}) {
   return frameHex;
 }
 
+function drawTierBadge(ctx, tier, cx, cy, radius) {
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(28, 16, 42, 0.92)';
+  ctx.fill();
+  ctx.strokeStyle = '#b07cff';
+  ctx.lineWidth = Math.max(3, Math.round(radius * 0.12));
+  ctx.stroke();
+  ctx.fillStyle = '#d2a8ff';
+  ctx.font = `bold ${Math.round(radius * 1.15)}px Cinzel, serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(String(tier ?? 1), cx, cy + 1);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+}
+
 function buildSquareBoardTexture(card, opts = {}) {
   const canvas2d = document.createElement('canvas');
   canvas2d.width = 512;
   canvas2d.height = 512;
   const ctx = canvas2d.getContext('2d');
+  const frozenShop = !!opts.frozenShop;
+  const spell = isSpell(card);
   const frameHex = frameColors(card, opts);
   ctx.fillStyle = frameHex;
   ctx.fillRect(0, 0, 512, 512);
-  ctx.fillStyle = '#120e18';
+  ctx.fillStyle = spell ? '#101828' : '#120e18';
   roundRect(ctx, 16, 16, 480, 480, 28);
   ctx.fill();
-  const artImg = textures[card.art]?.image || textures[ART_A]?.image;
-  ctx.save();
-  roundRect(ctx, 28, 28, 456, 456, 22);
-  ctx.clip();
-  if (artImg && artImg.width) {
-    const scale = Math.max(456 / artImg.width, 456 / artImg.height);
-    const w = artImg.width * scale;
-    const h = artImg.height * scale;
-    ctx.drawImage(artImg, 28 + (456 - w) / 2, 28 + (456 - h) / 2, w, h);
-  } else {
-    ctx.fillStyle = '#2a3344';
-    ctx.fillRect(28, 28, 456, 456);
-  }
-  ctx.restore();
-  ctx.strokeStyle = card.golden ? '#ffd978' : 'rgba(212,175,90,0.55)';
-  ctx.lineWidth = 4;
-  roundRect(ctx, 28, 28, 456, 456, 22);
-  ctx.stroke();
-  const grad = ctx.createLinearGradient(0, 340, 0, 484);
-  grad.addColorStop(0, 'rgba(10,12,18,0)');
-  grad.addColorStop(0.45, 'rgba(10,12,18,0.55)');
-  grad.addColorStop(1, 'rgba(10,12,18,0.92)');
-  ctx.fillStyle = grad;
-  ctx.fillRect(28, 340, 456, 144);
-  ctx.fillStyle = card.golden ? '#ffd978' : '#e0b85a';
-  ctx.font = 'bold 30px Cinzel, serif';
-  ctx.textAlign = 'center';
-  const name = card.name.length > 18 ? card.name.slice(0, 17) + '…' : card.name;
-  ctx.fillText(name, 256, 400);
-  const kws = (card.keywords || []).map(keywordLabel);
-  if (kws.length) {
-    ctx.fillStyle = '#9fd8ff';
-    ctx.font = 'bold 20px Source Sans 3, sans-serif';
-    ctx.fillText(kws.join(' · '), 256, 430);
-  }
-  ctx.beginPath();
-  ctx.arc(78, 448, 40, 0, Math.PI * 2);
-  ctx.fillStyle = '#5a2a1a';
-  ctx.fill();
-  ctx.strokeStyle = '#e0b85a';
-  ctx.lineWidth = 4;
-  ctx.stroke();
-  ctx.fillStyle = '#fff4d8';
-  ctx.font = 'bold 36px Source Sans 3, sans-serif';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(String(card.attack), 78, 450);
-  ctx.beginPath();
-  ctx.arc(434, 448, 40, 0, Math.PI * 2);
-  ctx.fillStyle = '#1a3a2a';
-  ctx.fill();
-  ctx.strokeStyle = '#7dcea0';
-  ctx.lineWidth = 4;
-  ctx.stroke();
-  ctx.fillStyle = '#e8fff2';
-  ctx.fillText(String(card.health), 434, 450);
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'alphabetic';
-  if (card.divineShield || hasKeyword(card, 'DivineShield')) {
-    ctx.strokeStyle = '#ffe08a';
-    ctx.lineWidth = 8;
-    roundRect(ctx, 10, 10, 492, 492, 30);
+  if (spell) {
+    const spellBg = ctx.createRadialGradient(256, 220, 40, 256, 240, 280);
+    spellBg.addColorStop(0, '#2a3f66');
+    spellBg.addColorStop(0.55, '#172438');
+    spellBg.addColorStop(1, '#101828');
+    ctx.fillStyle = spellBg;
+    roundRect(ctx, 28, 28, 456, 456, 22);
+    ctx.fill();
+    ctx.strokeStyle = frozenShop ? '#6ec6ff' : '#8eb7ff';
+    ctx.lineWidth = 4;
+    roundRect(ctx, 28, 28, 456, 456, 22);
     ctx.stroke();
+    ctx.fillStyle = 'rgba(159,216,255,0.16)';
+    ctx.beginPath();
+    ctx.moveTo(256, 120);
+    ctx.lineTo(320, 220);
+    ctx.lineTo(256, 320);
+    ctx.lineTo(192, 220);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(159,216,255,0.45)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  } else {
+    const artImg = textures[card.art]?.image || textures[ART_A]?.image;
+    ctx.save();
+    roundRect(ctx, 28, 28, 456, 456, 22);
+    ctx.clip();
+    if (artImg && artImg.width) {
+      const scale = Math.max(456 / artImg.width, 456 / artImg.height);
+      const w = artImg.width * scale;
+      const h = artImg.height * scale;
+      ctx.drawImage(artImg, 28 + (456 - w) / 2, 28 + (456 - h) / 2, w, h);
+      if (frozenShop) {
+        ctx.fillStyle = 'rgba(110,198,255,0.22)';
+        ctx.fillRect(28, 28, 456, 456);
+      }
+    } else {
+      ctx.fillStyle = '#2a3344';
+      ctx.fillRect(28, 28, 456, 456);
+    }
+    ctx.restore();
+    ctx.strokeStyle = card.golden ? '#ffd978' : 'rgba(212,175,90,0.55)';
+    ctx.lineWidth = 4;
+    roundRect(ctx, 28, 28, 456, 456, 22);
+    ctx.stroke();
+    if (card.divineShield || hasKeyword(card, 'DivineShield')) {
+      ctx.beginPath();
+      ctx.strokeStyle = '#ffe08a';
+      ctx.lineWidth = 8;
+      roundRect(ctx, 10, 10, 492, 492, 30);
+      ctx.stroke();
+    }
+  }
+  drawTierBadge(ctx, card.tier, 56, 56, 34);
+  if (spell) {
+    const cost = Number.isFinite(card.cost) ? card.cost : 0;
+    const grad = ctx.createLinearGradient(0, 360, 0, 500);
+    grad.addColorStop(0, 'rgba(10,12,18,0)');
+    grad.addColorStop(0.55, 'rgba(10,12,18,0.45)');
+    grad.addColorStop(1, 'rgba(10,12,18,0.88)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(28, 360, 456, 140);
+    ctx.beginPath();
+    ctx.arc(256, 430, 48, 0, Math.PI * 2);
+    ctx.fillStyle = '#2a3a5c';
+    ctx.fill();
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#e0b85a';
+    ctx.stroke();
+    ctx.fillStyle = '#ffe08a';
+    ctx.font = 'bold 42px Source Sans 3, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(cost), 256, 432);
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+  } else {
+    const atk = Number.isFinite(card.attack) ? card.attack : 0;
+    const hp = Number.isFinite(card.health) ? card.health : 0;
+    const grad = ctx.createLinearGradient(0, 360, 0, 500);
+    grad.addColorStop(0, 'rgba(10,12,18,0)');
+    grad.addColorStop(0.55, 'rgba(10,12,18,0.45)');
+    grad.addColorStop(1, 'rgba(10,12,18,0.88)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(28, 360, 456, 140);
+    ctx.beginPath();
+    ctx.arc(78, 430, 44, 0, Math.PI * 2);
+    ctx.fillStyle = '#5a2a1a';
+    ctx.fill();
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#e0b85a';
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(434, 430, 44, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a3a2a';
+    ctx.fill();
+    ctx.strokeStyle = '#7dcea0';
+    ctx.stroke();
+    ctx.fillStyle = '#fff4d8';
+    ctx.font = 'bold 40px Source Sans 3, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(atk), 78, 432);
+    ctx.fillStyle = '#e8fff2';
+    ctx.fillText(String(hp), 434, 432);
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
   }
   const tex = new THREE.CanvasTexture(canvas2d);
   tex.colorSpace = THREE.SRGBColorSpace;
@@ -2257,7 +2376,7 @@ function buildCardFrontTexture(card, opts = {}) {
     ctx.fillText(spellName, 56, 400);
     ctx.fillStyle = '#b9a888';
     ctx.font = 'bold 24px Source Sans 3, sans-serif';
-    ctx.fillText(`Tier ${card.tier} Spell`, 56, 440);
+    ctx.fillText('Spell', 56, 440);
     ctx.fillStyle = '#eee2cb';
     ctx.font = '26px Source Sans 3, sans-serif';
     const lines = wrapText(ctx, card.text || '', 400);
@@ -2294,7 +2413,7 @@ function buildCardFrontTexture(card, opts = {}) {
     ctx.fillText(name, 56, 460);
     ctx.fillStyle = '#b9a888';
     ctx.font = 'bold 24px Source Sans 3, sans-serif';
-    ctx.fillText(`T${card.tier}  ${card.tribe}`, 56, 500);
+    ctx.fillText(card.tribe, 56, 500);
     const kws = (card.keywords || []).map(keywordLabel);
     if (kws.length) {
       ctx.fillStyle = '#9fd8ff';
@@ -2336,6 +2455,7 @@ function buildCardFrontTexture(card, opts = {}) {
       ctx.fillText('GOLDEN', 56, 660);
     }
   }
+  drawTierBadge(ctx, card.tier, 62, 62, 38);
   const tex = new THREE.CanvasTexture(canvas2d);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
@@ -2357,31 +2477,87 @@ function wrapText(ctx, text, maxWidth) {
   return lines;
 }
 
+let cardBackTexture = null;
+function getCardBackTexture() {
+  if (cardBackTexture) return cardBackTexture;
+  const canvas2d = document.createElement('canvas');
+  canvas2d.width = 512;
+  canvas2d.height = 716;
+  const ctx = canvas2d.getContext('2d');
+  const bg = ctx.createLinearGradient(0, 0, 512, 716);
+  bg.addColorStop(0, '#1a2438');
+  bg.addColorStop(0.5, '#121826');
+  bg.addColorStop(1, '#0c1018');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, 512, 716);
+  ctx.strokeStyle = 'rgba(212,175,90,0.7)';
+  ctx.lineWidth = 10;
+  roundRect(ctx, 22, 22, 468, 672, 32);
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(212,175,90,0.35)';
+  ctx.lineWidth = 4;
+  roundRect(ctx, 48, 48, 416, 620, 24);
+  ctx.stroke();
+  for (let i = 0; i < 7; i++) {
+    ctx.strokeStyle = `rgba(212,175,90,${0.08 + (i % 2) * 0.06})`;
+    ctx.lineWidth = 2;
+    roundRect(ctx, 70 + i * 8, 70 + i * 10, 372 - i * 16, 576 - i * 20, 18);
+    ctx.stroke();
+  }
+  ctx.fillStyle = 'rgba(224,184,90,0.16)';
+  ctx.beginPath();
+  ctx.moveTo(256, 160);
+  ctx.lineTo(330, 260);
+  ctx.lineTo(256, 360);
+  ctx.lineTo(182, 260);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(224,184,90,0.55)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.fillStyle = '#e0b85a';
+  ctx.font = 'bold 54px Cinzel, serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('FB', 256, 260);
+  ctx.fillStyle = '#b9a888';
+  ctx.font = 'bold 22px Cinzel, serif';
+  ctx.fillText('FLAG', 256, 520);
+  ctx.fillText('BEARER', 256, 552);
+  cardBackTexture = new THREE.CanvasTexture(canvas2d);
+  cardBackTexture.colorSpace = THREE.SRGBColorSpace;
+  cardBackTexture.anisotropy = 4;
+  return cardBackTexture;
+}
+
 function makeCardMesh(card, zone, index, opts = {}) {
   const group = new THREE.Group();
-  const isSelected = selected && selected.minion && selected.minion.instanceId === card.instanceId;
+  const faceDown = !!opts.faceDown;
+  const isSelected = !faceDown && selected && selected.minion && selected.minion.instanceId === card.instanceId;
   const isAttacker = opts.attackerId && opts.attackerId === card.instanceId;
   const frozenShop = !!opts.frozenShop;
-  const square = isBoardZone(zone);
+  const square = isShortCardZone(zone);
   const { w, h } = cardSizeForZone(zone);
   let edgeColor = isSpell(card) ? 0x2a3a5c : 0x3a2f1c;
   if (card.golden) edgeColor = 0xd4af37;
   if (frozenShop) edgeColor = 0x6ec6ff;
   if (isSelected) edgeColor = 0x7ad0ff;
   if (isAttacker) edgeColor = 0xff6b5a;
-  const frontTex = buildCardFrontTexture(card, { frozenShop, isSelected, isAttacker, square });
+  if (faceDown) edgeColor = 0x2a3348;
+  const frontTex = faceDown ? getCardBackTexture() : buildCardFrontTexture(card, { frozenShop, isSelected, isAttacker, square });
   const edgeMat = new THREE.MeshStandardMaterial({
     color: edgeColor,
     roughness: 0.45,
-    metalness: card.golden ? 0.55 : 0.2
+    metalness: card.golden && !faceDown ? 0.55 : 0.2
   });
   const frontMat = new THREE.MeshStandardMaterial({
     map: frontTex,
-    roughness: 0.42,
-    metalness: card.golden ? 0.28 : 0.08
+    roughness: faceDown ? 0.55 : 0.42,
+    metalness: faceDown ? 0.12 : (card.golden ? 0.28 : 0.08)
   });
   const backMat = new THREE.MeshStandardMaterial({
-    color: 0x1a1424,
+    map: faceDown ? null : getCardBackTexture(),
+    color: faceDown ? 0x1a1424 : 0xffffff,
     roughness: 0.7,
     metalness: 0.05
   });
@@ -2405,17 +2581,19 @@ function makeCardMesh(card, zone, index, opts = {}) {
     glow.position.z = -0.01;
     group.add(glow);
   }
-  group.userData = { minion: card, zone, index, cardW: w, cardH: h };
+  group.userData = { minion: card, zone, index, cardW: w, cardH: h, faceDown };
   return group;
 }
 
-function layoutRow(items, z, y, spacing, rotX = -0.52) {
+function layoutRow(items, z, y, spacing, rotX = -0.68) {
   const start = -((items.length - 1) * spacing) / 2;
   items.forEach((mesh, i) => {
-    mesh.position.set(start + i * spacing, y, z);
+    const x = start + i * spacing;
+    mesh.position.set(x, y, z);
     mesh.rotation.x = rotX;
     mesh.rotation.y = 0;
     mesh.rotation.z = 0;
+    mesh.userData.baseX = x;
     mesh.userData.baseY = y;
     mesh.userData.baseZ = z;
     mesh.userData.baseRotX = rotX;
@@ -2424,55 +2602,311 @@ function layoutRow(items, z, y, spacing, rotX = -0.52) {
 }
 
 function clearCardHover() {
-  if (!hoveredCard) return;
-  hoveredCard.rotation.x = hoveredCard.userData.baseRotX ?? hoveredCard.rotation.x;
-  hoveredCard.rotation.y = hoveredCard.userData.baseRotY ?? 0;
-  hoveredCard.position.y = hoveredCard.userData.baseY ?? hoveredCard.position.y;
+  if (hoveredCard && hoveredCard.userData.zone !== 'hand') {
+    hoveredCard.rotation.x = hoveredCard.userData.baseRotX ?? hoveredCard.rotation.x;
+    hoveredCard.rotation.y = hoveredCard.userData.baseRotY ?? 0;
+    hoveredCard.position.y = hoveredCard.userData.baseY ?? hoveredCard.position.y;
+    hoveredCard.position.z = hoveredCard.userData.baseZ ?? hoveredCard.position.z;
+  }
   hoveredCard = null;
+  hideCardTooltip();
 }
 
 function applyCardHoverTilt(card, point) {
+  if (card.userData.zone === 'hand') return;
   const local = card.worldToLocal(point.clone());
   const halfW = (card.userData.cardW || CARD_W) * 0.5;
   const halfH = (card.userData.cardH || CARD_H) * 0.5;
   const tiltY = clamp(local.x / halfW, -1, 1) * 0.22;
   const tiltX = clamp(-local.y / halfH, -1, 1) * 0.14;
-  card.rotation.x = (card.userData.baseRotX ?? -0.52) + tiltX;
+  card.rotation.x = (card.userData.baseRotX ?? -0.68) + tiltX;
   card.rotation.y = tiltY;
   card.position.y = (card.userData.baseY ?? card.position.y) + 0.18;
 }
 
-function makeBoardSlotMesh(index) {
-  const group = new THREE.Group();
-  const body = new THREE.Mesh(
-    new THREE.BoxGeometry(BOARD_S, BOARD_S, CARD_D * 0.45),
-    new THREE.MeshStandardMaterial({
-      color: 0x152030,
-      transparent: true,
-      opacity: 0.5,
-      roughness: 0.92,
-      metalness: 0.08
-    })
-  );
-  body.castShadow = false;
-  body.receiveShadow = true;
-  group.add(body);
-  const edge = new THREE.Mesh(
-    new THREE.BoxGeometry(BOARD_S + 0.08, BOARD_S + 0.08, CARD_D * 0.2),
-    new THREE.MeshBasicMaterial({
-      color: 0x8a6a2a,
-      transparent: true,
-      opacity: 0.35,
-      depthWrite: false
-    })
-  );
-  edge.position.z = -0.02;
-  group.add(edge);
-  group.userData = { zone: 'boardSlot', index, cardW: BOARD_S, cardH: BOARD_S, isSlot: true };
-  return group;
+const handOverlayCenter = new THREE.Vector3();
+const handOverlayEdge = new THREE.Vector3();
+const handOverlayProj = new THREE.Vector3();
+const handOverlayQuat = new THREE.Quaternion();
+const handOverlayParentQuat = new THREE.Quaternion();
+
+function setHandMeshHiddenForOverlay(group, hidden) {
+  const body = group?.children?.[0];
+  if (!body?.material) return;
+  const mats = Array.isArray(body.material) ? body.material : [body.material];
+  for (const mat of mats) {
+    if (!mat) continue;
+    mat.transparent = true;
+    mat.opacity = hidden ? 0 : 1;
+    mat.depthWrite = !hidden;
+  }
+  for (let i = 1; i < group.children.length; i++) {
+    group.children[i].visible = !hidden;
+  }
 }
 
-function renderHandRow(player, z = 4.4, y = 2.15) {
+function projectWorldPointToScreen(v) {
+  handOverlayProj.copy(v).project(camera);
+  return {
+    x: (handOverlayProj.x * 0.5 + 0.5) * window.innerWidth,
+    y: (-handOverlayProj.y * 0.5 + 0.5) * window.innerHeight
+  };
+}
+
+function measureHandCardScreenSize(baseX, baseY, baseZ, baseRotX, cardW, cardH, parent) {
+  const halfW = cardW * 0.5;
+  const halfH = cardH * 0.5;
+  handOverlayCenter.set(baseX, baseY, baseZ);
+  if (parent) parent.localToWorld(handOverlayCenter);
+  handOverlayQuat.setFromEuler(new THREE.Euler(baseRotX, 0, 0, 'XYZ'));
+  if (parent) {
+    parent.getWorldQuaternion(handOverlayParentQuat);
+    handOverlayQuat.premultiply(handOverlayParentQuat);
+  }
+  const origin = projectWorldPointToScreen(handOverlayCenter);
+  handOverlayEdge.set(halfW, 0, 0).applyQuaternion(handOverlayQuat).add(handOverlayCenter);
+  const right = projectWorldPointToScreen(handOverlayEdge);
+  handOverlayEdge.set(0, halfH, 0).applyQuaternion(handOverlayQuat).add(handOverlayCenter);
+  const top = projectWorldPointToScreen(handOverlayEdge);
+  const screenW = Math.max(36, Math.hypot(right.x - origin.x, right.y - origin.y) * 2);
+  const screenH = Math.max(50, Math.hypot(top.x - origin.x, top.y - origin.y) * 2);
+  return {
+    cx: origin.x,
+    cy: origin.y,
+    left: origin.x - screenW * 0.5,
+    right: origin.x + screenW * 0.5,
+    top: origin.y - screenH * 0.5,
+    bottom: origin.y + screenH * 0.5,
+    width: screenW,
+    height: screenH
+  };
+}
+
+function getHandCardBaseScreenRect(mesh) {
+  return measureHandCardScreenSize(
+    mesh.userData.baseX ?? mesh.position.x,
+    mesh.userData.baseY ?? HAND_ROW_Y,
+    mesh.userData.baseZ ?? HAND_ROW_Z,
+    mesh.userData.baseRotX ?? HAND_ROW_ROTX,
+    mesh.userData.cardW || HAND_W,
+    mesh.userData.cardH || HAND_H,
+    mesh.parent
+  );
+}
+
+function getPlayerHandCardScreenSize() {
+  const mesh = cardMeshes.find(m => m.userData.zone === 'hand');
+  if (mesh) return getHandCardBaseScreenRect(mesh);
+  return measureHandCardScreenSize(0, HAND_ROW_Y, HAND_ROW_Z, HAND_ROW_ROTX, HAND_W, HAND_H, cardGroup);
+}
+
+function findHandCardAtPointer(clientX, clientY) {
+  let best = null;
+  let bestDx = Infinity;
+  for (const mesh of cardMeshes) {
+    if (mesh.userData.zone !== 'hand') continue;
+    const rect = getHandCardBaseScreenRect(mesh);
+    const hitH = rect.height * 0.7;
+    const top = rect.cy - hitH * 0.5;
+    const bottom = rect.cy + hitH * 0.5;
+    if (clientY < top || clientY > bottom) continue;
+    const dx = Math.abs(clientX - rect.cx);
+    if (dx < bestDx) {
+      bestDx = dx;
+      best = { mesh, halfW: rect.width * 0.42 };
+    }
+  }
+  if (!best || bestDx > best.halfW) return null;
+  return best.mesh;
+}
+
+function handCardArtKey(minion, isSelected) {
+  return [
+    minion.instanceId,
+    minion.atk,
+    minion.hp,
+    minion.cost,
+    minion.golden ? 1 : 0,
+    isSelected ? 1 : 0,
+    (minion.keywords || []).join(',')
+  ].join('|');
+}
+
+function rectsOverlap(a, b) {
+  return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+}
+
+function syncPortraitHandBlocking() {
+  const layer = document.getElementById('handOverlay');
+  const nodes = [
+    document.querySelector('#playerPortraitSlot .playerSide'),
+    document.getElementById('playerHeroFrame')
+  ];
+  for (const node of nodes) {
+    if (!node) continue;
+    if (!layer || !layer.classList.contains('show') || !layer.children.length) {
+      node.style.pointerEvents = 'auto';
+      continue;
+    }
+    const nr = node.getBoundingClientRect();
+    let overlap = false;
+    for (const el of layer.children) {
+      if (rectsOverlap(nr, el.getBoundingClientRect())) {
+        overlap = true;
+        break;
+      }
+    }
+    node.style.pointerEvents = overlap ? 'none' : 'auto';
+  }
+}
+
+function hideHandOverlay() {
+  const layer = document.getElementById('handOverlay');
+  if (layer) {
+    layer.classList.remove('show');
+    layer.innerHTML = '';
+  }
+  for (const mesh of cardMeshes) {
+    if (mesh.userData.zone === 'hand') setHandMeshHiddenForOverlay(mesh, false);
+  }
+  syncPortraitHandBlocking();
+}
+
+function hideEnemyHandOverlay() {
+  const layer = document.getElementById('enemyHandOverlay');
+  if (layer) {
+    layer.classList.remove('show');
+    layer.innerHTML = '';
+  }
+}
+
+function syncEnemyHandOverlay(cards) {
+  const layer = document.getElementById('enemyHandOverlay');
+  if (!layer) return;
+  const list = cards || [];
+  if (phase !== 'combat' || !list.length) {
+    hideEnemyHandOverlay();
+    return;
+  }
+  const size = getPlayerHandCardScreenSize();
+  const overlap = size.width * (1 - HAND_ROW_SPACING / HAND_W);
+  layer.style.setProperty('--enemy-hand-overlap', `${-overlap}px`);
+  const portrait = document.getElementById('stagePortraitSlot');
+  const portraitRect = portrait?.getBoundingClientRect();
+  if (portraitRect && portraitRect.height > 0) {
+    const gap = 10;
+    const top = Math.max(6, portraitRect.top - size.height - gap);
+    layer.style.left = `${portraitRect.left + portraitRect.width * 0.5}px`;
+    layer.style.top = `${top}px`;
+  } else {
+    layer.style.left = '50%';
+    layer.style.top = '10px';
+  }
+  layer.classList.add('show');
+  while (layer.children.length < list.length) {
+    const el = document.createElement('div');
+    el.className = 'enemyHandOverlayCard';
+    el.appendChild(document.createElement('canvas'));
+    layer.appendChild(el);
+  }
+  while (layer.children.length > list.length) {
+    layer.removeChild(layer.lastChild);
+  }
+  const back = getCardBackTexture().image;
+  list.forEach((_, i) => {
+    const el = layer.children[i];
+    const canvas = el.firstChild;
+    el.style.width = `${size.width}px`;
+    el.style.height = `${size.height}px`;
+    if (el.dataset.key !== 'back') {
+      el.dataset.key = 'back';
+      const ctx = canvas.getContext('2d');
+      canvas.width = back.width;
+      canvas.height = back.height;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(back, 0, 0);
+    }
+  });
+}
+
+function syncHandOverlayLayer() {
+  const layer = document.getElementById('handOverlay');
+  if (!layer) return;
+  const uiHidden = document.getElementById('ui')?.classList.contains('hidden');
+  const handMeshes = cardMeshes.filter(m => m.userData.zone === 'hand');
+  if (uiHidden || !handMeshes.length) {
+    hideHandOverlay();
+    return;
+  }
+  layer.classList.add('show');
+  while (layer.children.length < handMeshes.length) {
+    const el = document.createElement('div');
+    el.className = 'handOverlayCard';
+    el.appendChild(document.createElement('canvas'));
+    layer.appendChild(el);
+  }
+  while (layer.children.length > handMeshes.length) {
+    layer.removeChild(layer.lastChild);
+  }
+  handMeshes.forEach((mesh, i) => {
+    const el = layer.children[i];
+    const canvas = el.firstChild;
+    const minion = mesh.userData.minion;
+    const isSelected = !!(selected && selected.minion && selected.minion.instanceId === minion.instanceId);
+    const key = handCardArtKey(minion, isSelected);
+    if (el.dataset.key !== key) {
+      el.dataset.key = key;
+      const tex = buildCardFrontTexture(minion, { isSelected, square: false });
+      const src = tex.image;
+      const ctx = canvas.getContext('2d');
+      canvas.width = src.width;
+      canvas.height = src.height;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(src, 0, 0);
+      tex.dispose();
+    }
+    const baseRect = getHandCardBaseScreenRect(mesh);
+    mesh.getWorldPosition(handOverlayCenter);
+    const center = projectWorldPointToScreen(handOverlayCenter);
+    el.style.left = `${center.x}px`;
+    el.style.top = `${center.y}px`;
+    el.style.width = `${baseRect.width}px`;
+    el.style.height = `${baseRect.height}px`;
+    const hoverT = mesh.userData.hoverT ?? 0;
+    el.classList.toggle('raised', hoverT > 0.2);
+    el.style.zIndex = String(1 + Math.round(hoverT * 12));
+    setHandMeshHiddenForOverlay(mesh, true);
+  });
+  syncPortraitHandBlocking();
+}
+
+function updateHandHoverAnimation() {
+  const draggingId = dragState?.dragging ? dragState.instanceId : null;
+  for (const mesh of cardMeshes) {
+    if (mesh.userData.zone !== 'hand') continue;
+    if (draggingId && mesh.userData.minion?.instanceId === draggingId) {
+      mesh.userData.hoverT = 0;
+      continue;
+    }
+    const raised = hoveredCard === mesh;
+    const target = raised ? 1 : 0;
+    const prev = mesh.userData.hoverT ?? 0;
+    const next = prev + (target - prev) * 0.2;
+    mesh.userData.hoverT = Math.abs(next - target) < 0.002 ? target : next;
+    const t = mesh.userData.hoverT;
+    const ease = t * t * (3 - 2 * t);
+    if (!dragState?.dragging || mesh.userData.minion?.instanceId !== dragState.instanceId) {
+      mesh.position.x = mesh.userData.baseX ?? mesh.position.x;
+      mesh.position.y = (mesh.userData.baseY ?? HAND_ROW_Y) + ease * 0.7;
+      mesh.position.z = (mesh.userData.baseZ ?? HAND_ROW_Z) - ease * 0.95;
+      mesh.rotation.x = (mesh.userData.baseRotX ?? HAND_ROW_ROTX) + ease * 0.08;
+      mesh.rotation.y = 0;
+    }
+  }
+  syncHandOverlayLayer();
+}
+
+function renderHandRow(player, z = HAND_ROW_Z, y = HAND_ROW_Y) {
   const handMeshes = [];
   player.hand.forEach((m, i) => {
     const mesh = makeCardMesh(m, 'hand', i);
@@ -2480,7 +2914,11 @@ function renderHandRow(player, z = 4.4, y = 2.15) {
     cardMeshes.push(mesh);
     cardGroup.add(mesh);
   });
-  layoutRow(handMeshes, z, y, 2.3, -0.3);
+  layoutRow(handMeshes, z, y, HAND_ROW_SPACING, HAND_ROW_ROTX);
+}
+
+function renderEnemyHandRow(cards) {
+  syncEnemyHandOverlay(cards);
 }
 
 function renderBoardRow(cards, zone, z, y, opts = {}) {
@@ -2491,18 +2929,11 @@ function renderBoardRow(cards, zone, z, y, opts = {}) {
     cardMeshes.push(mesh);
     cardGroup.add(mesh);
   });
-  if (zone === 'board' && phase === 'recruit' && opts.showSlots !== false) {
-    for (let i = cards.length; i < MAX_BOARD; i++) {
-      const slot = makeBoardSlotMesh(i);
-      meshes.push(slot);
-      cardMeshes.push(slot);
-      cardGroup.add(slot);
-    }
-  }
-  layoutRow(meshes, z, y, 2.55, -0.42);
+  layoutRow(meshes, z, y, opts.spacing ?? 2.55, opts.rotX ?? -0.64);
 }
 
 function renderCards() {
+  if (dragState?.dragging) return;
   clearCardHover();
   while (cardGroup.children.length) cardGroup.remove(cardGroup.children[0]);
   cardMeshes.length = 0;
@@ -2516,21 +2947,31 @@ function renderCards() {
     const bIsYou = !!(combatAnim.b && (combatAnim.b.isHuman || combatAnim.b.id === p.id));
     let mine;
     let theirs;
+    let foe = null;
     if (aIsYou) {
       mine = boardA;
       theirs = boardB;
+      foe = combatAnim.b;
     } else if (bIsYou) {
       mine = boardB;
       theirs = boardA;
+      foe = combatAnim.a;
     } else {
       mine = boardA;
       theirs = boardB;
+      foe = combatAnim.b;
     }
-    renderBoardRow(theirs, 'enemy', -3.8, 2.05, { attackerId: combatAnim.attackerId, showSlots: false });
-    renderBoardRow(mine, 'board', 0.2, 1.95, { attackerId: combatAnim.attackerId, showSlots: false });
-    renderHandRow(p, 4.4, 2.1);
+    renderBoardRow(theirs, 'enemy', TAVERN_ROW_Z, TAVERN_ROW_Y, {
+      attackerId: combatAnim.attackerId,
+      spacing: TAVERN_ROW_SPACING,
+      rotX: TAVERN_ROW_ROTX
+    });
+    renderBoardRow(mine, 'board', 3.75, 1.9, { attackerId: combatAnim.attackerId });
+    renderHandRow(p);
+    renderEnemyHandRow(foe?.hand || []);
     return;
   }
+  hideEnemyHandOverlay();
   const shopMeshes = [];
   p.shop.forEach((m, i) => {
     if (!m) return;
@@ -2539,125 +2980,396 @@ function renderCards() {
     cardMeshes.push(mesh);
     cardGroup.add(mesh);
   });
-  layoutRow(shopMeshes, -4.5, p.frozen ? 2.3 : 2.2, 2.65, -0.48);
-  renderBoardRow(p.board, 'board', 0.15, 1.95);
-  renderHandRow(p, 4.4, 2.15);
+  layoutRow(shopMeshes, TAVERN_ROW_Z, p.frozen ? TAVERN_ROW_Y_FROZEN : TAVERN_ROW_Y, TAVERN_ROW_SPACING, TAVERN_ROW_ROTX);
+  renderBoardRow(p.board, 'board', 3.7, 1.9);
+  renderHandRow(p);
 }
 
-function showTooltipFor() {}
+let tooltipCardId = null;
+
+function hideCardTooltip() {
+  tooltipCardId = null;
+  const tip = document.getElementById('cardTooltip');
+  if (tip) tip.classList.remove('show');
+}
+
+function positionCardTooltip(clientX, clientY) {
+  const tip = document.getElementById('cardTooltip');
+  if (!tip || !tip.classList.contains('show')) return;
+  const pad = 12;
+  const tw = tip.offsetWidth || 210;
+  const th = tip.offsetHeight || 294;
+  let left = clientX - tw - 72;
+  let top = clientY - th * 0.55;
+  if (left < pad) left = pad;
+  if (top < pad) top = pad;
+  if (top + th > window.innerHeight - pad) top = window.innerHeight - th - pad;
+  tip.style.left = `${left}px`;
+  tip.style.top = `${top}px`;
+}
+
+function showTooltipFor(minion, mesh, clientX, clientY) {
+  const tip = document.getElementById('cardTooltip');
+  if (!tip) return;
+  if (!minion || !mesh || !isShortCardZone(mesh.userData.zone) || mesh.userData.faceDown) {
+    hideCardTooltip();
+    return;
+  }
+  const id = minion.instanceId;
+  if (tooltipCardId !== id) {
+    tooltipCardId = id;
+    const frozenShop = mesh.userData.zone === 'shop' && !!human()?.frozen;
+    const isSelected = !!(selected && selected.minion && selected.minion.instanceId === minion.instanceId);
+    const tex = buildCardFrontTexture(minion, { frozenShop, isSelected, square: false });
+    const src = tex.image;
+    const canvas = document.getElementById('cardTooltipCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = src.width;
+    canvas.height = src.height;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(src, 0, 0);
+    tex.dispose();
+    tip.classList.add('show');
+  }
+  positionCardTooltip(clientX, clientY);
+}
+
+let dragState = null;
+const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+const dragHit = new THREE.Vector3();
 
 function resolveCardHit(hits) {
   if (!hits.length) return null;
   let obj = hits[0].object;
-  while (obj && !(obj.userData && (obj.userData.minion || obj.userData.isSlot))) obj = obj.parent;
+  while (obj && !(obj.userData && obj.userData.minion)) obj = obj.parent;
   return obj || null;
 }
 
-function tryPlaySelectedFromHand(player, boardIndex) {
-  if (!selected || selected.zone !== 'hand') return false;
-  const handIdx = player.hand.findIndex(m => m.instanceId === selected.minion.instanceId);
-  if (handIdx < 0) {
-    selected = null;
-    return false;
-  }
-  const card = player.hand[handIdx];
-  if (isSpell(card)) {
-    if (playSpell(player, handIdx)) {
-      log(`Cast ${card.name}.`);
-      selected = null;
-      return true;
-    }
-    return false;
-  }
-  if (playMinion(player, handIdx, boardIndex)) {
-    selected = null;
-    return true;
-  }
+function clearSellTargetHighlight() {
+  const bob = document.getElementById('tavernMasterFrame');
+  bob.classList.remove('sellTarget', 'sellHot');
+}
+
+function isPointerOverBob(clientX, clientY) {
+  const el = document.elementFromPoint(clientX, clientY);
+  return !!(el && el.closest && el.closest('#tavernMasterFrame'));
+}
+
+function isPointerOverPlayerPortrait(clientX, clientY) {
+  const el = document.elementFromPoint(clientX, clientY);
+  return !!(el && el.closest && el.closest('#playerPortraitSlot'));
+}
+
+function isDropInHandBuyZone(mesh, clientX, clientY) {
+  if (mesh && mesh.position.z >= 5.6) return true;
+  if (isPointerOverPlayerPortrait(clientX, clientY)) return true;
   return false;
 }
 
-function onPointerMove(e) {
-  pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-  pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
-  raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObjects(cardMeshes, true);
-  const obj = resolveCardHit(hits);
-  if (!obj || obj.userData.isSlot) {
-    clearCardHover();
-    showTooltipFor(null);
-    return;
-  }
-  if (hoveredCard !== obj) {
-    clearCardHover();
-    hoveredCard = obj;
-  }
-  applyCardHoverTilt(obj, hits[0].point);
-  showTooltipFor(obj.userData.minion);
+function isDropInBoardPlayZone(mesh) {
+  if (!mesh) return false;
+  const z = mesh.position.z;
+  return z > -2.4 && z < 5.6;
 }
 
-function onPointerDown(e) {
-  if (phase !== 'recruit' || pendingDiscover) return;
-  pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-  pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+function findDragMesh() {
+  if (!dragState) return null;
+  return cardMeshes.find(m => m.userData?.minion?.instanceId === dragState.instanceId) || null;
+}
+
+function resolveBoardDropIndex(clientX, clientY, draggedInstanceId, mesh, player) {
+  pointer.x = (clientX / window.innerWidth) * 2 - 1;
+  pointer.y = -(clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
   const hits = raycaster.intersectObjects(cardMeshes, true);
-  const obj = resolveCardHit(hits);
-  if (!obj) { selected = null; syncUI(); renderCards(); return; }
-  const { minion, zone, index } = obj.userData;
-  const p = human();
-  if (zone === 'shop') {
-    if (buyFromShop(p, index)) {
-      log(isSpell(minion) ? `Bought spell ${minion.name} (${minion.cost} gold) into Hand.` : `Bought ${minion.name} into Hand.`);
-      showToast(`Added ${minion.name} to Hand.`);
-      selected = null;
+  for (const hit of hits) {
+    let obj = hit.object;
+    while (obj && !(obj.userData && obj.userData.minion)) obj = obj.parent;
+    if (!obj) continue;
+    if (obj.userData.minion?.instanceId === draggedInstanceId) continue;
+    if (obj.userData.zone === 'board') return obj.userData.index;
+  }
+  if (mesh) {
+    const targets = cardMeshes
+      .filter(m => m.userData.zone === 'board' && m.userData.minion?.instanceId !== draggedInstanceId)
+      .slice()
+      .sort((a, b) => (a.userData.baseX ?? a.position.x) - (b.userData.baseX ?? b.position.x));
+    if (!targets.length) return player.board.length;
+    for (const target of targets) {
+      const tx = target.userData.baseX ?? target.position.x;
+      if (mesh.position.x < tx) return target.userData.index;
     }
+    return targets[targets.length - 1].userData.index + 1;
+  }
+  return player.board.length;
+}
+
+function moveBoardCard(player, fromIndex, toIndex) {
+  if (!player || fromIndex < 0 || fromIndex >= player.board.length) return false;
+  const dest = clamp(toIndex, 0, player.board.length);
+  if (dest === fromIndex || dest === fromIndex + 1) return false;
+  const [card] = player.board.splice(fromIndex, 1);
+  let insertAt = dest;
+  if (insertAt > fromIndex) insertAt--;
+  player.board.splice(insertAt, 0, card);
+  return true;
+}
+
+function updateDragCardPosition(clientX, clientY) {
+  const mesh = findDragMesh();
+  if (!mesh) return;
+  pointer.x = (clientX / window.innerWidth) * 2 - 1;
+  pointer.y = -(clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  dragPlane.constant = -(mesh.userData.baseY ?? 2);
+  if (raycaster.ray.intersectPlane(dragPlane, dragHit)) {
+    mesh.position.x = dragHit.x;
+    mesh.position.z = dragHit.z;
+    mesh.position.y = (mesh.userData.baseY ?? 2) + 0.45;
+    mesh.rotation.x = mesh.userData.baseRotX ?? -0.64;
+    mesh.rotation.y = 0;
+  }
+}
+
+function endCardDrag(clientX, clientY) {
+  if (!dragState) return;
+  const p = human();
+  const wasDragging = dragState.dragging;
+  const zone = dragState.zone;
+  const index = dragState.index;
+  const minion = dragState.minion;
+  const mesh = findDragMesh();
+  clearSellTargetHighlight();
+  dragState = null;
+  if (wasDragging) {
+    const inBuyZone = isDropInHandBuyZone(mesh, clientX, clientY);
+    const inBoardZone = isDropInBoardPlayZone(mesh);
+    if (mesh) {
+      mesh.position.x = mesh.userData.baseX ?? mesh.position.x;
+      mesh.position.y = mesh.userData.baseY ?? mesh.position.y;
+      mesh.position.z = mesh.userData.baseZ ?? mesh.position.z;
+      mesh.rotation.x = mesh.userData.baseRotX ?? mesh.rotation.x;
+      mesh.rotation.y = mesh.userData.baseRotY ?? 0;
+    }
+    if (p && zone === 'shop') {
+      const shopIdx = p.shop.findIndex(m => m && m.instanceId === minion.instanceId);
+      if (shopIdx >= 0 && inBuyZone) {
+        if (buyFromShop(p, shopIdx)) {
+          log(isSpell(minion) ? `Bought spell ${minion.name} (${minion.cost} gold) into Hand.` : `Bought ${minion.name} into Hand.`);
+          selected = null;
+          syncUI();
+          renderCards();
+          return;
+        }
+      } else if (shopIdx >= 0) {
+        logHint('Drag tavern cards into your Hand to buy.');
+      }
+      syncUI();
+      renderCards();
+      return;
+    }
+    if (p && (zone === 'hand' || zone === 'board') && isPointerOverBob(clientX, clientY)) {
+      const arr = zone === 'board' ? p.board : p.hand;
+      const idx = arr.findIndex(m => m && m.instanceId === minion.instanceId);
+      if (idx >= 0 && sellMinion(p, zone, idx)) {
+        log(`Sold ${minion.name} to Bartender Bob for 1 gold.`);
+        selected = null;
+        syncUI();
+        renderCards();
+        return;
+      }
+    }
+    if (p && zone === 'hand' && inBoardZone) {
+      const handIdx = p.hand.findIndex(m => m && m.instanceId === minion.instanceId);
+      if (handIdx >= 0) {
+        if (isSpell(minion)) {
+          if (playSpell(p, handIdx)) {
+            log(`Cast ${minion.name}.`);
+            selected = null;
+          }
+          syncUI();
+          renderCards();
+          return;
+        }
+        const boardIndex = resolveBoardDropIndex(clientX, clientY, minion.instanceId, mesh, p);
+        if (playMinion(p, handIdx, boardIndex)) selected = null;
+        syncUI();
+        renderCards();
+        return;
+      }
+    }
+    if (p && zone === 'board' && inBoardZone && !isPointerOverBob(clientX, clientY)) {
+      const fromIdx = p.board.findIndex(m => m && m.instanceId === minion.instanceId);
+      if (fromIdx >= 0) {
+        const toIdx = resolveBoardDropIndex(clientX, clientY, minion.instanceId, mesh, p);
+        if (moveBoardCard(p, fromIdx, toIdx)) {
+          selected = null;
+          log('Reordered board.');
+        }
+      }
+      syncUI();
+      renderCards();
+      return;
+    }
+    if (p && zone === 'hand' && !isPointerOverBob(clientX, clientY) && !inBoardZone) {
+      logHint(isSpell(minion) ? 'Drop on the Board to cast.' : 'Drop on the Board to play.');
+    }
+    if (p && zone === 'board' && !isPointerOverBob(clientX, clientY) && !inBoardZone) {
+      logHint('Drop on the Board to reorder, or on Bob to sell.');
+    }
+    syncUI();
+    renderCards();
+    return;
+  }
+  handleCardClick(zone, index, minion);
+}
+
+function handleCardClick(zone, index, minion) {
+  const p = human();
+  if (!p || !p.alive) return;
+  if (zone === 'shop') {
+    logHint('Drag tavern cards into your Hand to buy.');
+    return;
   } else if (zone === 'hand') {
-    if (selected && selected.zone === 'hand' && selected.minion.instanceId === minion.instanceId) {
-      if (isSpell(minion)) {
+    if (isSpell(minion)) {
+      if (selected && selected.zone === 'hand' && selected.minion.instanceId === minion.instanceId) {
         if (playSpell(p, index)) {
           log(`Cast ${minion.name}.`);
           selected = null;
         }
       } else {
         selected = { zone: 'hand', index, minion };
-        showToast('Click the Board to play this minion.');
+        logHint('Click again to cast, or drag onto the Board.');
       }
     } else {
       selected = { zone: 'hand', index, minion };
-      if (!isSpell(minion)) showToast('Selected from Hand — click Board to play.');
+      logHint('Drag onto the Board to play.');
     }
-  } else if (zone === 'boardSlot') {
-    tryPlaySelectedFromHand(p, index);
   } else if (zone === 'board') {
-    if (selected && selected.zone === 'hand') {
-      tryPlaySelectedFromHand(p, index);
-    } else if (selected && selected.zone === 'board' && selected.index !== index) {
-      const tmp = p.board[selected.index];
-      p.board[selected.index] = p.board[index];
-      p.board[index] = tmp;
-      selected = { zone: 'board', index, minion: p.board[index] };
-      log('Reordered board.');
-    } else {
-      selected = { zone: 'board', index, minion };
-    }
+    selected = null;
+    logHint('Drag on the Board to reorder.');
   }
   syncUI();
   renderCards();
 }
 
+function onPointerMove(e) {
+  if (dragState) {
+    const dx = e.clientX - dragState.startX;
+    const dy = e.clientY - dragState.startY;
+    if (!dragState.dragging && Math.hypot(dx, dy) > 8) {
+      dragState.dragging = true;
+      clearCardHover();
+      if (dragState.zone === 'shop') {
+        logHint('Drop in your Hand to buy.');
+      } else if (dragState.zone === 'hand') {
+        document.getElementById('tavernMasterFrame').classList.add('sellTarget');
+        logHint(isSpell(dragState.minion) ? 'Drop on Board to cast, or on Bob to sell.' : 'Drop on Board to play, or on Bob to sell.');
+      } else if (dragState.zone === 'board') {
+        document.getElementById('tavernMasterFrame').classList.add('sellTarget');
+        logHint('Drop on the Board to reorder, or on Bob to sell.');
+      } else {
+        document.getElementById('tavernMasterFrame').classList.add('sellTarget');
+        logHint('Drop on Bartender Bob to sell (+1 Gold).');
+      }
+    }
+    if (dragState.dragging) {
+      updateDragCardPosition(e.clientX, e.clientY);
+      if (dragState.zone === 'hand' || dragState.zone === 'board') {
+        document.getElementById('tavernMasterFrame').classList.toggle('sellHot', isPointerOverBob(e.clientX, e.clientY));
+      }
+      return;
+    }
+  }
+  const handTarget = findHandCardAtPointer(e.clientX, e.clientY);
+  let obj = handTarget;
+  let hitPoint = null;
+  if (!obj) {
+    pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    const hits = raycaster.intersectObjects(cardMeshes, true);
+    obj = resolveCardHit(hits);
+    if (obj && obj.userData.zone === 'hand') obj = null;
+    if (obj) hitPoint = hits[0].point;
+  }
+  if (!obj || obj.userData.faceDown || obj.userData.zone === 'enemyHand') {
+    clearCardHover();
+    return;
+  }
+  if (hoveredCard !== obj) {
+    if (hoveredCard && hoveredCard.userData.zone !== 'hand') {
+      hoveredCard.rotation.x = hoveredCard.userData.baseRotX ?? hoveredCard.rotation.x;
+      hoveredCard.rotation.y = hoveredCard.userData.baseRotY ?? 0;
+      hoveredCard.position.y = hoveredCard.userData.baseY ?? hoveredCard.position.y;
+    }
+    hideCardTooltip();
+    hoveredCard = obj;
+  }
+  if (hitPoint) applyCardHoverTilt(obj, hitPoint);
+  showTooltipFor(obj.userData.minion, obj, e.clientX, e.clientY);
+}
+
+function onPointerDown(e) {
+  const you = human();
+  if (phase !== 'recruit' || pendingDiscover || !you || !you.alive) return;
+  if (e.button != null && e.button !== 0) return;
+  let obj = findHandCardAtPointer(e.clientX, e.clientY);
+  if (!obj) {
+    pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    const hits = raycaster.intersectObjects(cardMeshes, true);
+    obj = resolveCardHit(hits);
+    if (obj && obj.userData.zone === 'hand') obj = findHandCardAtPointer(e.clientX, e.clientY);
+  }
+  if (!obj) { selected = null; syncUI(); renderCards(); return; }
+  const { minion, zone, index } = obj.userData;
+  if ((zone === 'hand' || zone === 'board' || zone === 'shop') && minion) {
+    dragState = {
+      zone,
+      index,
+      minion,
+      instanceId: minion.instanceId,
+      startX: e.clientX,
+      startY: e.clientY,
+      dragging: false
+    };
+    try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+    return;
+  }
+  handleCardClick(zone, index, minion);
+}
+
+function onPointerUp(e) {
+  if (!dragState) return;
+  try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+  endCardDrag(e.clientX, e.clientY);
+}
+
+function showTitleScreen() {
+  phase = 'title';
+  setGameUiVisible(false);
+  document.getElementById('overlay').classList.remove('hidden');
+  const box = document.getElementById('overlayContent');
+  box.innerHTML = `<h1 class="titleLogo">Flag Bearer</h1><button class="primary beginBtn" id="btnBegin">Begin</button>`;
+  document.getElementById('btnBegin').onclick = () => startHeroDraft();
+}
+
 function startHeroDraft() {
   phase = 'draft';
-  document.getElementById('ui').classList.add('hidden');
+  setGameUiVisible(false);
   document.getElementById('overlay').classList.remove('hidden');
   const heroes = HERO_DB.slice().sort(() => Math.random() - 0.5);
   const humanOptions = heroes.slice(0, 2);
   const box = document.getElementById('overlayContent');
-  box.innerHTML = `<h1>Tavern Legends</h1><p>Choose your hero. You will face seven AI opponents in Bob's Tavern.</p><div class="heroGrid"></div>`;
+  box.innerHTML = `<h1 class="chooseLord">Choose your Lord</h1><div class="heroGrid"></div>`;
   const grid = box.querySelector('.heroGrid');
   humanOptions.forEach(hero => {
     const el = document.createElement('div');
     el.className = 'heroCard';
-    el.innerHTML = `<h3>${hero.name}</h3><div class="meta">Armor ${hero.armor}</div><div class="power"><strong>${hero.power.name}</strong> (${hero.power.cost} Gold)<br>${hero.power.text}</div>`;
+    const art = heroPortraitArt(hero);
+    el.innerHTML = `<img class="portrait" src="${art}" alt="${escapeHtml(hero.name)}"><h3>${escapeHtml(hero.name)}</h3><div class="meta">Armor ${hero.armor}</div><div class="power"><strong>${escapeHtml(hero.power.name)}</strong> (${hero.power.cost} Gold)<br>${escapeHtml(hero.power.text)}</div>`;
     el.onclick = () => beginMatch(hero, heroes);
     grid.appendChild(el);
   });
@@ -2685,44 +3397,41 @@ function beginMatch(humanHero, allHeroes) {
   closeCodex();
   renderHistoryPanel();
   document.getElementById('overlay').classList.add('hidden');
-  document.getElementById('ui').classList.remove('hidden');
+  setGameUiVisible(true);
   log('Match started. Buy minions, upgrade your tavern, and survive.');
   beginRecruitPhase();
 }
 
 document.getElementById('btnRefresh').onclick = () => {
   const p = human();
-  if (p.gold < REFRESH_COST) { showToast('Not enough gold to refresh.'); return; }
+  if (p.gold < REFRESH_COST) { log('Not enough gold to refresh.'); return; }
   if (refreshShop(p)) { log('Refreshed the Tavern.'); syncUI(); renderCards(); }
 };
 document.getElementById('btnUpgrade').onclick = () => {
   const p = human();
-  if (p.tavernTier >= 6) { showToast('Already at max tavern tier.'); return; }
-  if (p.gold < p.upgradeCost) { showToast(`Need ${p.upgradeCost} gold to upgrade.`); return; }
+  if (p.tavernTier >= 6) { log('Already at max tavern tier.'); return; }
+  if (p.gold < p.upgradeCost) { log(`Need ${p.upgradeCost} gold to upgrade.`); return; }
   if (upgradeTavern(p)) { syncUI(); renderCards(); }
 };
 document.getElementById('btnFreeze').onclick = () => {
   const p = human();
   p.frozen = !p.frozen;
-  log(p.frozen ? 'Tavern frozen.' : 'Tavern unfrozen.');
-  showToast(p.frozen ? 'Tavern frozen for next turn.' : 'Tavern unfrozen.');
+  log(p.frozen ? 'Tavern frozen for next turn.' : 'Tavern unfrozen.');
   syncUI();
   renderCards();
 };
 document.getElementById('btnHeroPower').onclick = () => {
   const p = human();
-  if (p.heroPowerUses <= 0) { showToast('Hero power already used.'); return; }
-  if (p.gold < p.hero.power.cost) { showToast('Not enough gold for hero power.'); return; }
+  if (p.heroPowerUses <= 0) { log('Lord power already used.'); return; }
+  if (p.gold < p.hero.power.cost) { log('Not enough gold for Lord power.'); return; }
   if (useHeroPower(p)) { syncUI(); renderCards(); }
 };
 const heroPowerBtn = document.getElementById('btnHeroPower');
-heroPowerBtn.onmouseenter = (e) => showHeroPowerHover(e.clientX, e.clientY);
-heroPowerBtn.onmousemove = (e) => {
-  if (document.getElementById('heroPowerHover').classList.contains('show')) {
-    showHeroPowerHover(e.clientX, e.clientY);
-  }
-};
-heroPowerBtn.onmouseleave = () => hideHeroPowerHover();
+heroPowerBtn.addEventListener('mouseenter', (e) => showHeroPowerHover(e.clientX, e.clientY));
+heroPowerBtn.addEventListener('mousemove', (e) => {
+  if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
+});
+heroPowerBtn.addEventListener('mouseleave', () => hideOppHover());
 document.getElementById('btnHistory').onclick = () => setHistoryOpen(!historyOpen);
 const playerHeroFrame = document.getElementById('playerHeroFrame');
 playerHeroFrame.addEventListener('mouseenter', (e) => showPlayerHeroFrameHover(e.clientX, e.clientY));
@@ -2757,6 +3466,10 @@ document.getElementById('codexTabUnits').onclick = () => {
   codexTab = 'units';
   renderCodexBody();
 };
+document.getElementById('codexTabSpells').onclick = () => {
+  codexTab = 'spells';
+  renderCodexBody();
+};
 document.getElementById('codexTabHeroes').onclick = () => {
   codexTab = 'heroes';
   renderCodexBody();
@@ -2764,43 +3477,24 @@ document.getElementById('codexTabHeroes').onclick = () => {
 document.getElementById('codexOverlay').addEventListener('click', (e) => {
   if (e.target.id === 'codexOverlay') closeCodex();
 });
-document.getElementById('btnSell').onclick = () => {
-  const p = human();
-  if (!selected || (selected.zone !== 'hand' && selected.zone !== 'board')) {
-    showToast('Select a hand or board minion to sell.');
-    return;
-  }
-  const arr = selected.zone === 'board' ? p.board : p.hand;
-  const idx = arr.findIndex(m => m.instanceId === selected.minion.instanceId);
-  if (idx < 0) { selected = null; syncUI(); return; }
-  const name = selected.minion.name;
-  if (sellMinion(p, selected.zone, idx)) {
-    log(`Sold ${name}.`);
-    showToast(`Sold ${name} for 1 gold.`);
-    selected = null;
-    syncUI();
-    renderCards();
-  }
-};
 document.getElementById('btnClosePeek').onclick = () => closePeek();
 document.getElementById('btnEnd').onclick = async () => {
   if (phase !== 'recruit' || pendingDiscover) return;
   const you = human();
-  const unplayed = you ? you.hand.filter(c => !isSpell(c)).length : 0;
+  if (!you || !you.alive) return;
+  const unplayed = you.hand.filter(c => !isSpell(c)).length;
   if (unplayed > 0) {
-    showToast(`${unplayed} minion(s) left in Hand — only Board minions fight.`);
-    await sleep(850);
+    log(`${unplayed} minion(s) left in Hand — only Board minions fight.`);
   }
   phase = 'ending';
   setControlsEnabled(false);
   closePeek();
-  document.getElementById('phaseRow').classList.add('show');
-  document.getElementById('phaseBanner').textContent = 'Opponents recruiting...';
-  document.getElementById('combatLog').textContent = '';
-  document.getElementById('tavernControls').classList.remove('show');
+  document.getElementById('phaseRow').classList.remove('show');
+  document.getElementById('phaseBanner').textContent = '';
+  document.querySelectorAll('.tavernSide').forEach(el => el.classList.remove('show'));
   document.getElementById('tavernMasterFrame').classList.remove('show');
   document.getElementById('combatEnemyFrame').classList.remove('show');
-  showToast('AI opponents taking their turns...');
+  log('AI opponents taking their turns...');
   await sleep(350);
   for (const p of state.players) {
     if (!p.alive || p.isHuman) continue;
@@ -2812,6 +3506,8 @@ document.getElementById('btnEnd').onclick = async () => {
 
 window.addEventListener('pointermove', onPointerMove);
 window.addEventListener('pointerdown', onPointerDown);
+window.addEventListener('pointerup', onPointerUp);
+window.addEventListener('pointercancel', onPointerUp);
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -2820,10 +3516,11 @@ window.addEventListener('resize', () => {
 
 function animate() {
   requestAnimationFrame(animate);
+  updateHandHoverAnimation();
   if (combatAnim) {
     combatAnim.t = (combatAnim.t || 0) + 0.08;
     cardGroup.children.forEach((c) => {
-      if (c === hoveredCard) return;
+      if (c === hoveredCard || c.userData.zone === 'hand') return;
       const baseY = c.userData.baseY ?? c.position.y;
       const baseZ = c.userData.baseZ ?? c.position.z;
       if (combatAnim.attackerId && c.userData.minion?.instanceId === combatAnim.attackerId) {
@@ -2839,7 +3536,7 @@ function animate() {
 }
 
 animate();
-startHeroDraft();
+showTitleScreen();
 </script>
 </body>
 </html>
