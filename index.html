@@ -12,14 +12,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #ui{position:fixed;inset:0;pointer-events:none;z-index:10;display:flex;flex-direction:column}
 #ui>*{pointer-events:none}
 #ui button,#ui .opp,#ui #opponents,#ui #peekPanel,#ui #topRightActions,#ui #historyPanel,#ui #goldPanel,#ui #btnEnd,#ui #tavernMasterFrame,#ui #combatEnemyFrame,#ui #stagePortraitSlot,#ui .tavernSide{pointer-events:auto}
-#playerPortraitSlot{position:fixed;left:50%;bottom:168px;transform:translateX(-50%);z-index:12;width:102px;height:102px;pointer-events:none}
+#playerPortraitSlot{position:fixed;left:50%;bottom:158px;transform:translateX(-50%);z-index:12;width:104px;height:136px;pointer-events:none}
 #playerPortraitSlot .playerSide,#playerPortraitSlot #playerHeroFrame{pointer-events:auto}
 #handOverlay{position:fixed;inset:0;z-index:16;pointer-events:none;display:none}
 #handOverlay.show{display:block}
 .handOverlayCard{position:absolute;transform:translate(-50%,-50%);transform-origin:center center;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));z-index:1}
 .handOverlayCard.raised{filter:drop-shadow(0 16px 28px rgba(0,0,0,.55))}
 .handOverlayCard canvas{display:block;width:100%;height:100%;border-radius:12px;border:1px solid rgba(212,175,90,.4);background:#0c1018}
-#enemyHandOverlay{position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:16;display:none;pointer-events:none;flex-direction:row;align-items:flex-end;justify-content:center}
+#enemyHandOverlay{position:fixed;left:50%;top:0;transform:translate(-50%,-50%);z-index:16;display:none;pointer-events:none;flex-direction:row;align-items:center;justify-content:center}
 #enemyHandOverlay.show{display:flex}
 .enemyHandOverlayCard{flex:0 0 auto;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));margin-left:0}
 .enemyHandOverlayCard + .enemyHandOverlayCard{margin-left:var(--enemy-hand-overlap, -40px)}
@@ -62,16 +62,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 .codexSpellArt .tag{font-family:Cinzel,serif;font-size:11px;letter-spacing:.08em;color:#9fd8ff}
 .codexSpellArt .cost{font-family:Cinzel,serif;font-size:36px;font-weight:800;color:#e0b85a;line-height:1}
 .codexSpellArt .costLabel{font-size:11px;font-weight:700;color:#b9a888;letter-spacing:.06em}
-#opponents{position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:14;display:flex;flex-direction:column;gap:10px;align-items:center;max-height:min(78vh,720px);overflow-y:auto;overflow-x:visible;padding:6px 8px;pointer-events:auto;scrollbar-width:thin}
-.opp{pointer-events:auto;cursor:pointer;position:relative;width:68px;height:68px;padding:0;border-radius:14px;background:rgba(18,22,32,.95);border:2px solid rgba(212,175,90,.35);overflow:hidden;flex:0 0 auto;transition:border-color .15s,transform .15s,box-shadow .15s}
+#opponents{position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:14;display:flex;flex-direction:column;gap:12px;align-items:center;max-height:min(84vh,860px);overflow-y:auto;overflow-x:visible;padding:8px 10px;pointer-events:auto;scrollbar-width:thin}
+.opp{pointer-events:auto;cursor:pointer;position:relative;width:92px;height:92px;padding:0;border-radius:18px;background:rgba(18,22,32,.95);border:2px solid rgba(212,175,90,.35);overflow:hidden;flex:0 0 auto;transition:border-color .15s,transform .15s,box-shadow .15s}
 .opp:hover{border-color:#e0b85a;transform:translateX(3px) scale(1.04);box-shadow:0 6px 18px rgba(0,0,0,.45)}
 .opp.dead{opacity:.38;filter:grayscale(.85);pointer-events:auto}
 .opp.self{border-color:#6ec6ff}
 .opp.combat{border-color:#ff6b5a;box-shadow:0 0 0 2px rgba(255,107,90,.45)}
 .opp.peeking{border-color:#9fd8ff;box-shadow:0 0 0 2px rgba(159,216,255,.45)}
 .opp .portrait{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
-.opp .rank{position:absolute;top:4px;left:4px;min-width:22px;height:20px;padding:0 5px;border-radius:8px;background:rgba(10,12,18,.82);border:1px solid rgba(212,175,90,.45);color:#e0b85a;font-family:Cinzel,serif;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.opp .hpBar{position:absolute;left:0;right:0;bottom:0;height:8px;background:rgba(8,10,16,.75);pointer-events:none}
+.opp .rank{position:absolute;top:5px;left:5px;min-width:26px;height:24px;padding:0 6px;border-radius:9px;background:rgba(10,12,18,.82);border:1px solid rgba(212,175,90,.45);color:#e0b85a;font-family:Cinzel,serif;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.opp .hpBar{position:absolute;left:0;right:0;bottom:0;height:10px;background:rgba(8,10,16,.75);pointer-events:none}
 .opp .hpBarFill{height:100%;width:100%;background:linear-gradient(90deg,#2f8f5b,#7dcea0);box-shadow:0 0 8px rgba(125,206,160,.35)}
 .opp.dead .hpBarFill{background:linear-gradient(90deg,#5a2420,#a05048);box-shadow:none;width:0%!important}
 #oppHover{position:fixed;z-index:22;display:none;width:240px;padding:12px 14px;pointer-events:none!important;background:rgba(12,16,24,.96);border:1px solid rgba(212,175,90,.45);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.5)}
@@ -85,21 +85,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #phaseRow.show{display:flex}
 #phaseBanner{font-family:Cinzel,serif;font-size:18px;color:#e0b85a;text-shadow:0 2px 12px rgba(0,0,0,.8);text-align:center}
 #playfield{position:relative;flex:1 1 auto;min-height:0;width:100%}
-.heroFrame{width:102px;pointer-events:auto}
-.heroFrame .portraitWrap{position:relative;width:102px;height:102px;border-radius:18px;overflow:hidden;isolation:isolate;border:2px solid rgba(212,175,90,.45);background:rgba(18,22,32,.95);box-shadow:0 8px 22px rgba(0,0,0,.4)}
+.heroFrame{width:104px;pointer-events:auto}
+.heroFrame .portraitWrap{position:relative;width:104px;height:136px;border-radius:18px;overflow:hidden;isolation:isolate;border:2px solid rgba(212,175,90,.45);background:rgba(18,22,32,.95);box-shadow:0 8px 22px rgba(0,0,0,.4)}
 .heroFrame .portraitWrap img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:16px}
-#stagePortraitSlot{position:absolute;left:50%;top:148px;transform:translateX(-50%);z-index:12;width:102px;height:102px;pointer-events:none}
-#stagePortraitCenter{position:relative;width:102px;height:102px;display:flex;align-items:center;justify-content:center;pointer-events:auto}
-.tavernSide{position:absolute;top:50%;transform:translateY(-50%);display:none;align-items:center;gap:8px;pointer-events:auto;white-space:nowrap}
+#stagePortraitSlot{position:absolute;left:50%;top:128px;transform:translateX(-50%);z-index:12;width:104px;height:136px;pointer-events:none}
+#stagePortraitCenter{position:relative;width:104px;height:136px;display:flex;align-items:center;justify-content:center;pointer-events:auto}
+.tavernSide{position:absolute;top:50%;transform:translateY(-50%);display:none;align-items:center;gap:10px;pointer-events:auto;white-space:nowrap}
 .tavernSide.show{display:flex}
 #tavernSideLeft{right:calc(100% + 14px)}
 #tavernSideRight{left:calc(100% + 14px);flex-direction:row}
 .playerSide{position:absolute;top:50%;left:calc(100% + 14px);transform:translateY(-50%);display:flex;align-items:center;pointer-events:auto}
-#playerHeroFrame{position:relative;width:102px;height:102px;pointer-events:auto}
+#playerHeroFrame{position:relative;width:104px;height:136px;pointer-events:auto}
 #playerHeroFrame .portraitWrap{border-color:#6ec6ff}
-#btnHeroPower{position:relative;width:102px;height:102px;padding:0;border-radius:18px;overflow:hidden;isolation:isolate;border:2px solid rgba(212,175,90,.55);background:rgba(18,22,32,.95);box-shadow:0 8px 22px rgba(0,0,0,.4);display:block}
-#btnHeroPower img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:16px;pointer-events:none}
-#btnHeroPower .heroPowerCost{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);min-width:30px;height:30px;padding:0 7px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-size:15px;font-weight:800;color:#f2e8d5;background:radial-gradient(circle at 35% 30%,#5a3d12 0%,#2a1a08 70%);border:2px solid rgba(224,184,90,.85);box-shadow:0 2px 8px rgba(0,0,0,.55);pointer-events:none;line-height:1}
+.circleBtn{position:relative;width:72px;height:72px;padding:0;border-radius:50%;overflow:hidden;isolation:isolate;border:2px solid rgba(212,175,90,.55);background:rgba(18,22,32,.95);box-shadow:0 8px 22px rgba(0,0,0,.4);display:block;flex:0 0 auto}
+.circleBtn img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:50%;pointer-events:none}
+.circleBtn .btnCost{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);min-width:26px;height:26px;padding:0 6px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-size:13px;font-weight:800;color:#f2e8d5;background:radial-gradient(circle at 35% 30%,#5a3d12 0%,#2a1a08 70%);border:2px solid rgba(224,184,90,.85);box-shadow:0 2px 8px rgba(0,0,0,.55);pointer-events:none;line-height:1}
+#btnHeroPower{width:80px;height:80px}
+#btnHeroPower .btnCost{min-width:28px;height:28px;font-size:14px;bottom:5px}
+#btnFreeze.active{box-shadow:inset 0 0 0 2px #6ec6ff,0 8px 22px rgba(0,0,0,.4);border-color:#6ec6ff}
 #tavernMasterFrame,#combatEnemyFrame{display:none}
 #tavernMasterFrame.show,#combatEnemyFrame.show{display:block}
 #tavernMasterFrame .portraitWrap{border-color:rgba(224,184,90,.65);transition:border-color .15s,box-shadow .15s}
@@ -144,17 +147,20 @@ button.warn{border-color:#c97b4a}
 .heroCard .power,.discoverCard .text{font-size:13px;color:#eee2cb;line-height:1.35}
 .hidden{display:none!important}
 @media (max-width:900px){
-  .opp{width:56px;height:56px;border-radius:12px}
-  #opponents{left:8px;gap:8px}
-  #stagePortraitSlot,#stagePortraitCenter,#playerPortraitSlot,#playerHeroFrame,#btnHeroPower{width:84px;height:84px}
-  #stagePortraitCenter .portraitWrap,#playerHeroFrame .portraitWrap{width:84px;height:84px;border-radius:14px}
-  #btnHeroPower{border-radius:14px}
-  #btnHeroPower img{border-radius:12px}
-  #btnHeroPower .heroPowerCost{min-width:26px;height:26px;font-size:13px;bottom:4px}
-  #stagePortraitSlot{top:120px}
+  .opp{width:72px;height:72px;border-radius:14px}
+  .opp .rank{min-width:22px;height:20px;font-size:10px}
+  .opp .hpBar{height:8px}
+  #opponents{left:8px;gap:10px}
+  #stagePortraitSlot,#stagePortraitCenter,#playerPortraitSlot,#playerHeroFrame,.heroFrame{width:84px;height:112px}
+  #stagePortraitCenter .portraitWrap,#playerHeroFrame .portraitWrap,.heroFrame .portraitWrap{width:84px;height:112px;border-radius:14px}
+  .circleBtn{width:60px;height:60px}
+  .circleBtn .btnCost{min-width:22px;height:22px;font-size:11px;bottom:3px}
+  #btnHeroPower{width:66px;height:66px}
+  #btnHeroPower .btnCost{min-width:24px;height:24px;font-size:12px;bottom:4px}
+  #stagePortraitSlot{top:104px}
   #tavernSideLeft{right:calc(100% + 10px)}
   #tavernSideRight,.playerSide{left:calc(100% + 10px)}
-  #playerPortraitSlot{bottom:140px}
+  #playerPortraitSlot{bottom:132px}
   #phaseBanner{font-size:15px}
   #peekPanel{width:220px;top:52px}
   #oppHover{width:210px}
@@ -176,9 +182,9 @@ button.warn{border-color:#c97b4a}
     </div>
   </div>
   <div class="playerSide">
-    <button id="btnHeroPower" type="button" aria-label="Lord Power">
+    <button id="btnHeroPower" class="circleBtn" type="button" aria-label="Lord Power">
       <img id="heroPowerArt" src="" alt="">
-      <span id="heroPowerCost" class="heroPowerCost">0</span>
+      <span id="heroPowerCost" class="btnCost">0</span>
     </button>
   </div>
 </div>
@@ -203,7 +209,10 @@ button.warn{border-color:#c97b4a}
   <div id="playfield">
     <div id="stagePortraitSlot">
       <div id="tavernSideLeft" class="tavernSide">
-        <button id="btnUpgrade">Upgrade</button>
+        <button id="btnUpgrade" class="circleBtn" type="button" aria-label="Upgrade Tavern">
+          <img id="upgradeArt" src="" alt="">
+          <span id="upgradeCost" class="btnCost">0</span>
+        </button>
       </div>
       <div id="stagePortraitCenter">
         <div id="tavernMasterFrame" class="heroFrame">
@@ -218,8 +227,13 @@ button.warn{border-color:#c97b4a}
         </div>
       </div>
       <div id="tavernSideRight" class="tavernSide">
-        <button id="btnRefresh">Refresh (1)</button>
-        <button id="btnFreeze">Freeze</button>
+        <button id="btnRefresh" class="circleBtn" type="button" aria-label="Refresh Tavern">
+          <img id="refreshArt" src="" alt="">
+          <span id="refreshCost" class="btnCost">1</span>
+        </button>
+        <button id="btnFreeze" class="circleBtn" type="button" aria-label="Freeze Tavern">
+          <img id="freezeArt" src="" alt="">
+        </button>
       </div>
     </div>
     <div id="peekPanel" class="panel">
@@ -1800,9 +1814,13 @@ function beginRecruitPhase() {
 function setControlsEnabled(on) {
   const you = human();
   const canAct = !!on && phase === 'recruit' && !!(you && you.alive);
+  if (canAct) {
+    syncUI();
+    return;
+  }
   ['btnRefresh', 'btnUpgrade', 'btnFreeze', 'btnHeroPower', 'btnEnd'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.disabled = !canAct;
+    if (el) el.disabled = true;
   });
 }
 
@@ -1884,14 +1902,22 @@ function syncHeroPortraits() {
 function syncUI() {
   const p = human();
   if (!p) return;
+  const canRecruit = phase === 'recruit' && !!p.alive;
   document.getElementById('goldVal').textContent = p.gold;
-  document.getElementById('btnUpgrade').textContent = p.tavernTier >= 6 ? 'Max Tier' : `Upgrade (${p.upgradeCost})`;
-  document.getElementById('btnFreeze').classList.toggle('active', p.frozen);
-  document.querySelectorAll('.tavernSide').forEach(el => el.classList.toggle('show', phase === 'recruit'));
-  document.getElementById('heroPowerArt').src = ART_A;
+  document.getElementById('upgradeArt').src = ART_A;
+  document.getElementById('refreshArt').src = ART_B;
+  document.getElementById('freezeArt').src = ART_A;
+  document.getElementById('heroPowerArt').src = ART_B;
+  document.getElementById('upgradeCost').textContent = p.tavernTier >= 6 ? '—' : String(p.upgradeCost);
+  document.getElementById('refreshCost').textContent = String(REFRESH_COST);
   document.getElementById('heroPowerCost').textContent = String(p.hero.power.cost);
-  document.getElementById('btnHeroPower').disabled = phase !== 'recruit' || !p.alive || p.heroPowerUses <= 0 || p.gold < p.hero.power.cost;
-  document.getElementById('btnEnd').disabled = phase !== 'recruit' || !p.alive;
+  document.getElementById('btnFreeze').classList.toggle('active', p.frozen);
+  document.getElementById('btnUpgrade').disabled = !canRecruit || p.tavernTier >= 6 || p.gold < p.upgradeCost;
+  document.getElementById('btnRefresh').disabled = !canRecruit || p.gold < REFRESH_COST;
+  document.getElementById('btnFreeze').disabled = !canRecruit;
+  document.getElementById('btnHeroPower').disabled = !canRecruit || p.heroPowerUses <= 0 || p.gold < p.hero.power.cost;
+  document.getElementById('btnEnd').disabled = !canRecruit;
+  document.querySelectorAll('.tavernSide').forEach(el => el.classList.toggle('show', phase === 'recruit'));
   syncHeroPortraits();
   syncOpponents();
 }
@@ -1968,6 +1994,50 @@ function showHeroPowerHover(clientX, clientY) {
     <div class="line">${power.text}</div>
   `;
   revealOppHover(clientX, clientY);
+}
+
+function showUpgradeHover(clientX, clientY) {
+  const p = human();
+  if (!p) return;
+  const tip = document.getElementById('oppHover');
+  const maxed = p.tavernTier >= 6;
+  tip.innerHTML = `
+    <div class="title">Upgrade Tavern</div>
+    <div class="rankLine">${maxed ? 'Max Tier' : `${p.upgradeCost} Gold`} · Tier ${p.tavernTier}${maxed ? '' : ` → ${p.tavernTier + 1}`}</div>
+    <div class="line">${maxed ? 'Your tavern is already at maximum tier.' : 'Increase your tavern tier to find stronger minions and spells.'}</div>
+  `;
+  revealOppHover(clientX, clientY);
+}
+
+function showRefreshHover(clientX, clientY) {
+  const tip = document.getElementById('oppHover');
+  tip.innerHTML = `
+    <div class="title">Refresh</div>
+    <div class="rankLine">${REFRESH_COST} Gold</div>
+    <div class="line">Replace the minions and spells in Bob's Tavern.</div>
+  `;
+  revealOppHover(clientX, clientY);
+}
+
+function showFreezeHover(clientX, clientY) {
+  const p = human();
+  const tip = document.getElementById('oppHover');
+  const frozen = !!(p && p.frozen);
+  tip.innerHTML = `
+    <div class="title">Freeze</div>
+    <div class="rankLine">${frozen ? 'Frozen' : 'Ready'}</div>
+    <div class="line">${frozen ? 'The tavern will stay the same next turn. Click again to unfreeze.' : 'Keep the current tavern offerings for your next turn.'}</div>
+  `;
+  revealOppHover(clientX, clientY);
+}
+
+function bindHoverTooltip(el, showFn) {
+  if (!el) return;
+  el.addEventListener('mouseenter', (e) => showFn(e.clientX, e.clientY));
+  el.addEventListener('mousemove', (e) => {
+    if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
+  });
+  el.addEventListener('mouseleave', () => hideOppHover());
 }
 
 function showEndTurnHover(clientX, clientY) {
@@ -2070,35 +2140,41 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.25;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0b0e14);
-scene.fog = new THREE.Fog(0x0b0e14, 18, 42);
+const FOG_NEAR = 18;
+const FOG_FAR = 42;
+scene.fog = new THREE.Fog(0x0b0e14, FOG_NEAR, FOG_FAR);
 
 const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 100);
 const CAMERA_LOOK_AT = new THREE.Vector3(0, 1.35, 0.8);
-const CAMERA_BASE_POSITION = new THREE.Vector3(0, 14.6, 17.2);
-const CAMERA_REF_HEIGHT = 960;
-const CAMERA_OFFSET = CAMERA_BASE_POSITION.clone().sub(CAMERA_LOOK_AT);
+const CAMERA_BASE_OFFSET = new THREE.Vector3(0, 13.25, 16.4);
+const VIEW_DESIGN_HEIGHT = 900;
 
-function fitCameraToViewport() {
-  const w = window.innerWidth;
+function syncViewportCamera() {
+  const w = Math.max(1, window.innerWidth);
   const h = Math.max(1, window.innerHeight);
+  const zoom = Math.max(1, h / VIEW_DESIGN_HEIGHT);
   camera.aspect = w / h;
-  const heightScale = Math.max(1, h / CAMERA_REF_HEIGHT);
-  camera.position.copy(CAMERA_LOOK_AT).addScaledVector(CAMERA_OFFSET, heightScale);
+  camera.position.copy(CAMERA_LOOK_AT).addScaledVector(CAMERA_BASE_OFFSET, zoom);
   camera.lookAt(CAMERA_LOOK_AT);
   camera.updateProjectionMatrix();
   renderer.setSize(w, h);
+  if (scene.fog) {
+    scene.fog.near = FOG_NEAR * zoom;
+    scene.fog.far = FOG_FAR * zoom;
+  }
 }
+syncViewportCamera();
 
-fitCameraToViewport();
-
-const hemi = new THREE.HemisphereLight(0xb7c8ff, 0x2a1a10, 1.2);
+const hemi = new THREE.HemisphereLight(0xa8c0ff, 0x3a2416, 0.9);
 scene.add(hemi);
-const key = new THREE.DirectionalLight(0xffe2b0, 1.4);
+const key = new THREE.DirectionalLight(0xffe2b0, 1.7);
 key.position.set(6, 14, 8);
 key.castShadow = true;
 key.shadow.mapSize.set(1024, 1024);
@@ -2109,9 +2185,15 @@ key.shadow.camera.right = 12;
 key.shadow.camera.top = 12;
 key.shadow.camera.bottom = -12;
 scene.add(key);
-const rimLight = new THREE.DirectionalLight(0x6ec6ff, 0.35);
+const rimLight = new THREE.DirectionalLight(0x6ec6ff, 0.5);
 rimLight.position.set(-8, 6, -4);
 scene.add(rimLight);
+const lanternGlow = new THREE.PointLight(0xffc79a, 30, 0, 1.7);
+lanternGlow.position.set(0, 9, 1.5);
+scene.add(lanternGlow);
+const tableBounce = new THREE.DirectionalLight(0x5a4a8a, 0.3);
+tableBounce.position.set(0, -4, 6);
+scene.add(tableBounce);
 
 const table = new THREE.Mesh(
   new THREE.BoxGeometry(24, 0.5, 16.5),
@@ -2173,6 +2255,8 @@ const HAND_ROW_Z = 8.35;
 const HAND_ROW_Y = 1.45;
 const HAND_ROW_SPACING = 1.45;
 const HAND_ROW_ROTX = -0.82;
+const HAND_SCREEN_HOVER_LIFT = 0.64;
+const HAND_SCREEN_HOVER_SCALE = 0.26;
 const BOARD_S = 2.35;
 const BOARD_ROW_Z = 3.7;
 const BOARD_ROW_Y = 1.9;
@@ -2656,13 +2740,17 @@ function layoutRow(items, z, y, spacing, rotX = -0.68) {
   });
 }
 
+function resetCardHoverVisual(card) {
+  if (!card || card.userData.zone === 'hand') return;
+  card.rotation.x = card.userData.baseRotX ?? card.rotation.x;
+  card.rotation.y = card.userData.baseRotY ?? 0;
+  card.position.y = card.userData.baseY ?? card.position.y;
+  card.position.z = card.userData.baseZ ?? card.position.z;
+  card.scale.set(1, 1, 1);
+}
+
 function clearCardHover() {
-  if (hoveredCard && hoveredCard.userData.zone !== 'hand') {
-    hoveredCard.rotation.x = hoveredCard.userData.baseRotX ?? hoveredCard.rotation.x;
-    hoveredCard.rotation.y = hoveredCard.userData.baseRotY ?? 0;
-    hoveredCard.position.y = hoveredCard.userData.baseY ?? hoveredCard.position.y;
-    hoveredCard.position.z = hoveredCard.userData.baseZ ?? hoveredCard.position.z;
-  }
+  resetCardHoverVisual(hoveredCard);
   hoveredCard = null;
   hideCardTooltip();
 }
@@ -2676,7 +2764,8 @@ function applyCardHoverTilt(card, point) {
   const tiltX = clamp(-local.y / halfH, -1, 1) * 0.14;
   card.rotation.x = (card.userData.baseRotX ?? -0.68) + tiltX;
   card.rotation.y = tiltY;
-  card.position.y = (card.userData.baseY ?? card.position.y) + 0.18;
+  card.position.y = (card.userData.baseY ?? card.position.y) + 0.22;
+  card.scale.setScalar(card.userData.zone === 'board' ? 1.24 : 1.16);
 }
 
 const handOverlayCenter = new THREE.Vector3();
@@ -2749,26 +2838,44 @@ function getHandCardBaseScreenRect(mesh) {
   );
 }
 
+function getHandScreenCardSize() {
+  const height = Math.min(230, Math.max(130, window.innerHeight * 0.26));
+  const width = height * (HAND_W / HAND_H);
+  return { width, height };
+}
+
 function getPlayerHandCardScreenSize() {
-  const mesh = cardMeshes.find(m => m.userData.zone === 'hand');
-  if (mesh) return getHandCardBaseScreenRect(mesh);
-  return measureHandCardScreenSize(0, HAND_ROW_Y, HAND_ROW_Z, HAND_ROW_ROTX, HAND_W, HAND_H, cardGroup);
+  return getHandScreenCardSize();
+}
+
+function handHoverEase(hoverT) {
+  const t = hoverT ?? 0;
+  return t * t * (3 - 2 * t);
 }
 
 function findHandCardAtPointer(clientX, clientY) {
+  if (clientY > window.innerHeight) return null;
   let best = null;
   let bestDx = Infinity;
   for (const mesh of cardMeshes) {
     if (mesh.userData.zone !== 'hand') continue;
-    const rect = getHandCardBaseScreenRect(mesh);
-    const hitH = rect.height * 0.7;
-    const top = rect.cy - hitH * 0.5;
-    const bottom = rect.cy + hitH * 0.5;
+    const cx = mesh.userData.screenCx;
+    const restCy = mesh.userData.screenRestCy;
+    const baseW = mesh.userData.screenW;
+    const baseH = mesh.userData.screenH;
+    if (cx == null || restCy == null || !baseW || !baseH) continue;
+    const ease = handHoverEase(mesh.userData.hoverT);
+    const scale = 1 + ease * HAND_SCREEN_HOVER_SCALE;
+    const cy = restCy - ease * baseH * HAND_SCREEN_HOVER_LIFT;
+    const halfW = baseW * scale * 0.42;
+    const halfH = baseH * scale * 0.5;
+    const top = cy - halfH;
+    const bottom = Math.min(window.innerHeight, cy + halfH);
     if (clientY < top || clientY > bottom) continue;
-    const dx = Math.abs(clientX - rect.cx);
+    const dx = Math.abs(clientX - cx);
     if (dx < bestDx) {
       bestDx = dx;
-      best = { mesh, halfW: rect.width * 0.42 };
+      best = { mesh, halfW };
     }
   }
   if (!best || bestDx > best.halfW) return null;
@@ -2846,17 +2953,8 @@ function syncEnemyHandOverlay(cards) {
   const size = getPlayerHandCardScreenSize();
   const overlap = size.width * (1 - HAND_ROW_SPACING / HAND_W);
   layer.style.setProperty('--enemy-hand-overlap', `${-overlap}px`);
-  const portrait = document.getElementById('stagePortraitSlot');
-  const portraitRect = portrait?.getBoundingClientRect();
-  if (portraitRect && portraitRect.height > 0) {
-    const gap = 10;
-    const top = Math.max(6, portraitRect.top - size.height - gap);
-    layer.style.left = `${portraitRect.left + portraitRect.width * 0.5}px`;
-    layer.style.top = `${top}px`;
-  } else {
-    layer.style.left = '50%';
-    layer.style.top = '10px';
-  }
+  layer.style.left = '50%';
+  layer.style.top = '0px';
   layer.classList.add('show');
   while (layer.children.length < list.length) {
     const el = document.createElement('div');
@@ -2903,6 +3001,11 @@ function syncHandOverlayLayer() {
   while (layer.children.length > handMeshes.length) {
     layer.removeChild(layer.lastChild);
   }
+  const size = getHandScreenCardSize();
+  const spacing = size.width * (HAND_ROW_SPACING / HAND_W);
+  const totalW = handMeshes.length > 1 ? (handMeshes.length - 1) * spacing : 0;
+  const startX = window.innerWidth * 0.5 - totalW * 0.5;
+  const restCy = window.innerHeight;
   handMeshes.forEach((mesh, i) => {
     const el = layer.children[i];
     const canvas = el.firstChild;
@@ -2919,16 +3022,30 @@ function syncHandOverlayLayer() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(src, 0, 0);
     }
-    const baseRect = getHandCardBaseScreenRect(mesh);
-    mesh.getWorldPosition(handOverlayCenter);
-    const center = projectWorldPointToScreen(handOverlayCenter);
-    el.style.left = `${center.x}px`;
-    el.style.top = `${center.y}px`;
-    el.style.width = `${baseRect.width}px`;
-    el.style.height = `${baseRect.height}px`;
     const hoverT = mesh.userData.hoverT ?? 0;
-    el.classList.toggle('raised', hoverT > 0.2);
-    el.style.zIndex = String(1 + Math.round(hoverT * 12));
+    const ease = handHoverEase(hoverT);
+    const hoverScale = 1 + ease * HAND_SCREEN_HOVER_SCALE;
+    const cardW = size.width * hoverScale;
+    const cardH = size.height * hoverScale;
+    const isDraggingThis = !!(dragState?.dragging && dragState.instanceId === minion.instanceId);
+    let cx = startX + i * spacing;
+    let cy = restCy - ease * size.height * HAND_SCREEN_HOVER_LIFT;
+    if (isDraggingThis) {
+      mesh.getWorldPosition(handOverlayCenter);
+      const center = projectWorldPointToScreen(handOverlayCenter);
+      cx = center.x;
+      cy = center.y;
+    }
+    mesh.userData.screenCx = startX + i * spacing;
+    mesh.userData.screenRestCy = restCy;
+    mesh.userData.screenW = size.width;
+    mesh.userData.screenH = size.height;
+    el.style.left = `${cx}px`;
+    el.style.top = `${cy}px`;
+    el.style.width = `${cardW}px`;
+    el.style.height = `${cardH}px`;
+    el.classList.toggle('raised', hoverT > 0.2 || isDraggingThis);
+    el.style.zIndex = String(1 + Math.round(hoverT * 12) + (isDraggingThis ? 20 : 0));
     setHandMeshHiddenForOverlay(mesh, true);
   });
   syncPortraitHandBlocking();
@@ -2947,14 +3064,13 @@ function updateHandHoverAnimation() {
     const prev = mesh.userData.hoverT ?? 0;
     const next = prev + (target - prev) * 0.2;
     mesh.userData.hoverT = Math.abs(next - target) < 0.002 ? target : next;
-    const t = mesh.userData.hoverT;
-    const ease = t * t * (3 - 2 * t);
     if (!dragState?.dragging || mesh.userData.minion?.instanceId !== dragState.instanceId) {
       mesh.position.x = mesh.userData.baseX ?? mesh.position.x;
-      mesh.position.y = (mesh.userData.baseY ?? HAND_ROW_Y) + ease * 0.7;
-      mesh.position.z = (mesh.userData.baseZ ?? HAND_ROW_Z) - ease * 0.95;
-      mesh.rotation.x = (mesh.userData.baseRotX ?? HAND_ROW_ROTX) + ease * 0.08;
+      mesh.position.y = mesh.userData.baseY ?? HAND_ROW_Y;
+      mesh.position.z = mesh.userData.baseZ ?? HAND_ROW_Z;
+      mesh.rotation.x = mesh.userData.baseRotX ?? HAND_ROW_ROTX;
       mesh.rotation.y = 0;
+      mesh.scale.set(1, 1, 1);
     }
   }
   syncHandOverlayLayer();
@@ -3351,11 +3467,7 @@ function onPointerMove(e) {
     return;
   }
   if (hoveredCard !== obj) {
-    if (hoveredCard && hoveredCard.userData.zone !== 'hand') {
-      hoveredCard.rotation.x = hoveredCard.userData.baseRotX ?? hoveredCard.rotation.x;
-      hoveredCard.rotation.y = hoveredCard.userData.baseRotY ?? 0;
-      hoveredCard.position.y = hoveredCard.userData.baseY ?? hoveredCard.position.y;
-    }
+    resetCardHoverVisual(hoveredCard);
     hideCardTooltip();
     hoveredCard = obj;
   }
@@ -3479,37 +3591,15 @@ document.getElementById('btnHeroPower').onclick = () => {
   if (p.gold < p.hero.power.cost) { log('Not enough gold for Lord power.'); return; }
   if (useHeroPower(p)) { syncUI(); renderCards(); }
 };
-const heroPowerBtn = document.getElementById('btnHeroPower');
-heroPowerBtn.addEventListener('mouseenter', (e) => showHeroPowerHover(e.clientX, e.clientY));
-heroPowerBtn.addEventListener('mousemove', (e) => {
-  if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
-});
-heroPowerBtn.addEventListener('mouseleave', () => hideOppHover());
+bindHoverTooltip(document.getElementById('btnHeroPower'), showHeroPowerHover);
+bindHoverTooltip(document.getElementById('btnUpgrade'), showUpgradeHover);
+bindHoverTooltip(document.getElementById('btnRefresh'), showRefreshHover);
+bindHoverTooltip(document.getElementById('btnFreeze'), showFreezeHover);
 document.getElementById('btnHistory').onclick = () => setHistoryOpen(!historyOpen);
-const playerHeroFrame = document.getElementById('playerHeroFrame');
-playerHeroFrame.addEventListener('mouseenter', (e) => showPlayerHeroFrameHover(e.clientX, e.clientY));
-playerHeroFrame.addEventListener('mousemove', (e) => {
-  if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
-});
-playerHeroFrame.addEventListener('mouseleave', () => hideOppHover());
-const tavernMasterFrame = document.getElementById('tavernMasterFrame');
-tavernMasterFrame.addEventListener('mouseenter', (e) => showBobHover(e.clientX, e.clientY));
-tavernMasterFrame.addEventListener('mousemove', (e) => {
-  if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
-});
-tavernMasterFrame.addEventListener('mouseleave', () => hideOppHover());
-const combatEnemyFrame = document.getElementById('combatEnemyFrame');
-combatEnemyFrame.addEventListener('mouseenter', (e) => showCombatEnemyHover(e.clientX, e.clientY));
-combatEnemyFrame.addEventListener('mousemove', (e) => {
-  if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
-});
-combatEnemyFrame.addEventListener('mouseleave', () => hideOppHover());
-const endTurnBtn = document.getElementById('btnEnd');
-endTurnBtn.addEventListener('mouseenter', (e) => showEndTurnHover(e.clientX, e.clientY));
-endTurnBtn.addEventListener('mousemove', (e) => {
-  if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
-});
-endTurnBtn.addEventListener('mouseleave', () => hideOppHover());
+bindHoverTooltip(document.getElementById('playerHeroFrame'), showPlayerHeroFrameHover);
+bindHoverTooltip(document.getElementById('tavernMasterFrame'), showBobHover);
+bindHoverTooltip(document.getElementById('combatEnemyFrame'), showCombatEnemyHover);
+bindHoverTooltip(document.getElementById('btnEnd'), showEndTurnHover);
 document.getElementById('btnCodex').onclick = () => {
   if (document.getElementById('codexOverlay').classList.contains('open')) closeCodex();
   else openCodex(codexTab);
@@ -3562,9 +3652,12 @@ window.addEventListener('pointerdown', onPointerDown);
 window.addEventListener('pointerup', onPointerUp);
 window.addEventListener('pointercancel', onPointerUp);
 window.addEventListener('resize', () => {
-  fitCameraToViewport();
-  updateHandHoverAnimation();
-  if (phase === 'combat') syncEnemyHandOverlay(getCombatEnemy()?.hand || []);
+  syncViewportCamera();
+  syncHandOverlayLayer();
+  if (phase === 'combat') {
+    const foe = getCombatEnemy();
+    syncEnemyHandOverlay(foe?.hand || []);
+  }
 });
 
 function animate() {
