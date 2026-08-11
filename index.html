@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Flag Bearer</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Source+Sans+3:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Metamorphous&family=Source+Sans+3:wght@400;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d5;font-family:'Source Sans 3',sans-serif;user-select:none}
 #gameCanvas{position:fixed;inset:0;display:block;z-index:1}
@@ -36,31 +36,31 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #codexOverlay.open{display:flex}
 .codexBox{width:min(1100px,96vw);max-height:92vh;display:flex;flex-direction:column;background:radial-gradient(circle at top,#2a2114 0%,#12161f 55%,#0b0e14 100%);border:1px solid rgba(212,175,90,.45);border-radius:14px;overflow:hidden}
 .codexHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid rgba(212,175,90,.25);flex-wrap:wrap}
-.codexHeader h1{font-family:Cinzel,serif;font-size:28px;color:#e0b85a;margin:0}
+.codexHeader h1{font-family:Metamorphous,serif;font-size:28px;color:#e0b85a;margin:0}
 .codexTabs{display:flex;gap:8px;align-items:center}
 .codexTabs button.active{box-shadow:inset 0 0 0 1px #e0b85a;color:#e0b85a;border-color:#e0b85a}
 #codexBody{overflow:auto;padding:16px 18px 22px;text-align:left}
 .codexRace{margin-bottom:22px}
 .codexRace:last-child{margin-bottom:0}
-.codexRace h2{font-family:Cinzel,serif;font-size:18px;color:#e0b85a;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(212,175,90,.22);display:flex;align-items:baseline;gap:10px}
+.codexRace h2{font-family:Metamorphous,serif;font-size:18px;color:#e0b85a;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(212,175,90,.22);display:flex;align-items:baseline;gap:10px}
 .codexRace h2 span{font-family:'Source Sans 3',sans-serif;font-size:12px;color:#b9a888;font-weight:600}
 .codexGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
 .codexCard{border:1px solid rgba(212,175,90,.28);border-radius:10px;background:rgba(14,18,28,.92);overflow:hidden;display:flex;flex-direction:column;min-height:210px}
 .codexCard .art{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#1a2230}
 .codexCard .body{padding:8px 9px 10px;display:flex;flex-direction:column;gap:4px;flex:1}
-.codexCard .name{font-family:Cinzel,serif;color:#e0b85a;font-size:13px;line-height:1.2}
+.codexCard .name{font-family:Metamorphous,serif;color:#e0b85a;font-size:13px;line-height:1.2}
 .codexCard .meta{font-size:11px;color:#9fd8ff;font-weight:700}
 .codexCard .text{font-size:11px;color:#d7cbb0;line-height:1.3;margin-top:2px}
 .codexHeroCard{border:1px solid rgba(212,175,90,.28);border-radius:10px;background:rgba(14,18,28,.92);overflow:hidden;display:flex;flex-direction:column}
 .codexHeroCard .art{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#1a2230}
 .codexHeroCard .body{padding:10px 11px 12px}
-.codexHeroCard .name{font-family:Cinzel,serif;color:#e0b85a;font-size:15px;margin-bottom:4px}
+.codexHeroCard .name{font-family:Metamorphous,serif;color:#e0b85a;font-size:15px;margin-bottom:4px}
 .codexHeroCard .meta{font-size:12px;color:#b9a888;margin-bottom:8px}
 .codexHeroCard .powerName{font-size:12px;color:#9fd8ff;font-weight:700;margin-bottom:3px}
 .codexHeroCard .text{font-size:12px;color:#eee2cb;line-height:1.35}
 .codexSpellArt{width:100%;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:radial-gradient(circle at 50% 30%,#2a3a5c 0%,#151c2c 55%,#0e1420 100%);border-bottom:1px solid rgba(142,183,255,.25)}
-.codexSpellArt .tag{font-family:Cinzel,serif;font-size:11px;letter-spacing:.08em;color:#9fd8ff}
-.codexSpellArt .cost{font-family:Cinzel,serif;font-size:36px;font-weight:800;color:#e0b85a;line-height:1}
+.codexSpellArt .tag{font-family:Metamorphous,serif;font-size:11px;letter-spacing:.08em;color:#9fd8ff}
+.codexSpellArt .cost{font-family:Metamorphous,serif;font-size:36px;font-weight:800;color:#e0b85a;line-height:1}
 .codexSpellArt .costLabel{font-size:11px;font-weight:700;color:#b9a888;letter-spacing:.06em}
 #opponents{position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:14;display:flex;flex-direction:column;gap:12px;align-items:center;max-height:min(84vh,860px);overflow-y:auto;overflow-x:visible;padding:8px 10px;pointer-events:auto;scrollbar-width:thin}
 .opp{pointer-events:auto;cursor:pointer;position:relative;width:92px;height:92px;padding:0;border-radius:18px;background:rgba(18,22,32,.95);border:2px solid rgba(212,175,90,.35);overflow:hidden;flex:0 0 auto;transition:border-color .15s,transform .15s,box-shadow .15s}
@@ -70,20 +70,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 .opp.combat{border-color:#ff6b5a;box-shadow:0 0 0 2px rgba(255,107,90,.45)}
 .opp.peeking{border-color:#9fd8ff;box-shadow:0 0 0 2px rgba(159,216,255,.45)}
 .opp .portrait{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
-.opp .rank{position:absolute;top:5px;left:5px;min-width:26px;height:24px;padding:0 6px;border-radius:9px;background:rgba(10,12,18,.82);border:1px solid rgba(212,175,90,.45);color:#e0b85a;font-family:Cinzel,serif;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.opp .rank{position:absolute;top:5px;left:5px;min-width:26px;height:24px;padding:0 6px;border-radius:9px;background:rgba(10,12,18,.82);border:1px solid rgba(212,175,90,.45);color:#e0b85a;font-family:Metamorphous,serif;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;pointer-events:none}
 .opp .hpBar{position:absolute;left:0;right:0;bottom:0;height:10px;background:rgba(8,10,16,.75);pointer-events:none}
 .opp .hpBarFill{height:100%;width:100%;background:linear-gradient(90deg,#2f8f5b,#7dcea0);box-shadow:0 0 8px rgba(125,206,160,.35)}
 .opp.dead .hpBarFill{background:linear-gradient(90deg,#5a2420,#a05048);box-shadow:none;width:0%!important}
 #oppHover{position:fixed;z-index:22;display:none;width:240px;padding:12px 14px;pointer-events:none!important;background:rgba(12,16,24,.96);border:1px solid rgba(212,175,90,.45);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.5)}
 #oppHover.show{display:block}
-#oppHover .title{font-family:Cinzel,serif;color:#e0b85a;font-size:15px;margin-bottom:4px}
+#oppHover .title{font-family:Metamorphous,serif;color:#e0b85a;font-size:15px;margin-bottom:4px}
 #oppHover .rankLine{font-size:11px;color:#9fd8ff;margin-bottom:8px;letter-spacing:.04em}
 #oppHover .line{font-size:12px;color:#eee2cb;line-height:1.4;margin-bottom:3px}
 #oppHover .muted{color:#b9a888}
 #oppHover .power{margin-top:8px;padding-top:8px;border-top:1px solid rgba(212,175,90,.22);font-size:12px;color:#d7cbb0;line-height:1.35}
 #phaseRow{display:none;flex-direction:column;align-items:center;gap:2px;min-height:2.4em;pointer-events:none}
 #phaseRow.show{display:flex}
-#phaseBanner{font-family:Cinzel,serif;font-size:18px;color:#e0b85a;text-shadow:0 2px 12px rgba(0,0,0,.8);text-align:center}
+#phaseBanner{font-family:Metamorphous,serif;font-size:18px;color:#e0b85a;text-shadow:0 2px 12px rgba(0,0,0,.8);text-align:center}
 #playfield{position:relative;flex:1 1 auto;min-height:0;width:100%}
 .heroFrame{width:104px;pointer-events:auto}
 .heroFrame .portraitWrap{position:relative;width:104px;height:136px;border-radius:18px;overflow:hidden;isolation:isolate;border:2px solid rgba(212,175,90,.45);background:rgba(18,22,32,.95);box-shadow:0 8px 22px rgba(0,0,0,.4)}
@@ -99,7 +99,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #playerHeroFrame .portraitWrap{border-color:#6ec6ff}
 .circleBtn{position:relative;width:72px;height:72px;padding:0;border-radius:50%;overflow:hidden;isolation:isolate;border:2px solid rgba(212,175,90,.55);background:rgba(18,22,32,.95);box-shadow:0 8px 22px rgba(0,0,0,.4);display:block;flex:0 0 auto}
 .circleBtn img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:50%;pointer-events:none}
-.circleBtn .btnCost{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);min-width:26px;height:26px;padding:0 6px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-size:13px;font-weight:800;color:#f2e8d5;background:radial-gradient(circle at 35% 30%,#5a3d12 0%,#2a1a08 70%);border:2px solid rgba(224,184,90,.85);box-shadow:0 2px 8px rgba(0,0,0,.55);pointer-events:none;line-height:1}
+.circleBtn .btnCost{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);min-width:26px;height:26px;padding:0 6px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Metamorphous,serif;font-size:13px;font-weight:800;color:#f2e8d5;background:radial-gradient(circle at 35% 30%,#5a3d12 0%,#2a1a08 70%);border:2px solid rgba(224,184,90,.85);box-shadow:0 2px 8px rgba(0,0,0,.55);pointer-events:none;line-height:1}
 #btnHeroPower{width:80px;height:80px}
 #btnHeroPower .btnCost{min-width:28px;height:28px;font-size:14px;bottom:5px}
 #btnFreeze.active{box-shadow:inset 0 0 0 2px #6ec6ff,0 8px 22px rgba(0,0,0,.4);border-color:#6ec6ff}
@@ -111,20 +111,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #combatEnemyFrame .portraitWrap{border-color:#ff6b5a}
 #peekPanel{position:absolute;top:52px;right:12px;width:260px;max-height:calc(100% - 60px);overflow:auto;z-index:13;display:none;pointer-events:auto}
 #peekPanel.show{display:block}
-#peekPanel h3{font-family:Cinzel,serif;color:#e0b85a;margin-bottom:8px;font-size:15px}
+#peekPanel h3{font-family:Metamorphous,serif;color:#e0b85a;margin-bottom:8px;font-size:15px}
 #peekPanel .meta{font-size:12px;color:#b9a888;margin-bottom:10px}
 .peekMinion{border:1px solid rgba(212,175,90,.25);border-radius:8px;padding:8px;margin-bottom:6px;background:rgba(8,10,16,.55)}
 .peekMinion .title{color:#f2e8d5;font-weight:700;font-size:13px}
 .peekMinion .stats{color:#e0b85a;font-size:12px;margin-top:2px}
 .peekMinion .text{color:#b9a888;font-size:11px;margin-top:4px;line-height:1.3}
 #goldPanel{position:fixed;right:14px;bottom:14px;z-index:15;min-width:92px;text-align:center;pointer-events:auto}
-#goldPanel .label{color:#d4af5a;font-family:Cinzel,serif;font-size:11px;letter-spacing:.08em}
+#goldPanel .label{color:#d4af5a;font-family:Metamorphous,serif;font-size:11px;letter-spacing:.08em}
 #goldPanel .value{font-size:28px;font-weight:700;line-height:1.1;color:#f2e8d5;margin-top:2px}
 #btnEnd{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:15;padding:14px 18px;font-size:13px;min-width:108px}
 #cardTooltip{position:fixed;z-index:19;display:none;pointer-events:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.7))}
 #cardTooltip.show{display:block}
 #cardTooltip canvas{width:min(210px,46vw);height:auto;border-radius:14px;border:1px solid rgba(212,175,90,.45);background:#0c1018}
-button{font-family:Cinzel,serif;font-weight:700;letter-spacing:.04em;border:1px solid rgba(212,175,90,.55);background:linear-gradient(180deg,#3a2a14,#1c140a);color:#f2e8d5;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:11px}
+button{font-family:Metamorphous,serif;font-weight:700;letter-spacing:.04em;border:1px solid rgba(212,175,90,.55);background:linear-gradient(180deg,#3a2a14,#1c140a);color:#f2e8d5;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:11px}
 button:hover:not(:disabled){filter:brightness(1.15)}
 button:disabled{opacity:.4;cursor:default}
 button.primary{background:linear-gradient(180deg,#5a3d12,#2a1a08);border-color:#e0b85a}
@@ -133,7 +133,7 @@ button.warn{border-color:#c97b4a}
 #overlay{position:fixed;inset:0;background:rgba(5,7,12,.88);display:flex;align-items:center;justify-content:center;z-index:20}
 #overlay.hidden{display:none}
 .overlayBox{width:min(920px,94vw);max-height:90vh;overflow:auto;background:radial-gradient(circle at top,#2a2114 0%,#12161f 55%,#0b0e14 100%);border:1px solid rgba(212,175,90,.45);border-radius:14px;padding:28px;text-align:center}
-.overlayBox h1{font-family:Cinzel,serif;font-size:34px;color:#e0b85a;margin-bottom:8px}
+.overlayBox h1{font-family:Metamorphous,serif;font-size:34px;color:#e0b85a;margin-bottom:8px}
 .overlayBox h1.titleLogo{font-size:52px;margin-bottom:28px;letter-spacing:.04em}
 .overlayBox h1.chooseLord{font-size:40px;margin-bottom:28px;text-align:center}
 .overlayBox .beginBtn{padding:14px 40px;font-size:16px;min-width:160px}
@@ -142,7 +142,7 @@ button.warn{border-color:#c97b4a}
 .heroCard,.discoverCard{width:220px;padding:14px;border-radius:10px;background:rgba(20,24,34,.9);border:1px solid rgba(212,175,90,.35);cursor:pointer;text-align:left}
 .heroCard:hover,.discoverCard:hover{border-color:#e0b85a;transform:translateY(-2px)}
 .heroCard .portrait{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;border-radius:14px;margin-bottom:12px;border:2px solid rgba(212,175,90,.4);background:#1a2230}
-.heroCard h3,.discoverCard h3{font-family:Cinzel,serif;color:#e0b85a;margin-bottom:6px;font-size:16px}
+.heroCard h3,.discoverCard h3{font-family:Metamorphous,serif;color:#e0b85a;margin-bottom:6px;font-size:16px}
 .heroCard .meta,.discoverCard .meta{font-size:12px;color:#b9a888;margin-bottom:8px}
 .heroCard .power,.discoverCard .text{font-size:13px;color:#eee2cb;line-height:1.35}
 .hidden{display:none!important}
@@ -1975,7 +1975,6 @@ function showPlayerHeroFrameHover(clientX, clientY) {
   const tip = document.getElementById('oppHover');
   tip.innerHTML = `
     <div class="title">${p.hero.name}</div>
-    <div class="rankLine">Your Lord</div>
     <div class="line">Health <strong>${p.hp}</strong>${p.armor ? ` · Armor <strong>${p.armor}</strong>` : ''} · Total <strong>${heroEffectiveHp(p)}</strong></div>
     <div class="power"><strong>${p.hero.power.name}</strong> (${p.hero.power.cost} Gold)<br>${p.hero.power.text}</div>
   `;
@@ -2069,15 +2068,13 @@ function showCombatEnemyHover(clientX, clientY) {
 
 function showOppHover(player, rank, clientX, clientY) {
   const tip = document.getElementById('oppHover');
-  const total = heroEffectiveHp(player);
-  const label = player.isHuman ? 'You' : player.hero.name;
   const status = player.alive ? 'Alive' : `Eliminated${player.placement ? ` · #${player.placement}` : ''}`;
   tip.innerHTML = `
-    <div class="title">${label}</div>
-    <div class="rankLine">Lobby rank #${rank} · ${status}</div>
-    <div class="line">Health <strong>${player.hp}</strong>${player.armor ? ` · Armor <strong>${player.armor}</strong>` : ''} · Total <strong>${total}</strong></div>
+    <div class="title">${player.hero.name}</div>
+    <div class="rankLine">${status}</div>
+    <div class="line">Health <strong>${player.hp}</strong>${player.armor ? ` · Armor <strong>${player.armor}</strong>` : ''}</div>
     <div class="line muted">Tavern Tier ${player.tavernTier} · Board ${player.board.length}/${MAX_BOARD}</div>
-    <div class="line muted">Hand ${player.isHuman ? player.hand.length : '?'} · ${player.isHuman ? 'Your Lord' : 'Opponent'}</div>
+    <div class="line muted">Hand ${player.isHuman ? player.hand.length : '?'}</div>
     <div class="power"><strong>${player.hero.power.name}</strong> (${player.hero.power.cost} Gold)<br>${player.hero.power.text}</div>
   `;
   revealOppHover(clientX, clientY);
@@ -2105,10 +2102,10 @@ function syncOpponents(combatA, combatB) {
     if (p.id === combatA || p.id === combatB) cls.push('combat');
     if (p.id === peekPlayerId) cls.push('peeking');
     const art = heroPortraitArt(p.hero);
-    const name = p.isHuman ? 'You' : p.hero.name;
+    const name = p.hero.name;
     const maxPool = Math.max(1, (p.maxHp || START_HP) + (p.hero?.armor || 0));
     const hpPct = p.alive ? clamp((heroEffectiveHp(p) / maxPool) * 100, 0, 100) : 0;
-    const rankHtml = rank <= 3 ? `<div class="rank">#${rank}</div>` : '';
+    const rankHtml = rank <= 3 ? `<div class="rank">${rank}</div>` : '';
     return `<div class="${cls.join(' ')}" data-pid="${p.id}" data-rank="${rank}" title="">
       <img class="portrait" src="${art}" alt="${name}">
       ${rankHtml}
@@ -2305,7 +2302,7 @@ function drawTierBadge(ctx, tier, cx, cy, radius) {
   ctx.lineWidth = Math.max(3, Math.round(radius * 0.12));
   ctx.stroke();
   ctx.fillStyle = '#d2a8ff';
-  ctx.font = `bold ${Math.round(radius * 1.15)}px Cinzel, serif`;
+  ctx.font = `bold ${Math.round(radius * 1.15)}px Metamorphous, serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(String(tier ?? 1), cx, cy + 1);
@@ -2496,11 +2493,11 @@ function buildCardFrontTextureRaw(card, opts = {}) {
     roundRect(ctx, 36, 36, 440, 280, 18);
     ctx.stroke();
     ctx.fillStyle = '#9fd8ff';
-    ctx.font = 'bold 34px Cinzel, serif';
+    ctx.font = 'bold 34px Metamorphous, serif';
     ctx.textAlign = 'center';
     ctx.fillText('TAVERN SPELL', 256, 120);
     ctx.fillStyle = '#e0b85a';
-    ctx.font = 'bold 64px Cinzel, serif';
+    ctx.font = 'bold 64px Metamorphous, serif';
     ctx.fillText(`${card.cost}`, 256, 210);
     ctx.fillStyle = '#b9a888';
     ctx.font = 'bold 26px Source Sans 3, sans-serif';
@@ -2510,7 +2507,7 @@ function buildCardFrontTextureRaw(card, opts = {}) {
     roundRect(ctx, 36, 340, 440, 340, 18);
     ctx.fill();
     ctx.fillStyle = '#9fd8ff';
-    ctx.font = 'bold 36px Cinzel, serif';
+    ctx.font = 'bold 36px Metamorphous, serif';
     const spellName = card.name.length > 20 ? card.name.slice(0, 19) + '…' : card.name;
     ctx.fillText(spellName, 56, 400);
     ctx.fillStyle = '#b9a888';
@@ -2547,7 +2544,7 @@ function buildCardFrontTextureRaw(card, opts = {}) {
     roundRect(ctx, 36, 410, 440, 270, 18);
     ctx.fill();
     ctx.fillStyle = card.golden ? '#ffd978' : '#e0b85a';
-    ctx.font = 'bold 36px Cinzel, serif';
+    ctx.font = 'bold 36px Metamorphous, serif';
     const name = card.name.length > 20 ? card.name.slice(0, 19) + '…' : card.name;
     ctx.fillText(name, 56, 460);
     ctx.fillStyle = '#b9a888';
@@ -2590,7 +2587,7 @@ function buildCardFrontTextureRaw(card, opts = {}) {
     }
     if (card.golden) {
       ctx.fillStyle = '#ffd978';
-      ctx.font = 'bold 20px Cinzel, serif';
+      ctx.font = 'bold 20px Metamorphous, serif';
       ctx.fillText('GOLDEN', 56, 660);
     }
   }
@@ -2655,12 +2652,12 @@ function getCardBackTexture() {
   ctx.lineWidth = 3;
   ctx.stroke();
   ctx.fillStyle = '#e0b85a';
-  ctx.font = 'bold 54px Cinzel, serif';
+  ctx.font = 'bold 54px Metamorphous, serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText('FB', 256, 260);
   ctx.fillStyle = '#b9a888';
-  ctx.font = 'bold 22px Cinzel, serif';
+  ctx.font = 'bold 22px Metamorphous, serif';
   ctx.fillText('FLAG', 256, 520);
   ctx.fillText('BEARER', 256, 552);
   cardBackTexture = new THREE.CanvasTexture(canvas2d);
