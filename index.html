@@ -11,19 +11,19 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #gameCanvas{position:fixed;inset:0;display:block;z-index:1}
 #ui{position:fixed;inset:0;pointer-events:none;z-index:10;display:flex;flex-direction:column}
 #ui>*{pointer-events:none}
-#ui button,#ui .opp,#ui #opponents,#ui #peekPanel,#ui #topRightActions,#ui #historyPanel,#ui #goldPanel,#ui #btnEnd,#ui #tavernMasterFrame,#ui #combatEnemyFrame,#ui #stagePortraitSlot,#ui .tavernSide{pointer-events:auto}
-#playerPortraitSlot{position:fixed;left:50%;bottom:158px;transform:translateX(-50%);z-index:12;width:104px;height:136px;pointer-events:none}
-#playerPortraitSlot .playerSide,#playerPortraitSlot #playerHeroFrame{pointer-events:auto}
+#ui button,#ui .opp,#ui #opponents,#ui #peekPanel,#ui #topRightActions,#ui #historyPanel,#ui #goldPanel,#ui #btnEnd,#ui #tavernMasterFrame,#ui #combatEnemyFrame,#ui #combatEnemyPower,#ui #stagePortraitSlot,#ui #stagePortraitCenter,#ui .tavernSide,#ui .stageCard{pointer-events:auto}
+#playerPortraitSlot{position:fixed;left:50%;bottom:calc(12px + var(--stageCard) * 0.55);transform:translateX(-50%);z-index:18;display:flex;align-items:center;gap:10px;width:auto;height:var(--stageCard);pointer-events:none;overflow:visible}
+#playerPortraitSlot .stageCard{pointer-events:auto}
 #handOverlay{position:fixed;inset:0;z-index:16;pointer-events:none;display:none}
 #handOverlay.show{display:block}
 .handOverlayCard{position:absolute;transform:translate(-50%,-50%);transform-origin:center center;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));z-index:1}
 .handOverlayCard.raised{filter:drop-shadow(0 16px 28px rgba(0,0,0,.55))}
-.handOverlayCard canvas{display:block;width:100%;height:100%;border-radius:12px;border:1px solid rgba(212,175,90,.4);background:#0c1018}
+.handOverlayCard canvas{display:block;width:100%;height:100%;border-radius:6px;border:1px solid rgba(212,175,90,.4);background:#0c1018}
 #enemyHandOverlay{position:fixed;left:50%;top:0;transform:translate(-50%,-50%);z-index:16;display:none;pointer-events:none;flex-direction:row;align-items:center;justify-content:center}
 #enemyHandOverlay.show{display:flex}
 .enemyHandOverlayCard{flex:0 0 auto;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));margin-left:0}
 .enemyHandOverlayCard + .enemyHandOverlayCard{margin-left:var(--enemy-hand-overlap, -40px)}
-.enemyHandOverlayCard canvas{display:block;width:100%;height:100%;border-radius:12px;border:1px solid rgba(212,175,90,.35);background:#0c1018}
+.enemyHandOverlayCard canvas{display:block;width:100%;height:100%;border-radius:6px;border:1px solid rgba(212,175,90,.35);background:#0c1018}
 .panel{background:rgba(12,16,24,.82);border:1px solid rgba(212,175,90,.35);backdrop-filter:blur(6px);border-radius:10px;padding:10px 14px}
 #topStack{position:relative;z-index:12;display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 12px 0;width:100%;flex:0 0 auto}
 #topRightActions{position:fixed;top:12px;right:14px;z-index:17;display:flex;gap:8px;align-items:center}
@@ -34,17 +34,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #historyPanel .entry:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 #codexOverlay{position:fixed;inset:0;background:rgba(5,7,12,.9);display:none;align-items:center;justify-content:center;z-index:25;padding:18px}
 #codexOverlay.open{display:flex}
-.codexBox{width:min(1100px,96vw);max-height:92vh;display:flex;flex-direction:column;background:radial-gradient(circle at top,#2a2114 0%,#12161f 55%,#0b0e14 100%);border:1px solid rgba(212,175,90,.45);border-radius:14px;overflow:hidden}
-.codexHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid rgba(212,175,90,.25);flex-wrap:wrap}
+.codexBox{width:min(1100px,96vw);height:min(860px,92vh);display:flex;flex-direction:column;background:radial-gradient(circle at top,#2a2114 0%,#12161f 55%,#0b0e14 100%);border:1px solid rgba(212,175,90,.45);border-radius:14px;overflow:hidden}
+.codexHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid rgba(212,175,90,.25);flex-wrap:wrap;flex:0 0 auto}
 .codexHeader h1{font-family:Metamorphous,serif;font-size:28px;color:#e0b85a;margin:0}
 .codexTabs{display:flex;gap:8px;align-items:center}
 .codexTabs button.active{box-shadow:inset 0 0 0 1px #e0b85a;color:#e0b85a;border-color:#e0b85a}
-#codexBody{overflow:auto;padding:16px 18px 22px;text-align:left}
+#codexBody{overflow:auto;padding:16px 18px 22px;text-align:left;flex:1 1 auto;min-height:0}
 .codexRace{margin-bottom:22px}
 .codexRace:last-child{margin-bottom:0}
 .codexRace h2{font-family:Metamorphous,serif;font-size:18px;color:#e0b85a;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(212,175,90,.22);display:flex;align-items:baseline;gap:10px}
 .codexRace h2 span{font-family:'Source Sans 3',sans-serif;font-size:12px;color:#b9a888;font-weight:600}
 .codexGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
+.codexGrid.unitCards{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px;align-items:start}
+.codexUnitCard{border:none;background:transparent;border-radius:6px;overflow:visible;filter:drop-shadow(0 8px 16px rgba(0,0,0,.45))}
+.codexUnitCard canvas{width:100%;height:auto;aspect-ratio:512/716;display:block;border-radius:6px;border:1px solid rgba(212,175,90,.4);background:#0c1018}
 .codexCard{border:1px solid rgba(212,175,90,.28);border-radius:10px;background:rgba(14,18,28,.92);overflow:hidden;display:flex;flex-direction:column;min-height:210px}
 .codexCard .art{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#1a2230}
 .codexCard .body{padding:8px 9px 10px;display:flex;flex-direction:column;gap:4px;flex:1}
@@ -63,19 +66,28 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 .codexSpellArt .cost{font-family:Metamorphous,serif;font-size:36px;font-weight:800;color:#e0b85a;line-height:1}
 .codexSpellArt .costLabel{font-size:11px;font-weight:700;color:#b9a888;letter-spacing:.06em}
 #opponents{position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:14;display:flex;flex-direction:column;gap:12px;align-items:center;max-height:min(84vh,860px);overflow-y:auto;overflow-x:visible;padding:8px 10px;pointer-events:auto;scrollbar-width:thin}
-.opp{pointer-events:auto;cursor:pointer;position:relative;width:92px;height:92px;padding:0;border-radius:18px;background:rgba(18,22,32,.95);border:2px solid rgba(212,175,90,.35);overflow:hidden;flex:0 0 auto;transition:border-color .15s,transform .15s,box-shadow .15s}
-.opp:hover{border-color:#e0b85a;transform:translateX(3px) scale(1.04);box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.opp{pointer-events:auto;cursor:pointer;position:relative;width:auto;height:92px;padding:0;border-radius:0;background:transparent;border:none;overflow:visible;flex:0 0 auto;display:flex;flex-direction:row;align-items:center;gap:0;transition:transform .15s}
+.opp:hover{transform:translateX(3px) scale(1.04)}
 .opp.dead{opacity:.38;filter:grayscale(.85);pointer-events:auto}
-.opp.self{border-color:#6ec6ff}
-.opp.combat{border-color:#ff6b5a;box-shadow:0 0 0 2px rgba(255,107,90,.45)}
-.opp.peeking{border-color:#9fd8ff;box-shadow:0 0 0 2px rgba(159,216,255,.45)}
+.oppBody{position:relative;width:92px;height:92px;border-radius:6px;overflow:hidden;flex:0 0 auto;background:rgba(18,22,32,.95);border:2px solid rgba(212,175,90,.35);box-shadow:0 6px 18px rgba(0,0,0,.35);transition:border-color .15s,box-shadow .15s;z-index:1}
+.opp:hover .oppBody{border-color:#e0b85a;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.opp.self .oppBody{border-color:#6ec6ff}
+.opp.combat .oppBody{border-color:#ff6b5a;box-shadow:0 0 0 2px rgba(255,107,90,.45)}
+.opp.peeking .oppBody{border-color:#9fd8ff;box-shadow:0 0 0 2px rgba(159,216,255,.45)}
 .opp .portrait{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .opp .rank{position:absolute;top:5px;left:5px;min-width:26px;height:24px;padding:0 6px;border-radius:9px;background:rgba(10,12,18,.82);border:1px solid rgba(212,175,90,.45);color:#e0b85a;font-family:Metamorphous,serif;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.opp .hpBar{position:absolute;left:0;right:0;bottom:0;height:10px;background:rgba(8,10,16,.75);pointer-events:none}
+.opp .lifeBars{position:absolute;left:0;right:0;bottom:0;height:13px;pointer-events:none}
+.opp .hpBar{position:absolute;left:0;right:0;bottom:0;height:10px;background:rgba(8,10,16,.75)}
 .opp .hpBarFill{height:100%;width:100%;background:linear-gradient(90deg,#2f8f5b,#7dcea0);box-shadow:0 0 8px rgba(125,206,160,.35)}
-.opp.dead .hpBarFill{background:linear-gradient(90deg,#5a2420,#a05048);box-shadow:none;width:0%!important}
-#oppHover{position:fixed;z-index:22;display:none;width:240px;padding:12px 14px;pointer-events:none!important;background:rgba(12,16,24,.96);border:1px solid rgba(212,175,90,.45);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.5)}
+.opp .armorBar{position:absolute;left:0;right:0;bottom:0;height:13px;z-index:1}
+.opp .armorBarFill{height:100%;width:100%;background:linear-gradient(90deg,#6a6f78,#b0b6c0);box-shadow:0 0 8px rgba(176,182,192,.28)}
+.opp.dead .hpBarFill,.opp.dead .armorBarFill{box-shadow:none;width:0%!important}
+.oppFlag{width:56px;height:56px;object-fit:contain;display:block;pointer-events:none;flex:0 0 auto;margin-left:-10px;position:relative;z-index:2;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+#oppHover{position:fixed;z-index:26;display:none;width:240px;padding:12px 14px;pointer-events:none!important;background:rgba(12,16,24,.96);border:1px solid rgba(212,175,90,.45);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.5)}
 #oppHover.show{display:block}
+#oppHover.cardPair{width:auto;max-width:none;padding:0;background:transparent;border:none;border-radius:0;box-shadow:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.7));display:none;gap:10px;align-items:flex-start}
+#oppHover.cardPair.show{display:flex}
+#oppHover.cardPair canvas{width:min(210px,42vw);height:auto;border-radius:6px;border:1px solid rgba(212,175,90,.45);background:#0c1018;display:block;flex:0 0 auto}
 #oppHover .title{font-family:Metamorphous,serif;color:#e0b85a;font-size:15px;margin-bottom:4px}
 #oppHover .rankLine{font-size:11px;color:#9fd8ff;margin-bottom:8px;letter-spacing:.04em}
 #oppHover .line{font-size:12px;color:#eee2cb;line-height:1.4;margin-bottom:3px}
@@ -85,30 +97,29 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #phaseRow.show{display:flex}
 #phaseBanner{font-family:Metamorphous,serif;font-size:18px;color:#e0b85a;text-shadow:0 2px 12px rgba(0,0,0,.8);text-align:center}
 #playfield{position:relative;flex:1 1 auto;min-height:0;width:100%}
-.heroFrame{width:104px;pointer-events:auto}
-.heroFrame .portraitWrap{position:relative;width:104px;height:136px;border-radius:18px;overflow:hidden;isolation:isolate;border:2px solid rgba(212,175,90,.45);background:rgba(18,22,32,.95);box-shadow:0 8px 22px rgba(0,0,0,.4)}
-.heroFrame .portraitWrap img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:16px}
-#stagePortraitSlot{position:absolute;left:50%;top:128px;transform:translateX(-50%);z-index:12;width:104px;height:136px;pointer-events:none}
-#stagePortraitCenter{position:relative;width:104px;height:136px;display:flex;align-items:center;justify-content:center;pointer-events:auto}
+:root{--stageCard:160px}
+.stageCard{position:relative;width:var(--stageCard);height:var(--stageCard);padding:0;border:none;background:transparent;box-shadow:none;display:block;flex:0 0 auto;pointer-events:auto;z-index:13;overflow:visible}
+.stageCardFace{position:absolute;inset:0;border-radius:0;overflow:visible;isolation:isolate;border:none;background:transparent;box-shadow:none;transform-origin:center center;pointer-events:none}
+.stageCard canvas{width:100%;height:100%;display:block;pointer-events:none;border-radius:0;opacity:0}
+.stageCard.abilityCard{cursor:pointer}
+.stageCard.abilityCard:disabled{opacity:.45;cursor:default}
+.stageCard.abilityCard.displayOnly{cursor:default}
+.stageCardStats{display:none}
+#tavernMasterFrame.sellTarget{box-shadow:0 0 0 2px rgba(125,206,160,.45)}
+#tavernMasterFrame.sellHot{box-shadow:0 0 0 3px rgba(255,224,138,.55)}
+#stagePortraitSlot{position:absolute;left:50%;top:96px;transform:translateX(-50%);z-index:18;width:auto;height:var(--stageCard);pointer-events:none;overflow:visible}
+#stagePortraitSlot .stageCard{pointer-events:auto}
+#stagePortraitCenter{position:relative;width:auto;height:var(--stageCard);display:flex;align-items:center;justify-content:center;gap:10px;pointer-events:auto;overflow:visible}
 .tavernSide{position:absolute;top:50%;transform:translateY(-50%);display:none;align-items:center;gap:10px;pointer-events:auto;white-space:nowrap}
 .tavernSide.show{display:flex}
 #tavernSideLeft{right:calc(100% + 14px)}
 #tavernSideRight{left:calc(100% + 14px);flex-direction:row}
-.playerSide{position:absolute;top:50%;left:calc(100% + 14px);transform:translateY(-50%);display:flex;align-items:center;pointer-events:auto}
-#playerHeroFrame{position:relative;width:104px;height:136px;pointer-events:auto}
-#playerHeroFrame .portraitWrap{border-color:#6ec6ff}
 .circleBtn{position:relative;width:72px;height:72px;padding:0;border-radius:50%;overflow:hidden;isolation:isolate;border:2px solid rgba(212,175,90,.55);background:rgba(18,22,32,.95);box-shadow:0 8px 22px rgba(0,0,0,.4);display:block;flex:0 0 auto}
 .circleBtn img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:50%;pointer-events:none}
 .circleBtn .btnCost{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);min-width:26px;height:26px;padding:0 6px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Metamorphous,serif;font-size:13px;font-weight:800;color:#f2e8d5;background:radial-gradient(circle at 35% 30%,#5a3d12 0%,#2a1a08 70%);border:2px solid rgba(224,184,90,.85);box-shadow:0 2px 8px rgba(0,0,0,.55);pointer-events:none;line-height:1}
-#btnHeroPower{width:80px;height:80px}
-#btnHeroPower .btnCost{min-width:28px;height:28px;font-size:14px;bottom:5px}
 #btnFreeze.active{box-shadow:inset 0 0 0 2px #6ec6ff,0 8px 22px rgba(0,0,0,.4);border-color:#6ec6ff}
-#tavernMasterFrame,#combatEnemyFrame{display:none}
-#tavernMasterFrame.show,#combatEnemyFrame.show{display:block}
-#tavernMasterFrame .portraitWrap{border-color:rgba(224,184,90,.65);transition:border-color .15s,box-shadow .15s}
-#tavernMasterFrame.sellTarget .portraitWrap{border-color:#7dcea0;box-shadow:0 0 0 2px rgba(125,206,160,.45),0 8px 22px rgba(0,0,0,.4)}
-#tavernMasterFrame.sellHot .portraitWrap{border-color:#ffe08a;box-shadow:0 0 0 3px rgba(255,224,138,.55),0 8px 22px rgba(0,0,0,.4)}
-#combatEnemyFrame .portraitWrap{border-color:#ff6b5a}
+#tavernMasterFrame,#combatEnemyFrame,#combatEnemyPower{display:none}
+#tavernMasterFrame.show,#combatEnemyFrame.show,#combatEnemyPower.show{display:block}
 #peekPanel{position:absolute;top:52px;right:12px;width:260px;max-height:calc(100% - 60px);overflow:auto;z-index:13;display:none;pointer-events:auto}
 #peekPanel.show{display:block}
 #peekPanel h3{font-family:Metamorphous,serif;color:#e0b85a;margin-bottom:8px;font-size:15px}
@@ -121,15 +132,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #goldPanel .label{color:#d4af5a;font-family:Metamorphous,serif;font-size:11px;letter-spacing:.08em}
 #goldPanel .value{font-size:28px;font-weight:700;line-height:1.1;color:#f2e8d5;margin-top:2px}
 #btnEnd{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:15;padding:14px 18px;font-size:13px;min-width:108px}
-#cardTooltip{position:fixed;z-index:19;display:none;pointer-events:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.7))}
+#cardTooltip{position:fixed;z-index:26;display:none;pointer-events:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.7))}
 #cardTooltip.show{display:block}
-#cardTooltip canvas{width:min(210px,46vw);height:auto;border-radius:14px;border:1px solid rgba(212,175,90,.45);background:#0c1018}
+#cardTooltip canvas{width:min(210px,46vw);height:auto;border-radius:6px;border:1px solid rgba(212,175,90,.45);background:#0c1018}
 button{font-family:Metamorphous,serif;font-weight:700;letter-spacing:.04em;border:1px solid rgba(212,175,90,.55);background:linear-gradient(180deg,#3a2a14,#1c140a);color:#f2e8d5;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:11px}
 button:hover:not(:disabled){filter:brightness(1.15)}
 button:disabled{opacity:.4;cursor:default}
 button.primary{background:linear-gradient(180deg,#5a3d12,#2a1a08);border-color:#e0b85a}
 button.active{box-shadow:inset 0 0 0 1px #6ec6ff;color:#9fd8ff;border-color:#6ec6ff}
 button.warn{border-color:#c97b4a}
+button.stageCard{padding:0;border-radius:0;background:transparent;font-size:0;letter-spacing:0}
+button.stageCard:hover:not(:disabled){filter:none}
+button.stageCard:disabled{opacity:.45}
 #overlay{position:fixed;inset:0;background:rgba(5,7,12,.88);display:flex;align-items:center;justify-content:center;z-index:20}
 #overlay.hidden{display:none}
 .overlayBox{width:min(920px,94vw);max-height:90vh;overflow:auto;background:radial-gradient(circle at top,#2a2114 0%,#12161f 55%,#0b0e14 100%);border:1px solid rgba(212,175,90,.45);border-radius:14px;padding:28px;text-align:center}
@@ -139,6 +153,7 @@ button.warn{border-color:#c97b4a}
 .overlayBox .beginBtn{padding:14px 40px;font-size:16px;min-width:160px}
 .overlayBox p{color:#c9b896;margin-bottom:18px;line-height:1.45}
 .heroGrid,.discoverGrid{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+#btnRerollLords{margin:18px auto 0;display:block;min-width:160px;padding:10px 18px;font-size:13px}
 .heroCard,.discoverCard{width:220px;padding:14px;border-radius:10px;background:rgba(20,24,34,.9);border:1px solid rgba(212,175,90,.35);cursor:pointer;text-align:left}
 .heroCard:hover,.discoverCard:hover{border-color:#e0b85a;transform:translateY(-2px)}
 .heroCard .portrait{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;border-radius:14px;margin-bottom:12px;border:2px solid rgba(212,175,90,.4);background:#1a2230}
@@ -146,47 +161,23 @@ button.warn{border-color:#c97b4a}
 .heroCard .meta,.discoverCard .meta{font-size:12px;color:#b9a888;margin-bottom:8px}
 .heroCard .power,.discoverCard .text{font-size:13px;color:#eee2cb;line-height:1.35}
 .hidden{display:none!important}
-@media (max-width:900px){
-  .opp{width:72px;height:72px;border-radius:14px}
-  .opp .rank{min-width:22px;height:20px;font-size:10px}
-  .opp .hpBar{height:8px}
-  #opponents{left:8px;gap:10px}
-  #stagePortraitSlot,#stagePortraitCenter,#playerPortraitSlot,#playerHeroFrame,.heroFrame{width:84px;height:112px}
-  #stagePortraitCenter .portraitWrap,#playerHeroFrame .portraitWrap,.heroFrame .portraitWrap{width:84px;height:112px;border-radius:14px}
-  .circleBtn{width:60px;height:60px}
-  .circleBtn .btnCost{min-width:22px;height:22px;font-size:11px;bottom:3px}
-  #btnHeroPower{width:66px;height:66px}
-  #btnHeroPower .btnCost{min-width:24px;height:24px;font-size:12px;bottom:4px}
-  #stagePortraitSlot{top:104px}
-  #tavernSideLeft{right:calc(100% + 10px)}
-  #tavernSideRight,.playerSide{left:calc(100% + 10px)}
-  #playerPortraitSlot{bottom:132px}
-  #phaseBanner{font-size:15px}
-  #peekPanel{width:220px;top:52px}
-  #oppHover{width:210px}
-  #cardTooltip canvas{width:min(170px,48vw)}
-  #historyPanel{width:min(260px,70vw)}
-  .codexHeader h1{font-size:22px}
-  .codexGrid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
-  .overlayBox h1.titleLogo{font-size:40px}
-  .overlayBox h1.chooseLord{font-size:30px}
-}
 </style>
 </head>
 <body>
 <canvas id="gameCanvas"></canvas>
 <div id="playerPortraitSlot" class="hidden">
-  <div id="playerHeroFrame" class="heroFrame">
-    <div class="portraitWrap">
-      <img id="playerHeroArt" src="" alt="Your Lord">
+  <div id="playerHeroFrame" class="stageCard lordCard player" role="img" aria-label="Your Lord">
+    <div class="stageCardFace">
+      <canvas id="playerHeroCanvas" width="512" height="512"></canvas>
+      <div class="stageCardStats">
+        <div id="playerHeroArmor" class="stageStat armor">0</div>
+        <div id="playerHeroHp" class="stageStat hp">0</div>
+      </div>
     </div>
   </div>
-  <div class="playerSide">
-    <button id="btnHeroPower" class="circleBtn" type="button" aria-label="Lord Power">
-      <img id="heroPowerArt" src="" alt="">
-      <span id="heroPowerCost" class="btnCost">0</span>
-    </button>
-  </div>
+  <button id="btnHeroPower" class="stageCard abilityCard" type="button" aria-label="Lord Power">
+    <div class="stageCardFace"><canvas id="heroPowerCanvas" width="512" height="512"></canvas></div>
+  </button>
 </div>
 <div id="handOverlay"></div>
 <div id="enemyHandOverlay"></div>
@@ -215,14 +206,19 @@ button.warn{border-color:#c97b4a}
         </button>
       </div>
       <div id="stagePortraitCenter">
-        <div id="tavernMasterFrame" class="heroFrame">
-          <div class="portraitWrap">
-            <img id="tavernMasterArt" src="" alt="Tavern Master">
-          </div>
+        <div id="combatEnemyPower" class="stageCard abilityCard displayOnly" role="img" aria-label="Enemy Lord Power">
+          <div class="stageCardFace"><canvas id="combatEnemyPowerCanvas" width="512" height="512"></canvas></div>
         </div>
-        <div id="combatEnemyFrame" class="heroFrame">
-          <div class="portraitWrap">
-            <img id="combatEnemyArt" src="" alt="Enemy Lord">
+        <div id="tavernMasterFrame" class="stageCard lordCard bob" role="img" aria-label="Quartermaster">
+          <div class="stageCardFace"><canvas id="tavernMasterCanvas" width="512" height="512"></canvas></div>
+        </div>
+        <div id="combatEnemyFrame" class="stageCard lordCard enemy" role="img" aria-label="Enemy Lord">
+          <div class="stageCardFace">
+            <canvas id="combatEnemyCanvas" width="512" height="512"></canvas>
+            <div class="stageCardStats">
+              <div id="combatEnemyArmor" class="stageStat armor">0</div>
+              <div id="combatEnemyHp" class="stageStat hp">0</div>
+            </div>
           </div>
         </div>
       </div>
@@ -258,7 +254,7 @@ button.warn{border-color:#c97b4a}
       <h1>Codex</h1>
       <div class="codexTabs">
         <button id="codexTabUnits" class="active">Units</button>
-        <button id="codexTabSpells">Spells</button>
+        <button id="codexTabSpells">Support</button>
         <button id="codexTabHeroes">Lords</button>
       </div>
       <button id="btnCloseCodex">Close</button>
@@ -276,8 +272,8 @@ button.warn{border-color:#c97b4a}
 <script type="module">
 import * as THREE from 'three';
 
-const ART_A = 'Gemini_Generated_Image_bti4bfbti4bfbti4.png';
-const ART_B = 'Gemini_Generated_Image_xdwagyxdwagyxdwa.png';
+const ART_A = 'test-cards-2.png';
+const ART_B = 'test-cards-2.png';
 const SHOP_SIZE = [0, 3, 4, 4, 5, 5, 6];
 const UPGRADE_BASE = [0, 0, 5, 7, 8, 10, 10];
 const COPY_COUNTS = [0, 16, 15, 13, 11, 9, 7];
@@ -285,23 +281,97 @@ const BUY_COST = 3;
 const REFRESH_COST = 1;
 const MAX_GOLD = 10;
 const MAX_BOARD = 7;
+const MAX_SUPPORT = 7;
 const MAX_HAND = 10;
 const START_HP = 30;
-const TRIBES = ['Beast', 'Demon', 'Dragon', 'Elemental', 'Mech', 'Murloc', 'Naga', 'Pirate', 'Quilboar', 'Undead', 'Neutral'];
+const TRIBES = [
+  'Britannia Major',
+  'Eastern Roman Empire',
+  'Mongol Empire',
+  'Tang Dynasty',
+  'Abbasid Caliphate',
+  'Song Dynasty',
+  'Holy Roman Empire',
+  'Delhi Sultanate',
+  'North Sea Empire',
+  'The Maya'
+];
 const KEYWORDS = ['Taunt', 'DivineShield', 'Reborn', 'Poisonous', 'Windfury'];
 
-const NAME_PARTS = {
-  Beast: [['Wild', 'Feral', 'Thorn', 'Moss', 'Ironhide'], ['Wolf', 'Boar', 'Raptor', 'Bear', 'Stalker']],
-  Demon: [['Fel', 'Abyssal', 'Crimson', 'Void', 'Spite'], ['Fiend', 'Imp', 'Brute', 'Hound', 'Tyrant']],
-  Dragon: [['Storm', 'Ember', 'Azure', 'Scale', 'Nether'], ['Whelp', 'Drake', 'Wyrm', 'Guardian', 'Scion']],
-  Elemental: [['Molten', 'Frost', 'Thunder', 'Ashen', 'Tide'], ['Spark', 'Golem', 'Spirit', 'Wisp', 'Colossus']],
-  Mech: [['Cog', 'Iron', 'Clock', 'Bolt', 'Scrap'], ['Bot', 'Tank', 'Drone', 'Walker', 'Core']],
-  Murloc: [['Murky', 'Tide', 'Gill', 'Coral', 'Brack'], ['Fin', 'Oracle', 'Scout', 'Raider', 'King']],
-  Naga: [['Deep', 'Pearl', 'Siren', 'Reef', 'Salt'], ['Myrmidon', 'Witch', 'Guard', 'Seer', 'Lord']],
-  Pirate: [['Salt', 'Black', 'Cutlass', 'Storm', 'Rum'], ['Corsair', 'Gunner', 'Mate', 'Captain', 'Scallywag']],
-  Quilboar: [['Bristle', 'Tusk', 'Thorn', 'Blood', 'Spike'], ['Geomancer', 'Warrior', 'Shaman', 'Tusker', 'Warden']],
-  Undead: [['Grave', 'Bone', 'Pale', 'Wailing', 'Rot'], ['Ghoul', 'Knight', 'Mage', 'Shade', 'Lich']],
-  Neutral: [['Sun', 'Stone', 'Oath', 'Rune', 'Ash'], ['Knight', 'Acolyte', 'Guard', 'Champion', 'Warden']]
+const NATION_COLORS = {
+  'Britannia Major': { dark: '#c8102e', light: '#f5f5f5' },
+  'Eastern Roman Empire': { dark: '#4b0082', light: '#d4af37' },
+  'Mongol Empire': { dark: '#1e3a5f', light: '#e8a54b' },
+  'Tang Dynasty': { dark: '#b71c1c', light: '#f6c945' },
+  'Abbasid Caliphate': { dark: '#111111', light: '#c9a227' },
+  'Song Dynasty': { dark: '#8b1e1e', light: '#f2e8d5' },
+  'Holy Roman Empire': { dark: '#1a1a1a', light: '#ffd700' },
+  'Delhi Sultanate': { dark: '#0b3d2e', light: '#d4af37' },
+  'North Sea Empire': { dark: '#c8102e', light: '#ffffff' },
+  'The Maya': { dark: '#0d7377', light: '#e85d04' }
+};
+
+const NATION_UNITS = {
+  'Britannia Major': [
+    'Longbowman', 'Billman', 'Yeoman Archer', 'Hobelar', 'Man-at-Arms', 'Longsword Knight', 'Mace Knight',
+    'Sword and Shield Soldier', 'Flanged Mace Warrior', 'Crossbowman', 'Spear Levy', 'Mounted Sergeant',
+    'Household Knight', 'Welsh Bowman', 'Foot Soldier', 'Halberdier', 'Knight Banneret', 'Garrison Archer',
+    'Border Reiver', 'Royal Guard', 'Pike Block', 'Squire of the Realm', 'Retinue Spearman', 'English Chevalier'
+  ],
+  'Eastern Roman Empire': [
+    'Kataphraktos', 'Skoutatos', 'Varangian Guard', 'Toxotes', 'Akritai Scout', 'Trapezites',
+    'Contus Lancer', 'Imperial Guard', 'Menavlion Infantry', 'Scoutarios', 'Tagmata Spearman',
+    'Klibanophoros', 'Hetaireia Guard', 'Light Skirmisher', 'Wall Garrison', 'Dromon Marine',
+    'Pronoiar Cavalry', 'Paramonai', 'Byzantine Archer', 'Shield Bearer', 'Pelekyphoros', 'City Watch'
+  ],
+  'Mongol Empire': [
+    'Mangudai Horse Archer', 'Keshig Guard', 'Heavy Lancer', 'Baghatur', 'Torguud Warrior', 'Kipchak Archer',
+    'Mongol Scout', 'Siege Engineer', 'Nomad Spearman', 'Steppe Lancer', 'Tumen Outrider', 'Composite Bowman',
+    'Guard of the Khan', 'Light Cavalry', 'Quiver Bearer', 'Ordu Warrior', 'Banner Guard', 'Sabre Cavalry',
+    'Iron Flail Rider', 'Shield Bearer', 'Armored Horse Archer', 'Camp Spearman', 'Messenger Rider', 'Siege Crew'
+  ],
+  'Tang Dynasty': [
+    'Tang Crossbowman', 'Pu Bing Spearman', 'Dao Swordsman', 'Ji Halberdier', 'Cavalry Archer', 'Imperial Guard',
+    'Mounted Lancer', 'Garrison Militia', 'Palace Guard', 'Tang Cataphract', 'Shield Wall Soldier',
+    'Border Watch', 'Elite Jian Warrior', 'Bow Conscript', 'Armored Cavalry', 'Standard Bearer',
+    'Siege Crossbow Crew', 'Martial Officer', 'Foot Archer', 'Heavy Infantry', 'Drum Tower Guard', 'Rank Spearman'
+  ],
+  'Abbasid Caliphate': [
+    'Ghulam Cavalry', 'Faris Cavalry', 'Arab Archer', 'Heavy Spearman', 'Abbasid Guardsman', 'Desert Scout',
+    'Composite Bowman', 'Mace Infantry', 'Sword and Buckler Man', 'Siege Engineer', 'Camel Rider',
+    'City Garrison', 'Black Banner Guard', 'Lancer of the Caliph', 'Pike Militia', 'Armored Horseman',
+    'Infantry of Iraq', 'Khurasani Cavalry', 'Foot Soldier', 'Archer of Baghdad', 'Flanged Mace Warrior', 'Watch Captain'
+  ],
+  'Song Dynasty': [
+    'Song Crossbowman', 'Fire Lance Soldier', 'Heavy Infantry', 'Shield Infantry', 'Song Cavalry', 'Imperial Guards',
+    'Ji Warrior', 'Dao Infantryman', 'Mountain Scout', 'Naval Marine', 'Siege Crossbowman', 'Armored Spearman',
+    'Elite Jian Guard', 'Garrison Archer', 'Halberd Troop', 'Mounted Archer', 'Standard Bearer',
+    'Palace Gate Guard', 'Pike Formation', 'Militia Levy', 'Sword Guard', 'Rank Crossbow'
+  ],
+  'Holy Roman Empire': [
+    'Landsknecht', 'Ritter Knight', 'Crossbowman', 'Halberdier', 'Sword and Shield Soldier', 'Mace Knight',
+    'Longsword Knight', 'Flanged Mace Warrior', 'Pike Square', 'Mounted Sergeant', 'Imperial Knight',
+    'Foot Soldier', 'Man-at-Arms', 'Spear Militia', 'Banner Knight', 'Pavise Crossbowman', 'Doppelsoldner',
+    'Household Guard', 'Squire', 'Billman', 'Cavalry Lancer', 'City Militia'
+  ],
+  'Delhi Sultanate': [
+    'Ghulam of Delhi', 'Turkic Cavalry', 'Archer of Delhi', 'Heavy Infantry', 'Rajput Swordsman', 'Spear Levy',
+    'Mounted Archer', 'Sultan\'s Guard', 'Mace Warrior', 'Sword and Shield Soldier', 'Siege Engineer',
+    'Foot Soldier', 'Lancer', 'Composite Bowman', 'City Watch', 'Flanged Mace Warrior', 'Cavalry of the Sultan',
+    'Pike Infantry', 'Desert Scout', 'Armored Horseman', 'Banner Guard', 'Elephant Escort'
+  ],
+  'North Sea Empire': [
+    'Huscarl', 'Housecarl Axeman', 'Viking Archer', 'Bondi Spearman', 'Dane Axe Warrior', 'Longship Marine',
+    'Shield Wall Soldier', 'Norse Spearman', 'Mounted Thegn', 'Bow Levy', 'Sword Dane', 'Coastal Raider',
+    'Fyrd Militia', 'Knight of Cnut', 'Anglo-Danish Archer', 'Heavy Axeman', 'Round Shield Warrior',
+    'Seax Fighter', 'Banner Thegn', 'Horseman of Wessex', 'Ship Guard', 'Spear Thrall Freemen'
+  ],
+  'The Maya': [
+    'Atlatl Skirmisher', 'Macuahuitl Warrior', 'Maya Archer', 'Spear Warrior', 'Holcan Soldier', 'Flint Spear Levy',
+    'Obsidian Swordsman', 'City Garrison', 'Scout Runner', 'Shield Bearer', 'Blowgun Skirmisher', 'Elite Guard',
+    'War Captain Retinue', 'Bow Conscript', 'Club Warrior', 'Standard Bearer', 'Temple Guard',
+    'Forest Ambushers', 'Rank Spearman', 'Tribute Levy', 'Jaguar Order Warrior', 'Coastal Fisher Militia'
+  ]
 };
 
 const EFFECT_CATALOG = {
@@ -370,8 +440,16 @@ function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
 function uid() { return Math.random().toString(36).slice(2, 10); }
 function keywordLabel(kw) {
-  if (kw === 'DivineShield') return 'Divine Shield';
+  if (kw === 'DivineShield') return 'Pavise';
+  if (kw === 'Reborn') return 'Reserves';
+  if (kw === 'Windfury') return 'Double Strike';
+  if (kw === 'Poisonous') return 'Venomed';
+  if (kw === 'Taunt') return 'Guard';
   return kw;
+}
+
+function nationFlagColors(nation) {
+  return NATION_COLORS[nation] || { dark: '#5a4030', light: '#d4af5a' };
 }
 
 function buffMinion(m, a, h) {
@@ -444,15 +522,17 @@ function createCardDatabase() {
     ]
   };
 
+  const nationCursor = Object.fromEntries(TRIBES.map(t => [t, 0]));
   for (let tier = 1; tier <= 6; tier++) {
     let made = 0;
     while (made < tierTargets[tier]) {
       const tribe = TRIBES[made % TRIBES.length];
-      const parts = NAME_PARTS[tribe];
-      let name = `${pick(parts[0])} ${pick(parts[1])}`;
+      const roster = NATION_UNITS[tribe] || ['Foot Soldier'];
+      const cursor = nationCursor[tribe]++;
+      let name = roster[cursor % roster.length];
+      if (cursor >= roster.length) name = `${name} ${Math.floor(cursor / roster.length) + 1}`;
       let guard = 0;
-      while (usedNames.has(name) && guard++ < 50) name = `${pick(parts[0])} ${pick(parts[1])}`;
-      if (usedNames.has(name)) name = `${name} ${id}`;
+      while (usedNames.has(name) && guard++ < 80) name = `${roster[cursor % roster.length]} ${id + guard}`;
       usedNames.add(name);
       const baseAtk = tier + Math.floor(made % 3);
       const baseHp = tier + 1 + Math.floor((made + 1) % 3);
@@ -484,7 +564,7 @@ function createCardDatabase() {
         startOfCombat,
         avenge,
         goldenUpgrade,
-        art: tribe === 'Neutral' || TRIBES.indexOf(tribe) % 2 === 0 ? ART_A : ART_B,
+        art: TRIBES.indexOf(tribe) % 2 === 0 ? ART_A : ART_B,
         isToken: false
       });
       made++;
@@ -492,17 +572,17 @@ function createCardDatabase() {
   }
 
   const tokens = [
-    { id: 'token_1_1', name: 'Spawn', tier: 1, attack: 1, health: 1 },
-    { id: 'token_2_2', name: 'Whelp', tier: 1, attack: 2, health: 2 },
-    { id: 'token_5_5', name: 'Monstrosity', tier: 3, attack: 5, health: 5 },
-    { id: 'token_8_8', name: 'Titan Fragment', tier: 5, attack: 8, health: 8 }
+    { id: 'token_1_1', name: 'Levy Spearmen', tier: 1, attack: 1, health: 1 },
+    { id: 'token_2_2', name: 'Militia Guards', tier: 1, attack: 2, health: 2 },
+    { id: 'token_5_5', name: 'Veteran Serjeants', tier: 3, attack: 5, health: 5 },
+    { id: 'token_8_8', name: 'Household Guard', tier: 5, attack: 8, health: 8 }
   ];
   for (const t of tokens) {
     cards.push({
       id: t.id,
       name: t.name,
       tier: t.tier,
-      tribe: 'Neutral',
+      tribe: 'Levy',
       attack: t.attack,
       health: t.health,
       keywords: [],
@@ -531,66 +611,126 @@ const CARD_DB = createCardDatabase();
 const CARD_BY_ID = Object.fromEntries(CARD_DB.map(c => [c.id, c]));
 
 const SPELL_DB = [
-  { id: 'sp_coin', name: 'Pocket Coin', tier: 1, cost: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' },
-  { id: 'sp_whet', name: 'Whetstone', tier: 1, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 1, health: 1 } }, text: 'Give a random friendly minion +1/+1.' },
-  { id: 'sp_reroll', name: 'Open Tab', tier: 1, cost: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' },
-  { id: 'sp_brace', name: 'Brace Up', tier: 2, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly minion Taunt.' },
-  { id: 'sp_feast', name: 'Shared Feast', tier: 2, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 1 } }, text: 'Give your minions +1/+1.' },
-  { id: 'sp_chill', name: 'Cold Storage', tier: 2, cost: 1, effect: { id: 'freezeShop', params: {} }, text: 'Freeze the Tavern.' },
-  { id: 'sp_shine', name: 'Polish Armor', tier: 3, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield' } }, text: 'Give a random friendly minion Divine Shield.' },
-  { id: 'sp_brood', name: 'Brood Call', tier: 3, cost: 3, effect: { id: 'summonToken', params: { tokenId: 'token_2_2', count: 2 } }, text: 'Summon two 2/2 Whelps.' },
-  { id: 'sp_surge', name: 'Battle Surge', tier: 3, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 0 } }, text: 'Give your minions +2 Attack.' },
-  { id: 'sp_study', name: 'Arcane Ledger', tier: 4, cost: 2, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a minion from your tier.' },
-  { id: 'sp_forge', name: 'Warforge', tier: 4, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 2 } }, text: 'Give your minions +2/+2.' },
-  { id: 'sp_reborn', name: 'Grave Pact', tier: 4, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn' } }, text: 'Give a random friendly minion Reborn.' },
-  { id: 'sp_storm', name: 'Storm Brand', tier: 5, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Windfury' } }, text: 'Give a random friendly minion Windfury.' },
-  { id: 'sp_titan', name: 'Titan Seed', tier: 5, cost: 5, effect: { id: 'summonToken', params: { tokenId: 'token_5_5', count: 1 } }, text: 'Summon a 5/5 Monstrosity.' },
-  { id: 'sp_rally', name: 'War Council', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 3, health: 3 } }, text: 'Give your minions +3/+3.' },
-  { id: 'sp_apex', name: 'Apex Decree', tier: 6, cost: 5, effect: { id: 'buffFriendlyAll', params: { attack: 4, health: 4 } }, text: 'Give your minions +4/+4.' },
-  { id: 'sp_colossus', name: 'Summon Colossus', tier: 6, cost: 6, effect: { id: 'summonToken', params: { tokenId: 'token_8_8', count: 1 } }, text: 'Summon an 8/8 Titan Fragment.' },
-  { id: 'sp_sanctum', name: 'Sanctum Ward', tier: 6, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield', all: true } }, text: 'Give your minions Divine Shield.' }
+  { id: 'sp_coin', name: 'Market Stall', category: 'Building', tier: 1, cost: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' },
+  { id: 'sp_tollhouse', name: 'Tollhouse', category: 'Building', tier: 1, cost: 2, effect: { id: 'gainGold', params: { amount: 2 } }, text: 'Gain 2 Gold.' },
+  { id: 'sp_watchpost', name: 'Watch Post', category: 'Building', tier: 1, cost: 2, effect: { id: 'summonToken', params: { tokenId: 'token_1_1', count: 1 } }, text: 'Summon a 1/1 Levy Spearmen.' },
+  { id: 'sp_crane', name: 'Harbor Crane', category: 'Building', tier: 1, cost: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' },
+  { id: 'sp_brace', name: 'Barricade', category: 'Building', tier: 2, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly unit Guard.' },
+  { id: 'sp_feast', name: 'Field Kitchen', category: 'Building', tier: 2, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 1 } }, text: 'Give your units +1/+1.' },
+  { id: 'sp_stable', name: 'Wayfarer Stable', category: 'Building', tier: 2, cost: 2, effect: { id: 'buffShop', params: { attack: 1, health: 0 } }, text: 'Give Tavern units +1 Attack.' },
+  { id: 'sp_bakehouse', name: 'Bakehouse', category: 'Building', tier: 2, cost: 2, effect: { id: 'buffFriendlyAll', params: { attack: 0, health: 1 } }, text: 'Give your units +0/+1.' },
+  { id: 'sp_chapel', name: 'Camp Chapel', category: 'Building', tier: 2, cost: 2, effect: { id: 'healHero', params: { amount: 3 } }, text: 'Restore 3 Health to your Lord.' },
+  { id: 'sp_brood', name: 'Muster Yard', category: 'Building', tier: 3, cost: 3, effect: { id: 'summonToken', params: { tokenId: 'token_2_2', count: 2 } }, text: 'Summon two 2/2 Militia Guards.' },
+  { id: 'sp_granary', name: 'Granary', category: 'Building', tier: 3, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 0, health: 2 } }, text: 'Give your units +0/+2.' },
+  { id: 'sp_tannery', name: 'Tannery', category: 'Building', tier: 3, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 0, health: 3 } }, text: 'Give a random friendly unit +0/+3.' },
+  { id: 'sp_siegeyard', name: 'Siege Workshop', category: 'Building', tier: 3, cost: 3, effect: { id: 'buffShop', params: { attack: 2, health: 0 } }, text: 'Give Tavern units +2 Attack.' },
+  { id: 'sp_forge', name: 'Armory', category: 'Building', tier: 4, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 2 } }, text: 'Give your units +2/+2.' },
+  { id: 'sp_smithy', name: 'Village Smithy', category: 'Building', tier: 4, cost: 3, effect: { id: 'buffShop', params: { attack: 1, health: 1 } }, text: 'Give Tavern units +1/+1.' },
+  { id: 'sp_training', name: 'Training Hall', category: 'Building', tier: 4, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 0 } }, text: 'Give your units +2 Attack.' },
+  { id: 'sp_moat', name: 'Moat Works', category: 'Building', tier: 4, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield' } }, text: 'Give a random friendly unit Pavise.' },
+  { id: 'sp_titan', name: 'Drill Ground', category: 'Building', tier: 5, cost: 5, effect: { id: 'summonToken', params: { tokenId: 'token_5_5', count: 1 } }, text: 'Summon a 5/5 Veteran Serjeants.' },
+  { id: 'sp_hospital', name: 'Field Hospital', category: 'Building', tier: 5, cost: 3, effect: { id: 'healHero', params: { amount: 4 } }, text: 'Restore 4 Health to your Lord.' },
+  { id: 'sp_warcollege', name: 'War College', category: 'Building', tier: 5, cost: 3, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a unit from your tier.' },
+  { id: 'sp_ballista', name: 'Ballista Yard', category: 'Building', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 3, health: 0 } }, text: 'Give your units +3 Attack.' },
+  { id: 'sp_colossus', name: 'Keep Barracks', category: 'Building', tier: 6, cost: 6, effect: { id: 'summonToken', params: { tokenId: 'token_8_8', count: 1 } }, text: 'Summon an 8/8 Household Guard.' },
+  { id: 'sp_citadel', name: 'Citadel Gate', category: 'Building', tier: 6, cost: 5, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt', all: true } }, text: 'Give your units Guard.' },
+  { id: 'sp_foundry', name: 'Royal Foundry', category: 'Building', tier: 6, cost: 5, effect: { id: 'buffShop', params: { attack: 2, health: 2 } }, text: 'Give Tavern units +2/+2.' },
+  { id: 'sp_keep', name: 'Inner Keep', category: 'Building', tier: 6, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn', all: true } }, text: 'Give your units Reserves.' },
+
+  { id: 'sp_whet', name: 'Whetstone', category: 'Item', tier: 1, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 1, health: 1 } }, text: 'Give a random friendly unit +1/+1.' },
+  { id: 'sp_boots', name: 'Marching Boots', category: 'Item', tier: 1, cost: 1, effect: { id: 'buffRandomFriendly', params: { attack: 1, health: 0 } }, text: 'Give a random friendly unit +1 Attack.' },
+  { id: 'sp_sword', name: 'Short Sword', category: 'Item', tier: 1, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 2, health: 0 } }, text: 'Give a random friendly unit +2 Attack.' },
+  { id: 'sp_mail', name: 'Padded Mail', category: 'Item', tier: 2, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 0, health: 2 } }, text: 'Give a random friendly unit +0/+2.' },
+  { id: 'sp_buckler', name: 'Heater Buckler', category: 'Item', tier: 2, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly unit Guard.' },
+  { id: 'sp_quiver', name: 'Archer\'s Quiver', category: 'Item', tier: 2, cost: 2, effect: { id: 'buffShop', params: { attack: 0, health: 1 } }, text: 'Give Tavern units +0/+1.' },
+  { id: 'sp_shine', name: 'Pavise Shield', category: 'Item', tier: 3, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield' } }, text: 'Give a random friendly unit Pavise.' },
+  { id: 'sp_surge', name: 'War Horn', category: 'Item', tier: 3, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 0 } }, text: 'Give your units +2 Attack.' },
+  { id: 'sp_longsword', name: 'Longsword', category: 'Item', tier: 3, cost: 3, effect: { id: 'buffRandomFriendly', params: { attack: 2, health: 2 } }, text: 'Give a random friendly unit +2/+2.' },
+  { id: 'sp_coif', name: 'Chain Coif', category: 'Item', tier: 3, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 1, health: 2 } }, text: 'Give a random friendly unit +1/+2.' },
+  { id: 'sp_lance', name: 'Tournament Lance', category: 'Item', tier: 4, cost: 3, effect: { id: 'buffRandomFriendly', params: { attack: 3, health: 1 } }, text: 'Give a random friendly unit +3/+1.' },
+  { id: 'sp_reliquary', name: 'Reliquary', category: 'Item', tier: 4, cost: 2, effect: { id: 'healHero', params: { amount: 3 } }, text: 'Restore 3 Health to your Lord.' },
+  { id: 'sp_spike', name: 'Spiked Shield', category: 'Item', tier: 4, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Poisonous' } }, text: 'Give a random friendly unit Venomed.' },
+  { id: 'sp_storm', name: 'Flanged Mace', category: 'Item', tier: 5, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Windfury' } }, text: 'Give a random friendly unit Double Strike.' },
+  { id: 'sp_poison', name: 'Venomed Blade', category: 'Item', tier: 5, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Poisonous' } }, text: 'Give a random friendly unit Venomed.' },
+  { id: 'sp_standard', name: 'Host Standard', category: 'Item', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 2 } }, text: 'Give your units +1/+2.' },
+  { id: 'sp_tabard', name: 'Captain\'s Tabard', category: 'Item', tier: 5, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn' } }, text: 'Give a random friendly unit Reserves.' },
+  { id: 'sp_plate', name: 'Plate Harness', category: 'Item', tier: 6, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 0, health: 3 } }, text: 'Give your units +0/+3.' },
+  { id: 'sp_crown', name: 'War Crown', category: 'Item', tier: 6, cost: 5, effect: { id: 'buffRandomFriendly', params: { attack: 4, health: 4 } }, text: 'Give a random friendly unit +4/+4.' },
+  { id: 'sp_greaves', name: 'Steel Greaves', category: 'Item', tier: 6, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 1 } }, text: 'Give your units +1/+1.' },
+  { id: 'sp_axe', name: 'Bearded Axe', category: 'Item', tier: 6, cost: 5, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Windfury', all: true } }, text: 'Give your units Double Strike.' },
+
+  { id: 'sp_reroll', name: 'Fresh Recruits', category: 'Edict', tier: 1, cost: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' },
+  { id: 'sp_ration', name: 'Ration Order', category: 'Edict', tier: 1, cost: 1, effect: { id: 'healHero', params: { amount: 2 } }, text: 'Restore 2 Health to your Lord.' },
+  { id: 'sp_scout', name: 'Scout Report', category: 'Edict', tier: 1, cost: 1, effect: { id: 'buffShop', params: { attack: 0, health: 1 } }, text: 'Give Tavern units +0/+1.' },
+  { id: 'sp_chill', name: 'Hold the Line', category: 'Edict', tier: 2, cost: 1, effect: { id: 'freezeShop', params: {} }, text: 'Freeze the Tavern.' },
+  { id: 'sp_levy', name: 'Levy Call', category: 'Edict', tier: 2, cost: 2, effect: { id: 'summonToken', params: { tokenId: 'token_1_1', count: 2 } }, text: 'Summon two 1/1 Levy Spearmen.' },
+  { id: 'sp_billet', name: 'Billeting Order', category: 'Edict', tier: 2, cost: 2, effect: { id: 'healHero', params: { amount: 3 } }, text: 'Restore 3 Health to your Lord.' },
+  { id: 'sp_tax', name: 'Muster Tax', category: 'Edict', tier: 2, cost: 2, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' },
+  { id: 'sp_drill', name: 'Drill Order', category: 'Edict', tier: 3, cost: 2, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 0 } }, text: 'Give your units +1 Attack.' },
+  { id: 'sp_pay', name: 'Pay Day', category: 'Edict', tier: 3, cost: 2, effect: { id: 'gainGold', params: { amount: 2 } }, text: 'Gain 2 Gold.' },
+  { id: 'sp_conscript', name: 'Conscription', category: 'Edict', tier: 3, cost: 3, effect: { id: 'summonToken', params: { tokenId: 'token_2_2', count: 1 } }, text: 'Summon a 2/2 Militia Guards.' },
+  { id: 'sp_nightwatch', name: 'Night Watch', category: 'Edict', tier: 3, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly unit Guard.' },
+  { id: 'sp_study', name: 'Recruitment Roll', category: 'Edict', tier: 4, cost: 2, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a unit from your tier.' },
+  { id: 'sp_reborn', name: 'Reserve Orders', category: 'Edict', tier: 4, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn' } }, text: 'Give a random friendly unit Reserves.' },
+  { id: 'sp_inspect', name: 'Camp Inspection', category: 'Edict', tier: 4, cost: 3, effect: { id: 'buffShop', params: { attack: 2, health: 0 } }, text: 'Give Tavern units +2 Attack.' },
+  { id: 'sp_herald', name: 'Herald\'s Call', category: 'Edict', tier: 4, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 0 } }, text: 'Give your units +2 Attack.' },
+  { id: 'sp_amnesty', name: 'Amnesty', category: 'Edict', tier: 4, cost: 3, effect: { id: 'healHero', params: { amount: 5 } }, text: 'Restore 5 Health to your Lord.' },
+  { id: 'sp_rally', name: 'War Council', category: 'Edict', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 3, health: 3 } }, text: 'Give your units +3/+3.' },
+  { id: 'sp_march', name: 'Forced March', category: 'Edict', tier: 5, cost: 3, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' },
+  { id: 'sp_feastedict', name: 'Victory Feast', category: 'Edict', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 2 } }, text: 'Give your units +2/+2.' },
+  { id: 'sp_writ', name: 'Quartermaster Writ', category: 'Edict', tier: 5, cost: 3, effect: { id: 'buffShop', params: { attack: 1, health: 2 } }, text: 'Give Tavern units +1/+2.' },
+  { id: 'sp_feudal', name: 'Feudal Duty', category: 'Edict', tier: 5, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn', all: true } }, text: 'Give your units Reserves.' },
+  { id: 'sp_apex', name: 'Royal Decree', category: 'Edict', tier: 6, cost: 5, effect: { id: 'buffFriendlyAll', params: { attack: 4, health: 4 } }, text: 'Give your units +4/+4.' },
+  { id: 'sp_sanctum', name: 'Shield Wall Order', category: 'Edict', tier: 6, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield', all: true } }, text: 'Give your units Pavise.' },
+  { id: 'sp_tribute', name: 'Tribute Levy', category: 'Edict', tier: 6, cost: 4, effect: { id: 'gainGold', params: { amount: 3 } }, text: 'Gain 3 Gold.' },
+  { id: 'sp_standing', name: 'Standing Orders', category: 'Edict', tier: 6, cost: 5, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 4 } }, text: 'Give your units +2/+4.' },
+  { id: 'sp_ban', name: 'Arms Ban Lifted', category: 'Edict', tier: 6, cost: 4, effect: { id: 'summonToken', params: { tokenId: 'token_5_5', count: 1 } }, text: 'Summon a 5/5 Veteran Serjeants.' }
 ];
 const SPELL_BY_ID = Object.fromEntries(SPELL_DB.map(s => [s.id, s]));
 const SPELL_COPIES = [0, 5, 7, 9, 11, 7, 5];
 
 const HERO_DB = [
-  { id: 'h1', name: 'Sunforged Regent', armor: 18, power: { name: 'Solar Boon', cost: 1, uses: 1, effect: { id: 'buffRandomFriendly', params: { attack: 2, health: 1 } }, text: 'Give a random friendly minion +2/+1.' } },
-  { id: 'h2', name: 'Ashen Corsair', armor: 15, power: { name: 'Loot Cache', cost: 1, uses: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' } },
-  { id: 'h3', name: 'Tide Oracle', armor: 13, power: { name: 'Reroll Tide', cost: 0, uses: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh Bob\'s Tavern.' } },
-  { id: 'h4', name: 'Grave Archivist', armor: 16, power: { name: 'Bone Study', cost: 2, uses: 1, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a minion from your tier.' } },
-  { id: 'h5', name: 'Felbrew Alchemist', armor: 14, power: { name: 'Volatile Mix', cost: 1, uses: 1, effect: { id: 'buffShop', params: { attack: 1, health: 1 } }, text: 'Give minions in the Tavern +1/+1.' } },
-  { id: 'h6', name: 'Ironclad Warden', armor: 20, power: { name: 'Bulwark', cost: 1, uses: 1, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly minion Taunt.' } },
-  { id: 'h7', name: 'Stormscale Seer', armor: 12, power: { name: 'Dragoncall', cost: 2, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Dragon', attack: 1, health: 1 } }, text: 'Give your Dragons +1/+1.' } },
-  { id: 'h8', name: 'Cogmaster Vex', armor: 17, power: { name: 'Tune Up', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Mech', attack: 1, health: 1 } }, text: 'Give your Mechs +1/+1.' } },
-  { id: 'h9', name: 'Bristle Prophet', armor: 15, power: { name: 'Thorn Blessing', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Quilboar', attack: 1, health: 1 } }, text: 'Give your Quilboar +1/+1.' } },
-  { id: 'h10', name: 'Deepwake Empress', armor: 14, power: { name: 'Siren Song', cost: 1, uses: 1, effect: { id: 'freezeShop', params: {} }, text: 'Freeze the Tavern.' } },
-  { id: 'h11', name: 'Pale Revenant', armor: 16, power: { name: 'Unholy Gift', cost: 2, uses: 1, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn' } }, text: 'Give a random friendly minion Reborn.' } },
-  { id: 'h12', name: 'Molten Heart', armor: 13, power: { name: 'Ember Feed', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Elemental', attack: 2, health: 0 } }, text: 'Give your Elementals +2 Attack.' } },
-  { id: 'h13', name: 'Murk Tidechief', armor: 12, power: { name: 'Schooling', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Murloc', attack: 1, health: 1 } }, text: 'Give your Murlocs +1/+1.' } },
-  { id: 'h14', name: 'Void Harvester', armor: 18, power: { name: 'Soul Sip', cost: 0, uses: 1, effect: { id: 'healHero', params: { amount: 2 } }, text: 'Restore 2 Health to your Lord.' } },
-  { id: 'h15', name: 'Rune Knight Ael', armor: 19, power: { name: 'Oathbound', cost: 1, uses: 1, effect: { id: 'buffSelf', params: { attack: 0, health: 0 } }, text: 'Give your left-most minion +1/+2.', special: 'leftmost' } },
-  { id: 'h16', name: 'Scarlet Raider', armor: 15, power: { name: 'Boarding Pike', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Pirate', attack: 1, health: 0 } }, text: 'Give your Pirates +1 Attack.' } }
+  { id: 'h1', name: 'Aldric of Ravensmarch', nation: 'Britannia Major', armor: 18, power: { name: 'Norman Charge', cost: 1, uses: 1, effect: { id: 'buffRandomFriendly', params: { attack: 2, health: 1 } }, text: 'Give a random friendly unit +2/+1.' } },
+  { id: 'h2', name: 'Elowen Greyhaft', nation: 'Britannia Major', armor: 16, power: { name: 'Longbow Levy', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Britannia Major', attack: 1, health: 0 } }, text: 'Give your Britannia Major units +1 Attack.' } },
+  { id: 'h3', name: 'Konstantios of Chrysa', nation: 'Eastern Roman Empire', armor: 15, power: { name: 'Codex Reform', cost: 0, uses: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' } },
+  { id: 'h4', name: 'Irene of Galata', nation: 'Eastern Roman Empire', armor: 17, power: { name: 'Tagmata Drill', cost: 2, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Eastern Roman Empire', attack: 1, health: 1 } }, text: 'Give your Eastern Roman Empire units +1/+1.' } },
+  { id: 'h5', name: 'Bogen of Black Banner', nation: 'Mongol Empire', armor: 14, power: { name: 'Ordu Muster', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Mongol Empire', attack: 1, health: 1 } }, text: 'Give your Mongol Empire units +1/+1.' } },
+  { id: 'h6', name: 'Saran Stormhoof', nation: 'Mongol Empire', armor: 13, power: { name: 'Forced March', cost: 1, uses: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' } },
+  { id: 'h7', name: 'Shen of Jade Gate', nation: 'Tang Dynasty', armor: 16, power: { name: 'Equal Field', cost: 2, uses: 1, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a unit from your tier.' } },
+  { id: 'h8', name: 'Mei of West Corridor', nation: 'Tang Dynasty', armor: 14, power: { name: 'Court Appointment', cost: 1, uses: 1, effect: { id: 'buffShop', params: { attack: 1, health: 1 } }, text: 'Give units in the Tavern +1/+1.' } },
+  { id: 'h9', name: 'Faris of Rayy', nation: 'Abbasid Caliphate', armor: 15, power: { name: 'House of Wisdom', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Abbasid Caliphate', attack: 1, health: 1 } }, text: 'Give your Abbasid Caliphate units +1/+1.' } },
+  { id: 'h10', name: 'Layla of Green Dome', nation: 'Abbasid Caliphate', armor: 18, power: { name: 'Ghulam Guard', cost: 1, uses: 1, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly unit Guard.' } },
+  { id: 'h11', name: 'Han of River Forts', nation: 'Song Dynasty', armor: 15, power: { name: 'Crossbow Corps', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Song Dynasty', attack: 1, health: 0 } }, text: 'Give your Song Dynasty units +1 Attack.' } },
+  { id: 'h12', name: 'Qiu of Bian Gate', nation: 'Song Dynasty', armor: 17, power: { name: 'Loyalty Oath', cost: 1, uses: 1, effect: { id: 'buffSelf', params: { attack: 0, health: 0 } }, text: 'Give your left-most unit +1/+2.', special: 'leftmost' } },
+  { id: 'h13', name: 'Reinhardt of Aachenmarch', nation: 'Holy Roman Empire', armor: 20, power: { name: 'Imperial Banner', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Holy Roman Empire', attack: 1, health: 1 } }, text: 'Give your Holy Roman Empire units +1/+1.' } },
+  { id: 'h14', name: 'Adelheid of Rheinfels', nation: 'Holy Roman Empire', armor: 16, power: { name: 'Hold Camp', cost: 1, uses: 1, effect: { id: 'freezeShop', params: {} }, text: 'Freeze the Tavern.' } },
+  { id: 'h15', name: 'Amir of Red Fort', nation: 'Delhi Sultanate', armor: 16, power: { name: 'Market Control', cost: 0, uses: 1, effect: { id: 'healHero', params: { amount: 2 } }, text: 'Restore 2 Health to your Lord.' } },
+  { id: 'h16', name: 'Noor of Yamuna', nation: 'Delhi Sultanate', armor: 14, power: { name: 'Delhi Levy', cost: 2, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Delhi Sultanate', attack: 1, health: 1 } }, text: 'Give your Delhi Sultanate units +1/+1.' } },
+  { id: 'h17', name: 'Erik of Grey Sails', nation: 'North Sea Empire', armor: 18, power: { name: 'Shield Wall', cost: 1, uses: 1, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield' } }, text: 'Give a random friendly unit Pavise.' } },
+  { id: 'h18', name: 'Astrid of Whitecrest', nation: 'North Sea Empire', armor: 15, power: { name: 'Sea Raid', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'North Sea Empire', attack: 1, health: 0 } }, text: 'Give your North Sea Empire units +1 Attack.' } },
+  { id: 'h19', name: 'Ajaw Tun of High Ceiba', nation: 'The Maya', armor: 15, power: { name: 'Temple Muster', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'The Maya', attack: 1, health: 1 } }, text: 'Give your The Maya units +1/+1.' } },
+  { id: 'h20', name: 'Lady Sacnicte of Red Road', nation: 'The Maya', armor: 13, power: { name: 'City Stores', cost: 1, uses: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' } }
 ];
 
 function describeCard(def) {
   const bits = [];
   if (def.keywords?.length) bits.push(def.keywords.map(keywordLabel).join(', '));
-  if (def.battlecry) bits.push(`Battlecry: ${effectText(def.battlecry)}`);
-  if (def.deathrattle) bits.push(`Deathrattle: ${effectText(def.deathrattle)}`);
+  if (def.battlecry) bits.push(`Muster: ${effectText(def.battlecry)}`);
+  if (def.deathrattle) bits.push(`Last Stand: ${effectText(def.deathrattle)}`);
   if (def.startOfCombat) bits.push(`Start of Combat: ${effectText(def.startOfCombat)}`);
-  if (def.avenge) bits.push(`Avenge (${def.avenge.count}): ${effectText(def.avenge.effect)}`);
+  if (def.avenge) bits.push(`Retaliation (${def.avenge.count}): ${effectText(def.avenge.effect)}`);
   return bits.join(' | ') || 'No special ability.';
 }
 
 function describeMinion(minion) {
-  if (isSpell(minion)) return minion.text || effectText(minion.effect) || 'Tavern spell.';
+  if (isSpell(minion)) return minion.text || effectText(minion.effect) || 'Support card.';
   const bits = [];
   if (minion.keywords?.length) bits.push(minion.keywords.map(keywordLabel).join(', '));
-  if (minion.battlecry) bits.push(`Battlecry: ${effectText(minion.battlecry)}`);
-  if (minion.deathrattle) bits.push(`Deathrattle: ${effectText(minion.deathrattle)}`);
+  if (minion.battlecry) bits.push(`Muster: ${effectText(minion.battlecry)}`);
+  if (minion.deathrattle) bits.push(`Last Stand: ${effectText(minion.deathrattle)}`);
   if (minion.startOfCombat) bits.push(`Start of Combat: ${effectText(minion.startOfCombat)}`);
-  if (minion.avenge) bits.push(`Avenge (${minion.avenge.count}): ${effectText(minion.avenge.effect)}`);
-  if (minion.golden) bits.push('Golden');
+  if (minion.avenge) bits.push(`Retaliation (${minion.avenge.count}): ${effectText(minion.avenge.effect)}`);
+  if (minion.golden) bits.push('Elite');
   return bits.join(' | ') || 'No special ability.';
 }
 
@@ -598,22 +738,22 @@ function effectText(effect) {
   const p = effect.params || {};
   switch (effect.id) {
     case 'buffSelf': return `Gain +${p.attack || 0}/+${p.health || 0}.`;
-    case 'buffFriendlyAll': return `Give your minions +${p.attack || 0}/+${p.health || 0}.`;
-    case 'buffFriendlyTribe': return `Give your ${p.tribe}s +${p.attack || 0}/+${p.health || 0}.`;
-    case 'buffRandomFriendly': return `Give a random friendly minion +${p.attack || 0}/+${p.health || 0}.`;
-    case 'giveKeywordFriendly': return p.all ? `Give your minions ${keywordLabel(p.keyword)}.` : `Give a friendly minion ${keywordLabel(p.keyword)}.`;
+    case 'buffFriendlyAll': return `Give your units +${p.attack || 0}/+${p.health || 0}.`;
+    case 'buffFriendlyTribe': return `Give your ${p.tribe} units +${p.attack || 0}/+${p.health || 0}.`;
+    case 'buffRandomFriendly': return `Give a random friendly unit +${p.attack || 0}/+${p.health || 0}.`;
+    case 'giveKeywordFriendly': return p.all ? `Give your units ${keywordLabel(p.keyword)}.` : `Give a friendly unit ${keywordLabel(p.keyword)}.`;
     case 'giveKeywordSelf': return `Gain ${keywordLabel(p.keyword)}.`;
-    case 'damageRandomEnemy': return `Deal ${p.damage} to a random enemy minion${p.times > 1 ? ` ${p.times} times` : ''}.`;
-    case 'damageAllEnemy': return `Deal ${p.damage} to all enemy minions.`;
+    case 'damageRandomEnemy': return `Deal ${p.damage} to a random enemy unit${p.times > 1 ? ` ${p.times} times` : ''}.`;
+    case 'damageAllEnemy': return `Deal ${p.damage} to all enemy units.`;
     case 'summonToken': {
       const t = CARD_BY_ID[p.tokenId];
-      return `Summon ${p.count || 1} ${t ? t.name : 'token'}.`;
+      return `Summon ${p.count || 1} ${t ? t.name : 'levy'}.`;
     }
     case 'gainGold': return `Gain ${p.amount} Gold.`;
     case 'refreshShop': return 'Refresh the Tavern.';
     case 'freezeShop': return 'Freeze the Tavern.';
-    case 'buffShop': return `Give Tavern minions +${p.attack || 0}/+${p.health || 0}.`;
-    case 'discoverCurrentTier': return 'Discover a minion from your tier.';
+    case 'buffShop': return `Give Tavern units +${p.attack || 0}/+${p.health || 0}.`;
+    case 'discoverCurrentTier': return 'Discover a unit from your tier.';
     case 'healHero': return `Restore ${p.amount} Health.`;
     default: return effect.id;
   }
@@ -636,7 +776,7 @@ function createMinionFromDef(def, opts = {}) {
   return {
     instanceId: uid(),
     cardId: def.id,
-    name: golden ? `Golden ${def.name}` : def.name,
+    name: golden ? `Elite ${def.name}` : def.name,
     tier: def.tier,
     tribe: def.tribe,
     attack,
@@ -746,64 +886,86 @@ function renderCodexUnits() {
   }
   return [...byTribe.entries()].filter(([, list]) => list.length).map(([tribe, list]) => {
     const cards = list.map(card => `
-      <div class="codexCard">
-        <img class="art" src="${card.art}" alt="${escapeHtml(card.name)}">
-        <div class="body">
-          <div class="name">${escapeHtml(card.name)}</div>
-          <div class="meta">${card.attack}/${card.health} · Tier ${card.tier}</div>
-          <div class="text">${escapeHtml(describeCard(card))}</div>
-        </div>
+      <div class="codexUnitCard" title="${escapeHtml(card.name)}">
+        <canvas class="codexUnitCanvas" data-card-id="${escapeHtml(card.id)}" width="512" height="716" aria-label="${escapeHtml(card.name)}"></canvas>
       </div>
     `).join('');
-    return `<section class="codexRace"><h2>${escapeHtml(tribe)} <span>${list.length}</span></h2><div class="codexGrid">${cards}</div></section>`;
+    return `<section class="codexRace"><h2>${escapeHtml(tribe)} <span>${list.length}</span></h2><div class="codexGrid unitCards">${cards}</div></section>`;
   }).join('');
 }
 
+let codexPaintToken = 0;
+
+function paintCodexCanvas(canvas) {
+  const cardId = canvas.getAttribute('data-card-id');
+  const spellId = canvas.getAttribute('data-spell-id');
+  const heroId = canvas.getAttribute('data-hero-id');
+  let src = null;
+  if (cardId) {
+    const def = CARD_BY_ID[cardId];
+    if (!def) return;
+    src = buildCardFrontTexture(createMinionFromDef(def), { square: false }).image;
+  } else if (spellId) {
+    const def = SPELL_BY_ID[spellId];
+    if (!def) return;
+    src = buildCardFrontTexture(createSpellCard(def), { square: false }).image;
+  } else if (heroId) {
+    const hero = HERO_DB.find(h => h.id === heroId);
+    if (!hero) return;
+    src = buildLordCardTexture(hero).image;
+  }
+  if (!src) return;
+  const ctx = canvas.getContext('2d');
+  if (canvas.width !== src.width || canvas.height !== src.height) {
+    canvas.width = src.width;
+    canvas.height = src.height;
+  }
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(src, 0, 0);
+}
+
+function paintCodexCardCanvases() {
+  const token = ++codexPaintToken;
+  const canvases = Array.from(document.querySelectorAll('#codexBody .codexUnitCanvas'));
+  let index = 0;
+  const paintBatch = () => {
+    if (token !== codexPaintToken) return;
+    const end = Math.min(index + 6, canvases.length);
+    for (; index < end; index++) paintCodexCanvas(canvases[index]);
+    if (index < canvases.length) requestAnimationFrame(paintBatch);
+  };
+  requestAnimationFrame(paintBatch);
+}
+
 function renderCodexHeroes() {
-  const cards = HERO_DB.map((hero, i) => {
-    const art = i % 2 === 0 ? ART_A : ART_B;
-    return `
-      <div class="codexHeroCard">
-        <img class="art" src="${art}" alt="${escapeHtml(hero.name)}">
-        <div class="body">
-          <div class="name">${escapeHtml(hero.name)}</div>
-          <div class="meta">Armor ${hero.armor}</div>
-          <div class="powerName">${escapeHtml(hero.power.name)} (${hero.power.cost} Gold)</div>
-          <div class="text">${escapeHtml(hero.power.text)}</div>
-        </div>
+  const cards = HERO_DB.map(hero => `
+      <div class="codexUnitCard" title="${escapeHtml(hero.name)}">
+        <canvas class="codexUnitCanvas" data-hero-id="${escapeHtml(hero.id)}" width="512" height="716" aria-label="${escapeHtml(hero.name)}"></canvas>
       </div>
-    `;
-  }).join('');
-  return `<section class="codexRace"><h2>Lords <span>${HERO_DB.length}</span></h2><div class="codexGrid">${cards}</div></section>`;
+    `).join('');
+  return `<section class="codexRace"><h2>Lords <span>${HERO_DB.length}</span></h2><div class="codexGrid unitCards">${cards}</div></section>`;
 }
 
 function renderCodexSpells() {
   const spells = SPELL_DB.slice().sort((a, b) => {
+    if (a.category !== b.category) return String(a.category).localeCompare(String(b.category));
     if (a.tier !== b.tier) return a.tier - b.tier;
     if (a.cost !== b.cost) return a.cost - b.cost;
     return a.name.localeCompare(b.name);
   });
-  const byTier = new Map();
+  const byCategory = new Map();
   for (const spell of spells) {
-    if (!byTier.has(spell.tier)) byTier.set(spell.tier, []);
-    byTier.get(spell.tier).push(spell);
+    const key = spell.category || 'Edict';
+    if (!byCategory.has(key)) byCategory.set(key, []);
+    byCategory.get(key).push(spell);
   }
-  return [...byTier.entries()].map(([tier, list]) => {
+  return [...byCategory.entries()].map(([category, list]) => {
     const cards = list.map(spell => `
-      <div class="codexCard">
-        <div class="codexSpellArt" aria-hidden="true">
-          <div class="tag">TAVERN SPELL</div>
-          <div class="cost">${spell.cost}</div>
-          <div class="costLabel">GOLD</div>
-        </div>
-        <div class="body">
-          <div class="name">${escapeHtml(spell.name)}</div>
-          <div class="meta">Tier ${spell.tier} · ${spell.cost} Gold</div>
-          <div class="text">${escapeHtml(spell.text || effectText(spell.effect) || 'Tavern spell.')}</div>
-        </div>
+      <div class="codexUnitCard" title="${escapeHtml(spell.name)}">
+        <canvas class="codexUnitCanvas" data-spell-id="${escapeHtml(spell.id)}" width="512" height="716" aria-label="${escapeHtml(spell.name)}"></canvas>
       </div>
     `).join('');
-    return `<section class="codexRace"><h2>Tier ${tier} <span>${list.length}</span></h2><div class="codexGrid">${cards}</div></section>`;
+    return `<section class="codexRace"><h2>${escapeHtml(category)} <span>${list.length}</span></h2><div class="codexGrid unitCards">${cards}</div></section>`;
   }).join('');
 }
 
@@ -812,6 +974,7 @@ function renderCodexBody() {
   if (codexTab === 'heroes') body.innerHTML = renderCodexHeroes();
   else if (codexTab === 'spells') body.innerHTML = renderCodexSpells();
   else body.innerHTML = renderCodexUnits();
+  paintCodexCardCanvases();
   document.getElementById('codexTabUnits').classList.toggle('active', codexTab === 'units');
   document.getElementById('codexTabSpells').classList.toggle('active', codexTab === 'spells');
   document.getElementById('codexTabHeroes').classList.toggle('active', codexTab === 'heroes');
@@ -884,7 +1047,7 @@ function showNextDiscover() {
   const options = drawDiscoverOptions(pendingDiscover.tier, 3).filter(def => (state.pool[def.id] || 0) > 0);
   const box = document.getElementById('overlayContent');
   document.getElementById('overlay').classList.remove('hidden');
-  box.innerHTML = `<h1>Discover</h1><p>${pendingDiscover.fromTriple ? 'Triple reward: choose a minion from the next Tavern Tier.' : 'Choose a minion.'}</p><div class="discoverGrid"></div>`;
+  box.innerHTML = `<h1>Discover</h1><p>${pendingDiscover.fromTriple ? 'Triple reward: choose a unit from the next Tavern Tier.' : 'Choose a unit.'}</p><div class="discoverGrid"></div>`;
   const grid = box.querySelector('.discoverGrid');
   options.forEach(def => {
     const el = document.createElement('div');
@@ -893,7 +1056,7 @@ function showNextDiscover() {
     el.onclick = () => {
       const p = pendingDiscover.player;
       if (!giveMinionToHand(p, def)) {
-        log('Could not take that minion.');
+        log('Could not take that unit.');
         return;
       }
       log(`Discovered ${def.name}.`);
@@ -934,6 +1097,7 @@ function isSpell(card) {
   return !!card && card.kind === 'spell';}
 
 function createSpellCard(def) {
+  const category = def.category || 'Edict';
   return {
     kind: 'spell',
     instanceId: uid(),
@@ -943,7 +1107,8 @@ function createSpellCard(def) {
     cost: def.cost,
     attack: 0,
     health: 0,
-    tribe: 'Spell',
+    tribe: category,
+    category,
     keywords: [],
     effect: { ...def.effect, params: { ...(def.effect.params || {}) } },
     text: def.text,
@@ -1069,14 +1234,15 @@ function buyMinion(player, shopIndex, quiet = false) {
 }
 
 function sellMinion(player, from, index, quiet = false) {
-  const arr = from === 'board' ? player.board : from === 'hand' ? player.hand : null;
+  const arr = from === 'board' ? player.board : from === 'hand' ? player.hand : from === 'support' ? player.support : null;
   if (!arr) {
-    if (!quiet && player.isHuman) logHint('Drag a hand or board card onto Bartender Bob to sell.');
+    if (!quiet && player.isHuman) logHint('Drag a hand, board, or support card onto the Quartermaster to sell.');
     return false;
   }
   const m = arr[index];
   if (!m) return false;
   if (from === 'board' && isSpell(m)) return false;
+  if (from === 'support' && !isSpell(m)) return false;
   arr.splice(index, 1);
   player.gold = Math.min(MAX_GOLD, player.gold + 1);
   returnToPool(m);
@@ -1086,16 +1252,20 @@ function sellMinion(player, from, index, quiet = false) {
 function playSpell(player, handIndex, quiet = false) {
   const spell = player.hand[handIndex];
   if (!isSpell(spell)) return false;
+  if ((player.support || []).length >= MAX_SUPPORT) {
+    if (!quiet && player.isHuman) log(`Support row is full (${MAX_SUPPORT}).`);
+    return false;
+  }
   if (spell.effect?.id === 'summonToken' && player.board.length >= MAX_BOARD) {
     if (!quiet && player.isHuman) log('Board is full.');
     return false;
   }
   if (spell.effect?.id === 'buffRandomFriendly' && !player.board.length) {
-    if (!quiet && player.isHuman) log('No minion to buff.');
+    if (!quiet && player.isHuman) log('No unit to equip.');
     return false;
   }
   if (spell.effect?.id === 'giveKeywordFriendly' && !player.board.length) {
-    if (!quiet && player.isHuman) log('No minion to enchant.');
+    if (!quiet && player.isHuman) log('No unit to equip.');
     return false;
   }
   player.hand.splice(handIndex, 1);
@@ -1106,6 +1276,8 @@ function playSpell(player, handIndex, quiet = false) {
     selfIndex: -1,
     inCombat: false
   });
+  if (!player.support) player.support = [];
+  player.support.push(spell);
   return true;
 }
 
@@ -1114,7 +1286,7 @@ function playMinion(player, handIndex, boardIndex = player.board.length, quiet =
   if (!m) return false;
   if (isSpell(m)) return playSpell(player, handIndex, quiet);
   if (player.board.length >= MAX_BOARD) {
-    if (!quiet && player.isHuman) log(`Board is full (${MAX_BOARD} minions).`);
+    if (!quiet && player.isHuman) log(`Board is full (${MAX_BOARD} units).`);
     return false;
   }
   player.hand.splice(handIndex, 1);
@@ -1184,7 +1356,7 @@ function checkTriples(player) {
     golden.rebornActive = golden.keywords.includes('Reborn');
     if (player.hand.length < MAX_HAND) player.hand.push(golden);
     else player.board.push(golden);
-    log(`${player.name} crafted Golden ${CARD_BY_ID[cardId].name}!`);
+    log(`${player.name} mustered Elite ${CARD_BY_ID[cardId].name}!`);
     const discoverTier = Math.min(6, player.tavernTier + 1);
     queueDiscover(player, discoverTier, true);
     return checkTriples(player);
@@ -1199,14 +1371,19 @@ function runEffect(effect, ctx) {
 }
 
 function applyHeroDamage(player, amount) {
-  let dmg = amount;
-  if (player.armor > 0) {
-    const used = Math.min(player.armor, dmg);
-    player.armor -= used;
+  let dmg = Math.max(0, amount || 0);
+  if (!player || dmg <= 0) return;
+  const armor = Math.max(0, player.armor || 0);
+  if (armor > 0) {
+    const used = Math.min(armor, dmg);
+    player.armor = armor - used;
     dmg -= used;
+  } else {
+    player.armor = 0;
   }
-  player.hp -= dmg;
-  if (player.hp < 0) player.hp = 0;
+  if (dmg > 0) {
+    player.hp = Math.max(0, (player.hp || 0) - dmg);
+  }
   player.lastCombatDamage = (player.lastCombatDamage || 0) + amount;
 }
 
@@ -1295,10 +1472,8 @@ function popDivineShield(minion) {
 
 function minionAttack(attacker, attackerSide, defenderSide) {
   const targets = getAttackTargets(attackerSide, defenderSide);
-  if (!targets.length || attacker.health <= 0 || attacker.attack <= 0) return;
+  if (!targets.length || attacker.health <= 0 || attacker.attack <= 0) return null;
   const target = pick(targets);
-  const ctxA = { friendly: attackerSide, enemy: defenderSide, self: attacker, selfIndex: attackerSide.board.indexOf(attacker), inCombat: true };
-  const ctxB = { friendly: defenderSide, enemy: attackerSide, self: target, selfIndex: defenderSide.board.indexOf(target), inCombat: true };
   const atkDmg = attacker.attack;
   const defDmg = target.attack;
   if (atkDmg > 0) {
@@ -1315,6 +1490,27 @@ function minionAttack(attacker, attackerSide, defenderSide) {
   }
   const attackerDies = attacker.health <= 0;
   const targetDies = target.health <= 0;
+  const dyingIds = [];
+  if (attackerDies) dyingIds.push(attacker.instanceId);
+  if (targetDies) dyingIds.push(target.instanceId);
+  return {
+    attacker,
+    target,
+    attackerSide,
+    defenderSide,
+    attackerId: attacker.instanceId,
+    targetId: target.instanceId,
+    attackerDies,
+    targetDies,
+    dyingIds
+  };
+}
+
+function resolveMinionAttackDeaths(hit) {
+  if (!hit) return;
+  const { attacker, target, attackerSide, defenderSide, attackerDies, targetDies } = hit;
+  const ctxA = { friendly: attackerSide, enemy: defenderSide, self: attacker, selfIndex: attackerSide.board.indexOf(attacker), inCombat: true };
+  const ctxB = { friendly: defenderSide, enemy: attackerSide, self: target, selfIndex: defenderSide.board.indexOf(target), inCombat: true };
   if (attackerDies && targetDies) {
     const aIdx = attackerSide.board.indexOf(attacker);
     const bIdx = defenderSide.board.indexOf(target);
@@ -1385,8 +1581,13 @@ function resolveCombat(playerA, playerB) {
   sideB.board.forEach(m => { m.divineShield = hasKeyword(m, 'DivineShield'); m.rebornActive = hasKeyword(m, 'Reborn'); if (m.avenge) m.avenge.progress = 0; });
 
   const frames = [];
-  const pushFrame = (text, attackerId = null) => {
-    frames.push({ text, attackerId, ...snapshotSides(sideA, sideB) });
+  const pushFrame = (text, opts = {}) => {
+    frames.push({
+      text,
+      attackerId: opts.attackerId || null,
+      dyingIds: opts.dyingIds ? opts.dyingIds.slice() : [],
+      ...snapshotSides(sideA, sideB)
+    });
   };
 
   for (const m of [...sideA.board]) {
@@ -1435,8 +1636,16 @@ function resolveCombat(playerA, playerB) {
       if (attacker.health <= 0 || !active.board.includes(attacker)) break;
       if (!other.board.some(m => m.health > 0)) break;
       attacker.attacksRemaining = Math.max(0, (attacker.attacksRemaining || 1) - 1);
-      minionAttack(attacker, active, other);
-      pushFrame(`${sideName}: ${attacker.name} attacks`, attacker.instanceId);
+      const hit = minionAttack(attacker, active, other);
+      if (!hit) break;
+      pushFrame(`${sideName}: ${attacker.name} attacks`, { attackerId: hit.attackerId });
+      if (hit.dyingIds.length) {
+        const fallen = [];
+        if (hit.attackerDies) fallen.push(hit.attacker.name);
+        if (hit.targetDies) fallen.push(hit.target.name);
+        pushFrame(`${fallen.join(' & ')} defeated`, { dyingIds: hit.dyingIds });
+        resolveMinionAttackDeaths(hit);
+      }
     }
     aFirst = !aFirst;
   }
@@ -1504,11 +1713,13 @@ function createPlayer(hero, isHuman, index) {
     shop: [],
     hand: [],
     board: [],
+    support: [],
     frozen: false,
     heroPowerUses: 0,
     alive: true,
     placement: null,
-    lastCombatBoard: []
+    lastCombatBoard: [],
+    flagColors: nationFlagColors(hero.nation)
   };
 }
 
@@ -1563,8 +1774,11 @@ function aiRecruit(player) {
         continue;
       }
     }
+    if ((player.support || []).length >= MAX_SUPPORT && (player.support || []).length) {
+      sellMinion(player, 'support', 0, true);
+    }
     const spellHand = player.hand.findIndex(isSpell);
-    if (spellHand >= 0 && playSpell(player, spellHand, true)) continue;
+    if (spellHand >= 0 && (player.support || []).length < MAX_SUPPORT && playSpell(player, spellHand, true)) continue;
     while (player.hand.some(c => !isSpell(c)) && player.board.length < MAX_BOARD) {
       const idx = player.hand.findIndex(c => !isSpell(c));
       if (idx < 0) break;
@@ -1589,7 +1803,9 @@ function aiRecruit(player) {
     playMinion(player, idx, player.board.length, true);
   }
   for (let i = player.hand.length - 1; i >= 0; i--) {
-    if (isSpell(player.hand[i])) playSpell(player, i, true);
+    if (!isSpell(player.hand[i])) continue;
+    if ((player.support || []).length >= MAX_SUPPORT) sellMinion(player, 'support', 0, true);
+    playSpell(player, i, true);
   }
 }
 
@@ -1600,6 +1816,62 @@ function pairPlayers(alive) {
   for (let i = 0; i < shuffled.length; i += 2) {
     if (i + 1 < shuffled.length) pairs.push([shuffled[i], shuffled[i + 1]]);
     else ghosts.push(shuffled[i]);
+  }
+  return { pairs, ghosts };
+}
+
+function assignNextPairings() {
+  if (!state) return;
+  const alive = state.players.filter(p => p.alive);
+  const { pairs, ghosts } = pairPlayers(alive);
+  state.pendingPairs = pairs.map(([a, b]) => [a.id, b.id]);
+  state.pendingGhosts = ghosts.map(g => g.id);
+  state.nextOpponentId = null;
+  const you = alive.find(p => p.isHuman);
+  if (!you) return;
+  for (const [a, b] of pairs) {
+    if (a.id === you.id) {
+      state.nextOpponentId = b.id;
+      return;
+    }
+    if (b.id === you.id) {
+      state.nextOpponentId = a.id;
+      return;
+    }
+  }
+}
+
+function takePendingPairings(alive) {
+  const byId = new Map(alive.map(p => [p.id, p]));
+  const pendingPairs = state.pendingPairs || [];
+  const pendingGhosts = state.pendingGhosts || [];
+  state.pendingPairs = null;
+  state.pendingGhosts = null;
+  if (!pendingPairs.length && !pendingGhosts.length) return pairPlayers(alive);
+  const pairs = [];
+  const used = new Set();
+  for (const [aid, bid] of pendingPairs) {
+    const a = byId.get(aid);
+    const b = byId.get(bid);
+    if (a && b) {
+      pairs.push([a, b]);
+      used.add(aid);
+      used.add(bid);
+    }
+  }
+  const ghosts = [];
+  for (const gid of pendingGhosts) {
+    const g = byId.get(gid);
+    if (g && !used.has(gid)) {
+      ghosts.push(g);
+      used.add(gid);
+    }
+  }
+  const leftovers = alive.filter(p => !used.has(p.id));
+  if (leftovers.length) {
+    const extra = pairPlayers(leftovers);
+    pairs.push(...extra.pairs);
+    ghosts.push(...extra.ghosts);
   }
   return { pairs, ghosts };
 }
@@ -1623,6 +1895,7 @@ function buildGhostOpponent(exclude, alive) {
     hero: donor.hero,
     tavernTier: donor.tavernTier,
     board: cloneBoard(donor.lastCombatBoard.length ? donor.lastCombatBoard : donor.board),
+    support: cloneBoard(donor.support || []),
     isHuman: false
   };
 }
@@ -1639,7 +1912,8 @@ async function runCombatPhase() {
   await sleep(300);
 
   const alive = state.players.filter(p => p.alive);
-  const { pairs, ghosts } = pairPlayers(alive);
+  const { pairs, ghosts } = takePendingPairings(alive);
+  state.nextOpponentId = null;
   const you = alive.find(p => p.isHuman) || null;
   let yourFight = null;
   const otherFights = [];
@@ -1705,8 +1979,8 @@ async function runCombatPhase() {
     p.hp = 0;
     p.placement = nextPlace;
     nextPlace++;
-    for (const m of [...p.board, ...p.hand, ...p.shop]) if (m) returnToPool(m);
-    p.board = []; p.hand = []; p.shop = [];
+    for (const m of [...p.board, ...p.hand, ...p.shop, ...(p.support || [])]) if (m) returnToPool(m);
+    p.board = []; p.hand = []; p.shop = []; p.support = [];
     log(`${p.name} was eliminated! (#${p.placement})`);
   }
   const stillAlive = state.players.filter(p => p.alive);
@@ -1735,13 +2009,17 @@ function sleep(ms) {
 async function playVisibleCombat(player, enemy) {
   const foeName = enemy.hero?.name || enemy.name;
   phase = 'combat';
+  clearCardTextureCache();
   combatAnim = {
     a: player,
     b: enemy,
     t: 0,
     attackerId: null,
+    dyingIds: [],
     boardA: cloneBoard(player.board),
-    boardB: cloneBoard(enemy.board || [])
+    boardB: cloneBoard(enemy.board || []),
+    supportA: cloneBoard(player.support || []),
+    supportB: cloneBoard(enemy.support || [])
   };
   log(`You vs ${foeName}`);
   log('Battle begins!');
@@ -1757,6 +2035,8 @@ async function animateCombat(result, a, b) {
     boardA: cloneBoard(result.sideA?.board || a.board || []),
     boardB: cloneBoard(result.sideB?.board || b.board || [])
   }];
+  const supportA = cloneBoard(a.support || combatAnim?.supportA || []);
+  const supportB = cloneBoard(b.support || combatAnim?.supportB || []);
   for (let i = 0; i < frames.length; i++) {
     const frame = frames[i];
     combatAnim = {
@@ -1764,9 +2044,12 @@ async function animateCombat(result, a, b) {
       b,
       t: 0,
       frame,
-      attackerId: frame.attackerId,
+      attackerId: frame.attackerId || null,
+      dyingIds: frame.dyingIds ? frame.dyingIds.slice() : [],
       boardA: frame.boardA || [],
-      boardB: frame.boardB || []
+      boardB: frame.boardB || [],
+      supportA,
+      supportB
     };
     if (frame.text) log(frame.text);
     syncHeroPortraits();
@@ -1797,6 +2080,8 @@ function endMatch(winner) {
 
 function beginRecruitPhase() {
   phase = 'recruit';
+  clearCardTextureCache();
+  assignNextPairings();
   const visitGold = getTavernGoldForTurn(state.turn);
   for (const p of state.players) {
     if (!p.alive) continue;
@@ -1838,13 +2123,13 @@ function openPeek(player) {
   const panel = document.getElementById('peekPanel');
   panel.classList.add('show');
   document.getElementById('peekTitle').textContent = player.isHuman ? 'Your Board' : player.hero.name;
-  document.getElementById('peekMeta').textContent = `HP ${player.hp}${player.armor ? ` · Armor ${player.armor}` : ''} · Tier ${player.tavernTier} · ${player.board.length}/7 minions`;
+  document.getElementById('peekMeta').textContent = `HP ${player.hp}${player.armor ? ` · Armor ${player.armor}` : ''} · Tier ${player.tavernTier} · ${player.board.length}/7 units`;
   const list = document.getElementById('peekList');
   if (!player.board.length) {
     list.innerHTML = '<div class="peekMinion"><div class="title">Empty board</div></div>';
   } else {
     list.innerHTML = player.board.map((m, i) => {
-      return `<div class="peekMinion"><div class="title">${i + 1}. ${m.name}</div><div class="stats">${m.attack}/${m.health} · T${m.tier} ${m.tribe}${m.golden ? ' · Golden' : ''}</div><div class="text">${describeMinion(m)}</div></div>`;
+      return `<div class="peekMinion"><div class="title">${i + 1}. ${m.name}</div><div class="stats">${m.attack}/${m.health} · T${m.tier} ${m.tribe}${m.golden ? ' · Elite' : ''}</div><div class="text">${describeMinion(m)}</div></div>`;
     }).join('');
   }
   syncOpponents();
@@ -1871,32 +2156,52 @@ function setGameUiVisible(visible) {
     hideHandOverlay();
     hideEnemyHandOverlay();
     hideOppHover();
+    hideCardTooltip();
+    clearStageMeshes();
+  } else {
+    syncStageCardSize();
+    syncStageMeshes();
   }
+}
+
+function syncHeroLifeStats(armorEl, hpEl, player) {
+  if (!armorEl || !hpEl) return;
+  const armor = Math.max(0, player?.armor || 0);
+  const hp = Math.max(0, player?.hp || 0);
+  armorEl.textContent = String(armor);
+  hpEl.textContent = String(hp);
+  armorEl.classList.toggle('zero', armor <= 0);
 }
 
 function syncHeroPortraits() {
   const p = human();
   const bobFrame = document.getElementById('tavernMasterFrame');
   const enemyFrame = document.getElementById('combatEnemyFrame');
+  const enemyPower = document.getElementById('combatEnemyPower');
   if (!p) {
     bobFrame.classList.remove('show');
     enemyFrame.classList.remove('show');
+    enemyPower.classList.remove('show');
+    clearStageMeshes();
     return;
   }
-  document.getElementById('playerHeroArt').src = heroPortraitArt(p.hero);
-  document.getElementById('playerHeroArt').alt = p.hero.name;
-  document.getElementById('tavernMasterArt').src = ART_B;
+  document.getElementById('playerHeroFrame').setAttribute('aria-label', p.hero.name);
+  document.getElementById('btnHeroPower').setAttribute('aria-label', p.hero.power?.name || 'Lord Power');
   const showBob = phase === 'recruit';
   const enemy = getCombatEnemy();
   const showEnemy = phase === 'combat' && !!enemy;
   bobFrame.classList.toggle('show', showBob);
   enemyFrame.classList.toggle('show', showEnemy);
-  if (showEnemy) {
-    const name = enemy.hero?.name || enemy.name || 'Enemy';
-    document.getElementById('combatEnemyArt').src = enemy.hero ? heroPortraitArt(enemy.hero) : ART_A;
-    document.getElementById('combatEnemyArt').alt = name;
+  enemyPower.classList.toggle('show', showEnemy);
+  if (showEnemy && enemy.hero) {
+    enemyFrame.setAttribute('aria-label', enemy.hero.name || enemy.name || 'Enemy');
+    enemyPower.setAttribute('aria-label', enemy.hero.power?.name || 'Enemy Lord Power');
   }
-  if (!showBob && !showEnemy) hideOppHover();
+  if (!showBob && !showEnemy) {
+    hideOppHover();
+    hideCardTooltip();
+  }
+  syncStageMeshes();
 }
 
 function syncUI() {
@@ -1907,10 +2212,8 @@ function syncUI() {
   document.getElementById('upgradeArt').src = ART_A;
   document.getElementById('refreshArt').src = ART_B;
   document.getElementById('freezeArt').src = ART_A;
-  document.getElementById('heroPowerArt').src = ART_B;
   document.getElementById('upgradeCost').textContent = p.tavernTier >= 6 ? '—' : String(p.upgradeCost);
   document.getElementById('refreshCost').textContent = String(REFRESH_COST);
-  document.getElementById('heroPowerCost').textContent = String(p.hero.power.cost);
   document.getElementById('btnFreeze').classList.toggle('active', p.frozen);
   document.getElementById('btnUpgrade').disabled = !canRecruit || p.tavernTier >= 6 || p.gold < p.upgradeCost;
   document.getElementById('btnRefresh').disabled = !canRecruit || p.gold < REFRESH_COST;
@@ -1928,71 +2231,95 @@ function heroEffectiveHp(player) {
 
 function hideOppHover() {
   const tip = document.getElementById('oppHover');
-  tip.classList.remove('show');
+  tip.classList.remove('show', 'cardPair');
   tip.style.display = 'none';
 }
 
-function positionOppHover(clientX, clientY) {
+function positionOppHover(clientX, clientY, anchorEl) {
   const tip = document.getElementById('oppHover');
   const pad = 12;
   const tw = tip.offsetWidth || 240;
   const th = tip.offsetHeight || 160;
-  let left = clientX + 18;
-  let top = clientY - 20;
-  if (left + tw > window.innerWidth - pad) left = clientX - tw - 18;
-  if (top + th > window.innerHeight - pad) top = window.innerHeight - th - pad;
-  if (top < pad) top = pad;
+  let left;
+  let top;
+  if (tip.classList.contains('cardPair') && anchorEl) {
+    const r = anchorEl.getBoundingClientRect();
+    left = r.right + 14;
+    top = r.top + r.height * 0.5 - th * 0.5;
+    if (left + tw > window.innerWidth - pad) left = Math.max(pad, r.left - tw - 14);
+    if (top < pad) top = pad;
+    if (top + th > window.innerHeight - pad) top = window.innerHeight - th - pad;
+  } else {
+    left = clientX + 18;
+    top = clientY - 20;
+    if (left + tw > window.innerWidth - pad) left = clientX - tw - 18;
+    if (top + th > window.innerHeight - pad) top = window.innerHeight - th - pad;
+    if (top < pad) top = pad;
+  }
   tip.style.left = `${left}px`;
   tip.style.top = `${top}px`;
 }
 
 function revealOppHover(clientX, clientY) {
+  hideCardTooltip();
   const tip = document.getElementById('oppHover');
+  tip.classList.remove('cardPair');
   tip.style.display = 'block';
   tip.classList.add('show');
   positionOppHover(clientX, clientY);
 }
 
-function showBobHover(clientX, clientY) {
-  const p = human();
+function paintOppHoverCardPair(lordSrc, powerSrc) {
   const tip = document.getElementById('oppHover');
-  const tier = p ? p.tavernTier : 1;
-  const upgrade = !p || p.tavernTier >= 6 ? 'Max tier' : `${p.upgradeCost} Gold`;
-  tip.innerHTML = `
-    <div class="title">Bartender Bob</div>
-    <div class="rankLine">Tavern Master</div>
-    <div class="line">Tavern Tier <strong>${tier}</strong></div>
-    <div class="line">Next Upgrade <strong>${upgrade}</strong></div>
-    <div class="line muted">Buy minions and spells from Bob's Tavern.</div>
-    <div class="line muted">Drag a hand or board card here to sell it for 1 Gold.</div>
-  `;
-  revealOppHover(clientX, clientY);
+  tip.classList.add('cardPair');
+  tip.innerHTML = '<canvas></canvas><canvas></canvas>';
+  const canvases = tip.querySelectorAll('canvas');
+  const sources = [lordSrc, powerSrc];
+  for (let i = 0; i < canvases.length; i++) {
+    const src = sources[i];
+    const canvas = canvases[i];
+    const ctx = canvas.getContext('2d');
+    canvas.width = src.width;
+    canvas.height = src.height;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(src, 0, 0);
+  }
 }
 
-function showPlayerHeroFrameHover(clientX, clientY) {
-  const p = human();
-  if (!p) return;
+function showOppLordCardPair(player, clientX, clientY, anchorEl) {
+  if (!player?.hero) return;
+  hideCardTooltip();
   const tip = document.getElementById('oppHover');
-  tip.innerHTML = `
-    <div class="title">${p.hero.name}</div>
-    <div class="line">Health <strong>${p.hp}</strong>${p.armor ? ` · Armor <strong>${p.armor}</strong>` : ''} · Total <strong>${heroEffectiveHp(p)}</strong></div>
-    <div class="power"><strong>${p.hero.power.name}</strong> (${p.hero.power.cost} Gold)<br>${p.hero.power.text}</div>
-  `;
-  revealOppHover(clientX, clientY);
+  const lordSrc = buildLiveLordCardImage(player.hero, {
+    armor: player.armor,
+    hp: player.hp
+  });
+  const powerSrc = buildLordPowerCardImage(player.hero);
+  paintOppHoverCardPair(lordSrc, powerSrc);
+  tip.style.display = 'flex';
+  tip.classList.add('show');
+  positionOppHover(clientX, clientY, anchorEl);
+  requestAnimationFrame(() => positionOppHover(clientX, clientY, anchorEl));
 }
 
-function showHeroPowerHover(clientX, clientY) {
+function showBobHover(clientX, clientY, anchorEl) {
+  const p = human();
+  showFullCardTooltip('bob', buildQuartermasterCardImage(p), clientX, clientY, anchorEl);
+}
+
+function showPlayerHeroFrameHover(clientX, clientY, anchorEl) {
   const p = human();
   if (!p) return;
-  const tip = document.getElementById('oppHover');
-  const power = p.hero.power;
-  const ready = phase === 'recruit' && p.heroPowerUses > 0 && p.gold >= power.cost;
-  tip.innerHTML = `
-    <div class="title">${power.name}</div>
-    <div class="rankLine">${power.cost} Gold · ${p.heroPowerUses > 0 ? 'Available' : 'Used this turn'}${ready ? '' : ' · Not ready'}</div>
-    <div class="line">${power.text}</div>
-  `;
-  revealOppHover(clientX, clientY);
+  showFullCardTooltip(`lord|${p.id}|${p.hp}|${p.armor}`, buildLiveLordCardImage(p.hero, {
+    armor: p.armor,
+    hp: p.hp
+  }), clientX, clientY, anchorEl);
+}
+
+function showHeroPowerHover(clientX, clientY, anchorEl) {
+  const p = human();
+  if (!p) return;
+  showFullCardTooltip(`power|${p.hero.id}`, buildLordPowerCardImage(p.hero), clientX, clientY, anchorEl);
 }
 
 function showUpgradeHover(clientX, clientY) {
@@ -2003,7 +2330,7 @@ function showUpgradeHover(clientX, clientY) {
   tip.innerHTML = `
     <div class="title">Upgrade Tavern</div>
     <div class="rankLine">${maxed ? 'Max Tier' : `${p.upgradeCost} Gold`} · Tier ${p.tavernTier}${maxed ? '' : ` → ${p.tavernTier + 1}`}</div>
-    <div class="line">${maxed ? 'Your tavern is already at maximum tier.' : 'Increase your tavern tier to find stronger minions and spells.'}</div>
+    <div class="line">${maxed ? 'Your tavern is already at maximum tier.' : 'Increase your tavern tier to find stronger units and support cards.'}</div>
   `;
   revealOppHover(clientX, clientY);
 }
@@ -2013,7 +2340,7 @@ function showRefreshHover(clientX, clientY) {
   tip.innerHTML = `
     <div class="title">Refresh</div>
     <div class="rankLine">${REFRESH_COST} Gold</div>
-    <div class="line">Replace the minions and spells in Bob's Tavern.</div>
+    <div class="line">Replace the units and support cards in the Tavern.</div>
   `;
   revealOppHover(clientX, clientY);
 }
@@ -2032,11 +2359,15 @@ function showFreezeHover(clientX, clientY) {
 
 function bindHoverTooltip(el, showFn) {
   if (!el) return;
-  el.addEventListener('mouseenter', (e) => showFn(e.clientX, e.clientY));
+  el.addEventListener('mouseenter', (e) => showFn(e.clientX, e.clientY, el));
   el.addEventListener('mousemove', (e) => {
-    if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY);
+    if (document.getElementById('oppHover').classList.contains('show')) positionOppHover(e.clientX, e.clientY, el);
+    if (document.getElementById('cardTooltip')?.classList.contains('show')) positionCardTooltip(e.clientX, e.clientY, el);
   });
-  el.addEventListener('mouseleave', () => hideOppHover());
+  el.addEventListener('mouseleave', () => {
+    hideOppHover();
+    hideCardTooltip();
+  });
 }
 
 function showEndTurnHover(clientX, clientY) {
@@ -2051,33 +2382,29 @@ function showEndTurnHover(clientX, clientY) {
   revealOppHover(clientX, clientY);
 }
 
-function showCombatEnemyHover(clientX, clientY) {
+function showCombatEnemyHover(clientX, clientY, anchorEl) {
   const enemy = getCombatEnemy();
-  if (!enemy) return;
-  const tip = document.getElementById('oppHover');
-  const name = enemy.hero?.name || enemy.name || 'Enemy';
-  tip.innerHTML = `
-    <div class="title">${name}</div>
-    <div class="rankLine">Combat Opponent</div>
-    <div class="line">Health <strong>${enemy.hp ?? '?'}</strong>${enemy.armor ? ` · Armor <strong>${enemy.armor}</strong>` : ''}</div>
-    <div class="line muted">Tavern Tier ${enemy.tavernTier ?? '?'} · Board ${(enemy.board || combatAnim?.boardB || []).length}/${MAX_BOARD}</div>
-    ${enemy.hero?.power ? `<div class="power"><strong>${enemy.hero.power.name}</strong> (${enemy.hero.power.cost} Gold)<br>${enemy.hero.power.text}</div>` : ''}
-  `;
-  revealOppHover(clientX, clientY);
+  if (!enemy?.hero) return;
+  showFullCardTooltip(`enemyLord|${enemy.id}|${enemy.hp}|${enemy.armor}`, buildLiveLordCardImage(enemy.hero, {
+    armor: enemy.armor,
+    hp: enemy.hp
+  }), clientX, clientY, anchorEl);
 }
 
-function showOppHover(player, rank, clientX, clientY) {
-  const tip = document.getElementById('oppHover');
-  const status = player.alive ? 'Alive' : `Eliminated${player.placement ? ` · #${player.placement}` : ''}`;
-  tip.innerHTML = `
-    <div class="title">${player.hero.name}</div>
-    <div class="rankLine">${status}</div>
-    <div class="line">Health <strong>${player.hp}</strong>${player.armor ? ` · Armor <strong>${player.armor}</strong>` : ''}</div>
-    <div class="line muted">Tavern Tier ${player.tavernTier} · Board ${player.board.length}/${MAX_BOARD}</div>
-    <div class="line muted">Hand ${player.isHuman ? player.hand.length : '?'}</div>
-    <div class="power"><strong>${player.hero.power.name}</strong> (${player.hero.power.cost} Gold)<br>${player.hero.power.text}</div>
-  `;
-  revealOppHover(clientX, clientY);
+function showCombatEnemyPowerHover(clientX, clientY, anchorEl) {
+  const enemy = getCombatEnemy();
+  if (!enemy?.hero) return;
+  showFullCardTooltip(`enemyPower|${enemy.hero.id}`, buildLordPowerCardImage(enemy.hero), clientX, clientY, anchorEl);
+}
+
+function showOppHover(player, rank, clientX, clientY, anchorEl) {
+  showOppLordCardPair(player, clientX, clientY, anchorEl);
+}
+
+
+function buildPlayerFlagSrc(dark, light) {
+  const svg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.9354 1.73555C16.345 -0.947922 7.83362 0.317839 3.65173 1.28615V6.07973C9.92457 6.07973 17.6734 5.08989 16.9354 1.73555Z" fill="${dark}" stroke="black" stroke-width="0.25" stroke-linejoin="round"/><path d="M3.65173 6.09461V4.32709C11.3513 2.58562 15.1133 3.22936 16.0319 3.76892C12.6757 6.06112 6.38002 6.27446 3.65173 6.09461Z" fill="${light}" stroke="black" stroke-width="0.25" stroke-linejoin="round"/><path d="M4.91822 9.61119C10.5934 9.61119 16.9843 8.72469 16.9843 5.6001V1.98688C15.9799 5.73543 8.80482 5.95963 4.91822 5.95963C0.801222 5.95963 0.125 8.25235 0.125 9.86778V13.4579C0.125 12.1325 0.378112 9.61119 4.91822 9.61119Z" fill="${dark}" stroke="black" stroke-width="0.25" stroke-linejoin="round"/><path d="M4.91822 13.2297C10.5934 13.2297 16.9843 12.3432 16.9843 9.21857V5.60535C15.9799 9.3539 8.80482 9.5781 4.91822 9.5781C0.801222 9.5781 0.125 11.8708 0.125 13.4862V17.0764C0.125 15.7509 0.378112 13.2297 4.91822 13.2297Z" fill="${light}" stroke="black" stroke-width="0.25" stroke-linejoin="round"/><path d="M5.65127 19.4578C2.08851 20.1532 0.392713 18.3287 0.125 17.1281V14.0886C0.526449 15.1527 2.19373 17.0779 5.65127 16.2653C9.97318 15.2495 10.5816 13.6532 17.0391 15.1044L19.0353 17.2733L17.0391 18.3287C11.0885 16.5555 7.88193 19.0225 5.65127 19.4578Z" fill="${light}" stroke="black" stroke-width="0.25" stroke-linejoin="round"/><path d="M5.65127 16.3328C2.08851 17.0459 0.392713 15.1747 0.125 13.9433V10.826C0.526449 11.9174 2.19373 13.8919 5.65127 13.0585C9.97318 12.0167 10.5816 10.3795 17.0391 11.8678L19.0353 14.0923L17.0391 15.1747C11.0885 13.3561 7.88193 15.8863 5.65127 16.3328Z" fill="${dark}" stroke="black" stroke-width="0.25" stroke-linejoin="round"/></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
 function syncOpponents(combatA, combatB) {
@@ -2088,10 +2415,12 @@ function syncOpponents(combatA, combatB) {
     return;
   }
   const ranked = state.players.slice().sort((a, b) => {
-    const aliveDiff = Number(b.alive) - Number(a.alive);
-    if (aliveDiff) return aliveDiff;
-    const hpDiff = heroEffectiveHp(b) - heroEffectiveHp(a);
-    if (hpDiff) return hpDiff;
+    const aAlive = a.alive ? 1 : 0;
+    const bAlive = b.alive ? 1 : 0;
+    if (bAlive !== aAlive) return bAlive - aAlive;
+    const aTotal = (a.hp || 0) + (a.armor || 0);
+    const bTotal = (b.hp || 0) + (b.armor || 0);
+    if (bTotal !== aTotal) return bTotal - aTotal;
     return a.id - b.id;
   });
   el.innerHTML = ranked.map((p, i) => {
@@ -2100,16 +2429,27 @@ function syncOpponents(combatA, combatB) {
     if (!p.alive) cls.push('dead');
     if (p.isHuman) cls.push('self');
     if (p.id === combatA || p.id === combatB) cls.push('combat');
+    else if (phase === 'recruit' && state.nextOpponentId != null && p.id === state.nextOpponentId) cls.push('combat');
     if (p.id === peekPlayerId) cls.push('peeking');
     const art = heroPortraitArt(p.hero);
     const name = p.hero.name;
-    const maxPool = Math.max(1, (p.maxHp || START_HP) + (p.hero?.armor || 0));
-    const hpPct = p.alive ? clamp((heroEffectiveHp(p) / maxPool) * 100, 0, 100) : 0;
+    const maxHp = Math.max(1, p.maxHp || START_HP);
+    const maxArmor = 30;
+    const hpPct = p.alive ? clamp(((p.hp || 0) / maxHp) * 100, 0, 100) : 0;
+    const armorPct = p.alive ? clamp(((p.armor || 0) / maxArmor) * 100, 0, 100) : 0;
     const rankHtml = rank <= 3 ? `<div class="rank">${rank}</div>` : '';
+    if (!p.flagColors) p.flagColors = nationFlagColors(p.hero?.nation);
+    const flagSrc = buildPlayerFlagSrc(p.flagColors.dark, p.flagColors.light);
     return `<div class="${cls.join(' ')}" data-pid="${p.id}" data-rank="${rank}" title="">
-      <img class="portrait" src="${art}" alt="${name}">
-      ${rankHtml}
-      <div class="hpBar"><div class="hpBarFill" style="width:${hpPct.toFixed(1)}%"></div></div>
+      <div class="oppBody">
+        <img class="portrait" src="${art}" alt="${name}">
+        ${rankHtml}
+        <div class="lifeBars">
+          <div class="hpBar"><div class="hpBarFill" style="width:${hpPct.toFixed(1)}%"></div></div>
+          <div class="armorBar"><div class="armorBarFill" style="width:${armorPct.toFixed(1)}%"></div></div>
+        </div>
+      </div>
+      <img class="oppFlag" src="${flagSrc}" alt="">
     </div>`;
   }).join('');
   el.querySelectorAll('.opp').forEach(node => {
@@ -2117,10 +2457,10 @@ function syncOpponents(combatA, combatB) {
     const rank = Number(node.getAttribute('data-rank'));
     const player = state.players.find(x => x.id === pid);
     if (!player) return;
-    node.onmouseenter = (e) => showOppHover(player, rank, e.clientX, e.clientY);
+    node.onmouseenter = (e) => showOppHover(player, rank, e.clientX, e.clientY, node);
     node.onmousemove = (e) => {
       if (document.getElementById('oppHover').classList.contains('show')) {
-        positionOppHover(e.clientX, e.clientY);
+        positionOppHover(e.clientX, e.clientY, node);
       }
     };
     node.onmouseleave = () => hideOppHover();
@@ -2133,24 +2473,21 @@ function syncOpponents(combatA, combatB) {
 }
 
 const canvas = document.getElementById('gameCanvas');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.25;
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0b0e14);
-const FOG_NEAR = 18;
-const FOG_FAR = 42;
+const FOG_NEAR = 20;
+const FOG_FAR = 55;
 scene.fog = new THREE.Fog(0x0b0e14, FOG_NEAR, FOG_FAR);
 
-const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 100);
-const CAMERA_LOOK_AT = new THREE.Vector3(0, 1.35, 0.8);
-const CAMERA_BASE_OFFSET = new THREE.Vector3(0, 13.25, 16.4);
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+const CAMERA_LOOK_AT = new THREE.Vector3(0, 0, 2.2);
+const CAMERA_BASE_OFFSET = new THREE.Vector3(0, 24, 0);
+const CAMERA_UP = new THREE.Vector3(0, 0, -1);
 const VIEW_DESIGN_HEIGHT = 900;
 
 function syncViewportCamera() {
@@ -2158,6 +2495,7 @@ function syncViewportCamera() {
   const h = Math.max(1, window.innerHeight);
   const zoom = Math.max(1, h / VIEW_DESIGN_HEIGHT);
   camera.aspect = w / h;
+  camera.up.copy(CAMERA_UP);
   camera.position.copy(CAMERA_LOOK_AT).addScaledVector(CAMERA_BASE_OFFSET, zoom);
   camera.lookAt(CAMERA_LOOK_AT);
   camera.updateProjectionMatrix();
@@ -2169,61 +2507,96 @@ function syncViewportCamera() {
 }
 syncViewportCamera();
 
-const hemi = new THREE.HemisphereLight(0xa8c0ff, 0x3a2416, 0.9);
-scene.add(hemi);
-const key = new THREE.DirectionalLight(0xffe2b0, 1.7);
-key.position.set(6, 14, 8);
-key.castShadow = true;
-key.shadow.mapSize.set(1024, 1024);
-key.shadow.camera.near = 2;
-key.shadow.camera.far = 40;
-key.shadow.camera.left = -12;
-key.shadow.camera.right = 12;
-key.shadow.camera.top = 12;
-key.shadow.camera.bottom = -12;
-scene.add(key);
-const rimLight = new THREE.DirectionalLight(0x6ec6ff, 0.5);
-rimLight.position.set(-8, 6, -4);
-scene.add(rimLight);
-const lanternGlow = new THREE.PointLight(0xffc79a, 30, 0, 1.7);
-lanternGlow.position.set(0, 9, 1.5);
-scene.add(lanternGlow);
-const tableBounce = new THREE.DirectionalLight(0x5a4a8a, 0.3);
-tableBounce.position.set(0, -4, 6);
-scene.add(tableBounce);
-
 const table = new THREE.Mesh(
   new THREE.BoxGeometry(24, 0.5, 16.5),
-  new THREE.MeshStandardMaterial({ color: 0x1a2330, roughness: 0.85, metalness: 0.15 })
+  new THREE.MeshBasicMaterial({ color: 0x1a2330 })
 );
 table.position.y = -0.25;
-table.receiveShadow = true;
 scene.add(table);
 
 const tableRim = new THREE.Mesh(
   new THREE.BoxGeometry(22.2, 0.08, 14.8),
-  new THREE.MeshStandardMaterial({ color: 0x8a6a2a, roughness: 0.55, metalness: 0.4 })
+  new THREE.MeshBasicMaterial({ color: 0x8a6a2a })
 );
 tableRim.position.y = 0.02;
-tableRim.receiveShadow = true;
 scene.add(tableRim);
 
 const felt = new THREE.Mesh(
   new THREE.BoxGeometry(21.2, 0.06, 13.8),
-  new THREE.MeshStandardMaterial({ color: 0x243045, roughness: 0.9, metalness: 0.05 })
+  new THREE.MeshBasicMaterial({ color: 0x243045 })
 );
 felt.position.y = 0.06;
-felt.receiveShadow = true;
 scene.add(felt);
 
 const cardGroup = new THREE.Group();
 scene.add(cardGroup);
+const stageCardGroup = new THREE.Group();
+scene.add(stageCardGroup);
+const stageMeshes = [];
+const stagePlacePlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+const stagePlaceHit = new THREE.Vector3();
 
 const textureLoader = new THREE.TextureLoader();
-function onCardArtLoaded(tex) {
+function configureCardTexture(tex) {
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
-  if (state) renderCards();
+  tex.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+  tex.generateMipmaps = false;
+  tex.minFilter = THREE.LinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+const cardGeometryCache = new Map();
+function getCardGeometry(w, h) {
+  const key = `${w.toFixed(3)}|${h.toFixed(3)}`;
+  let geo = cardGeometryCache.get(key);
+  if (!geo) {
+    geo = new THREE.BoxGeometry(w, h, CARD_D);
+    cardGeometryCache.set(key, geo);
+  }
+  return geo;
+}
+
+const glowGeometryCache = new Map();
+function getGlowGeometry(w, h) {
+  const key = `${w.toFixed(3)}|${h.toFixed(3)}`;
+  let geo = glowGeometryCache.get(key);
+  if (!geo) {
+    geo = new THREE.BoxGeometry(w + 0.16, h + 0.16, CARD_D + 0.02);
+    glowGeometryCache.set(key, geo);
+  }
+  return geo;
+}
+
+function disposeCardMesh(group) {
+  if (!group) return;
+  group.traverse(obj => {
+    if (!obj.isMesh) return;
+    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    for (const mat of mats) {
+      if (mat) mat.dispose();
+    }
+  });
+}
+
+function clearCardGroup() {
+  while (cardGroup.children.length) {
+    const child = cardGroup.children[0];
+    cardGroup.remove(child);
+    disposeCardMesh(child);
+  }
+  cardMeshes.length = 0;
+  flushPendingTextureDispose();
+}
+function onCardArtLoaded(tex) {
+  configureCardTexture(tex);
+  uiCardImageCache.clear();
+  lordCardTextureCache.clear();
+  if (state) {
+    syncHeroPortraits();
+    renderCards();
+  }
 }
 const textures = {
   [ART_A]: textureLoader.load(ART_A, onCardArtLoaded),
@@ -2248,28 +2621,34 @@ const CARD_W = 2.45;
 const CARD_H = 3.42;
 const HAND_W = 2.05;
 const HAND_H = 2.86;
-const HAND_ROW_Z = 8.35;
-const HAND_ROW_Y = 1.45;
+const HAND_ROW_Z = 7.4;
+const HAND_ROW_Y = 0.14;
 const HAND_ROW_SPACING = 1.45;
-const HAND_ROW_ROTX = -0.82;
+const HAND_ROW_ROTX = -Math.PI / 2;
 const HAND_SCREEN_HOVER_LIFT = 0.64;
 const HAND_SCREEN_HOVER_SCALE = 0.26;
-const BOARD_S = 2.35;
-const BOARD_ROW_Z = 3.7;
-const BOARD_ROW_Y = 1.9;
-const BOARD_ROW_SPACING = 2.55;
-const BOARD_ROW_ROTX = -0.64;
-const SHOP_S = 2.7;
-const TAVERN_ROW_Z = -0.35;
-const TAVERN_ROW_Y = 2.15;
-const TAVERN_ROW_Y_FROZEN = 2.25;
-const TAVERN_ROW_SPACING = 3.0;
-const TAVERN_ROW_ROTX = -0.68;
+const BOARD_S = 2.75;
+const BOARD_ROW_Z = 2.6;
+const BOARD_ROW_Y = 0.14;
+const BOARD_ROW_SPACING = 3.05;
+const BOARD_ROW_ROTX = -Math.PI / 2;
+const SUPPORT_ROW_Z = 5.0;
+const SUPPORT_ROW_Y = 0.14;
+const SUPPORT_ROW_SPACING = 3.05;
+const SUPPORT_ROW_ROTX = -Math.PI / 2;
+const ENEMY_BOARD_ROW_Z = 0.1;
+const ENEMY_SUPPORT_ROW_Z = -2.4;
+const SHOP_S = 2.75;
+const TAVERN_ROW_Z = -2.4;
+const TAVERN_ROW_Y = 0.14;
+const TAVERN_ROW_Y_FROZEN = 0.2;
+const TAVERN_ROW_SPACING = 3.05;
+const TAVERN_ROW_ROTX = -Math.PI / 2;
 const CARD_D = 0.12;
 let hoveredCard = null;
 
 function isBoardZone(zone) {
-  return zone === 'board' || zone === 'enemy';
+  return zone === 'board' || zone === 'enemy' || zone === 'support' || zone === 'enemySupport';
 }
 
 function isShortCardZone(zone) {
@@ -2277,8 +2656,8 @@ function isShortCardZone(zone) {
 }
 
 function cardSizeForZone(zone) {
-  if (zone === 'shop' || zone === 'enemy') return { w: SHOP_S, h: SHOP_S };
-  if (zone === 'board') return { w: BOARD_S, h: BOARD_S };
+  if (zone === 'shop' || zone === 'enemy' || zone === 'enemySupport') return { w: SHOP_S, h: SHOP_S };
+  if (zone === 'board' || zone === 'support') return { w: BOARD_S, h: BOARD_S };
   if (zone === 'hand' || zone === 'enemyHand') return { w: HAND_W, h: HAND_H };
   return { w: CARD_W, h: CARD_H };
 }
@@ -2289,7 +2668,7 @@ function frameColors(card, opts = {}) {
   if (card.golden) frameHex = '#d4af37';
   if (frozenShop) frameHex = '#6ec6ff';
   if (opts.isSelected) frameHex = '#7ad0ff';
-  if (opts.isAttacker) frameHex = '#ff6b5a';
+  if (opts.isDying) frameHex = '#ff6b5a';
   return frameHex;
 }
 
@@ -2310,18 +2689,42 @@ function drawTierBadge(ctx, tier, cx, cy, radius) {
   ctx.textBaseline = 'alphabetic';
 }
 
+function drawGoldCostBadge(ctx, cx, cy, cost, radius = 28) {
+  const r = radius;
+  const grad = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.3, r * 0.08, cx, cy, r);
+  grad.addColorStop(0, '#5a3d12');
+  grad.addColorStop(0.7, '#2a1a08');
+  grad.addColorStop(1, '#1a1006');
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.lineWidth = Math.max(2, Math.round(r * 0.14));
+  ctx.strokeStyle = 'rgba(224,184,90,0.85)';
+  ctx.stroke();
+  ctx.fillStyle = '#f2e8d5';
+  ctx.font = `bold ${Math.round(r * 0.95)}px Metamorphous, serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(String(Number.isFinite(cost) ? cost : 0), cx, cy + 1);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+}
+
 function buildSquareBoardTexture(card, opts = {}) {
   const canvas2d = document.createElement('canvas');
   canvas2d.width = 512;
   canvas2d.height = 512;
   const ctx = canvas2d.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
   const frozenShop = !!opts.frozenShop;
   const spell = isSpell(card);
   const frameHex = frameColors(card, opts);
   ctx.fillStyle = frameHex;
   ctx.fillRect(0, 0, 512, 512);
   ctx.fillStyle = spell ? '#101828' : '#120e18';
-  roundRect(ctx, 16, 16, 480, 480, 28);
+  roundRect(ctx, 16, 16, 480, 480, 12);
   ctx.fill();
   if (spell) {
     const spellBg = ctx.createRadialGradient(256, 220, 40, 256, 240, 280);
@@ -2329,11 +2732,11 @@ function buildSquareBoardTexture(card, opts = {}) {
     spellBg.addColorStop(0.55, '#172438');
     spellBg.addColorStop(1, '#101828');
     ctx.fillStyle = spellBg;
-    roundRect(ctx, 28, 28, 456, 456, 22);
+    roundRect(ctx, 28, 28, 456, 456, 10);
     ctx.fill();
     ctx.strokeStyle = frozenShop ? '#6ec6ff' : '#8eb7ff';
     ctx.lineWidth = 4;
-    roundRect(ctx, 28, 28, 456, 456, 22);
+    roundRect(ctx, 28, 28, 456, 456, 10);
     ctx.stroke();
     ctx.fillStyle = 'rgba(159,216,255,0.16)';
     ctx.beginPath();
@@ -2349,7 +2752,7 @@ function buildSquareBoardTexture(card, opts = {}) {
   } else {
     const artImg = textures[card.art]?.image || textures[ART_A]?.image;
     ctx.save();
-    roundRect(ctx, 28, 28, 456, 456, 22);
+    roundRect(ctx, 28, 28, 456, 456, 10);
     ctx.clip();
     if (artImg && artImg.width) {
       const scale = Math.max(456 / artImg.width, 456 / artImg.height);
@@ -2367,39 +2770,25 @@ function buildSquareBoardTexture(card, opts = {}) {
     ctx.restore();
     ctx.strokeStyle = card.golden ? '#ffd978' : 'rgba(212,175,90,0.55)';
     ctx.lineWidth = 4;
-    roundRect(ctx, 28, 28, 456, 456, 22);
+    roundRect(ctx, 28, 28, 456, 456, 10);
     ctx.stroke();
     if (card.divineShield || hasKeyword(card, 'DivineShield')) {
       ctx.beginPath();
       ctx.strokeStyle = '#ffe08a';
       ctx.lineWidth = 8;
-      roundRect(ctx, 10, 10, 492, 492, 30);
+      roundRect(ctx, 10, 10, 492, 492, 14);
       ctx.stroke();
     }
   }
   drawTierBadge(ctx, card.tier, 56, 56, 34);
   if (spell) {
-    const cost = Number.isFinite(card.cost) ? card.cost : 0;
     const grad = ctx.createLinearGradient(0, 360, 0, 500);
     grad.addColorStop(0, 'rgba(10,12,18,0)');
     grad.addColorStop(0.55, 'rgba(10,12,18,0.45)');
     grad.addColorStop(1, 'rgba(10,12,18,0.88)');
     ctx.fillStyle = grad;
     ctx.fillRect(28, 360, 456, 140);
-    ctx.beginPath();
-    ctx.arc(256, 430, 48, 0, Math.PI * 2);
-    ctx.fillStyle = '#2a3a5c';
-    ctx.fill();
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = '#e0b85a';
-    ctx.stroke();
-    ctx.fillStyle = '#ffe08a';
-    ctx.font = 'bold 42px Source Sans 3, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(String(cost), 256, 432);
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'alphabetic';
+    drawGoldCostBadge(ctx, 256, 430, card.cost, 30);
   } else {
     const atk = Number.isFinite(card.attack) ? card.attack : 0;
     const hp = Number.isFinite(card.health) ? card.health : 0;
@@ -2432,13 +2821,12 @@ function buildSquareBoardTexture(card, opts = {}) {
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
   }
-  const tex = new THREE.CanvasTexture(canvas2d);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
-  return tex;
+  return configureCardTexture(new THREE.CanvasTexture(canvas2d));
 }
 
 const cardTextureCache = new Map();
+const pendingTextureDispose = [];
+const CARD_TEXTURE_CACHE_MAX = 120;
 
 function cardTextureKey(card, opts = {}) {
   const artImg = textures[card.art]?.image;
@@ -2448,26 +2836,471 @@ function cardTextureKey(card, opts = {}) {
     String(card.attack),
     String(card.health),
     String(isSpell(card) ? card.cost : ''),
-    isSpell(card) ? (card.text || '') : '',
+    isSpell(card) ? `goldbadge|${card.category || ''}|${card.text || ''}` : '',
     card.golden ? 1 : 0,
     card.divineShield ? 1 : 0,
     (card.keywords || []).join(','),
     card.art,
     artImg && artImg.width ? 1 : 0,
-    opts.square ? 1 : 0,
+    opts.square ? 'sq512' : 0,
     opts.frozenShop ? 1 : 0,
     opts.isSelected ? 1 : 0,
-    opts.isAttacker ? 1 : 0
+    opts.isDying ? 1 : 0
   ].join('|');
+}
+
+function queueTextureDispose(tex) {
+  if (tex) pendingTextureDispose.push(tex);
+}
+
+function flushPendingTextureDispose() {
+  for (let i = 0; i < pendingTextureDispose.length; i++) {
+    pendingTextureDispose[i].dispose();
+  }
+  pendingTextureDispose.length = 0;
+}
+
+function rememberCardTexture(key, tex) {
+  if (cardTextureCache.has(key)) cardTextureCache.delete(key);
+  cardTextureCache.set(key, tex);
+  while (cardTextureCache.size > CARD_TEXTURE_CACHE_MAX) {
+    const oldest = cardTextureCache.keys().next().value;
+    const oldTex = cardTextureCache.get(oldest);
+    cardTextureCache.delete(oldest);
+    queueTextureDispose(oldTex);
+  }
+  return tex;
 }
 
 function buildCardFrontTexture(card, opts = {}) {
   const key = cardTextureKey(card, opts);
   let tex = cardTextureCache.get(key);
-  if (tex) return tex;
+  if (tex) {
+    cardTextureCache.delete(key);
+    cardTextureCache.set(key, tex);
+    return tex;
+  }
   tex = buildCardFrontTextureRaw(card, opts);
-  cardTextureCache.set(key, tex);
+  return rememberCardTexture(key, tex);
+}
+
+function clearCardTextureCache() {
+  for (const tex of cardTextureCache.values()) queueTextureDispose(tex);
+  cardTextureCache.clear();
+}
+
+const lordCardTextureCache = new Map();
+
+function buildLordCardTexture(hero) {
+  const key = hero.id;
+  let tex = lordCardTextureCache.get(key);
+  if (tex) return tex;
+  const canvas2d = document.createElement('canvas');
+  canvas2d.width = 512;
+  canvas2d.height = 716;
+  const ctx = canvas2d.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.fillStyle = '#3a2f1c';
+  ctx.fillRect(0, 0, 512, 716);
+  ctx.fillStyle = '#120e18';
+  roundRect(ctx, 18, 18, 476, 680, 12);
+  ctx.fill();
+  const artUrl = heroPortraitArt(hero);
+  const artImg = textures[artUrl]?.image || textures[ART_A]?.image;
+  ctx.save();
+  roundRect(ctx, 36, 36, 440, 360, 8);
+  ctx.clip();
+  if (artImg && artImg.width) {
+    const scale = Math.max(440 / artImg.width, 360 / artImg.height);
+    const w = artImg.width * scale;
+    const h = artImg.height * scale;
+    ctx.drawImage(artImg, 36 + (440 - w) / 2, 36 + (360 - h) / 2, w, h);
+  } else {
+    ctx.fillStyle = '#2a3344';
+    ctx.fillRect(36, 36, 440, 360);
+  }
+  ctx.restore();
+  ctx.strokeStyle = 'rgba(212,175,90,0.55)';
+  ctx.lineWidth = 4;
+  roundRect(ctx, 36, 36, 440, 360, 8);
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(10,12,18,0.92)';
+  roundRect(ctx, 36, 410, 440, 270, 8);
+  ctx.fill();
+  ctx.fillStyle = '#e0b85a';
+  ctx.font = 'bold 32px Metamorphous, serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  const name = hero.name.length > 22 ? hero.name.slice(0, 21) + '…' : hero.name;
+  ctx.fillText(name, 56, 452);
+  ctx.fillStyle = '#b9a888';
+  ctx.font = 'bold 22px Source Sans 3, sans-serif';
+  ctx.fillText(hero.nation || 'Lord', 56, 486);
+  ctx.fillStyle = '#9fd8ff';
+  ctx.font = 'bold 22px Source Sans 3, sans-serif';
+  const powerName = hero.power?.name || 'Lord Power';
+  ctx.fillText(powerName.length > 24 ? powerName.slice(0, 23) + '…' : powerName, 56, 522);
+  ctx.fillStyle = '#eee2cb';
+  ctx.font = '22px Source Sans 3, sans-serif';
+  const lines = wrapText(ctx, hero.power?.text || '', 400);
+  lines.slice(0, 2).forEach((line, i) => ctx.fillText(line, 56, 556 + i * 28));
+  ctx.beginPath();
+  ctx.arc(90, 640, 40, 0, Math.PI * 2);
+  ctx.fillStyle = '#5a3d12';
+  ctx.fill();
+  ctx.strokeStyle = '#e0b85a';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.fillStyle = '#fff4d8';
+  ctx.font = 'bold 34px Source Sans 3, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(String(hero.power?.cost ?? 0), 90, 642);
+  ctx.beginPath();
+  ctx.arc(422, 640, 40, 0, Math.PI * 2);
+  ctx.fillStyle = '#3a404a';
+  ctx.fill();
+  ctx.strokeStyle = '#b0b6c0';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.fillStyle = '#e8eaf0';
+  ctx.fillText(String(hero.armor ?? 0), 422, 642);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  tex = configureCardTexture(new THREE.CanvasTexture(canvas2d));
+  lordCardTextureCache.set(key, tex);
   return tex;
+}
+
+const uiCardImageCache = new Map();
+
+function getCachedUiCardImage(key, builder) {
+  let img = uiCardImageCache.get(key);
+  if (img) return img;
+  img = builder();
+  uiCardImageCache.set(key, img);
+  if (uiCardImageCache.size > 48) {
+    const oldest = uiCardImageCache.keys().next().value;
+    uiCardImageCache.delete(oldest);
+  }
+  return img;
+}
+
+function drawArtCover(ctx, artUrl, x, y, w, h) {
+  const artImg = textures[artUrl]?.image || textures[ART_A]?.image;
+  ctx.save();
+  roundRect(ctx, x, y, w, h, 10);
+  ctx.clip();
+  if (artImg && artImg.width) {
+    const scale = Math.max(w / artImg.width, h / artImg.height);
+    const dw = artImg.width * scale;
+    const dh = artImg.height * scale;
+    ctx.drawImage(artImg, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+  } else {
+    ctx.fillStyle = '#2a3344';
+    ctx.fillRect(x, y, w, h);
+  }
+  ctx.restore();
+}
+
+function drawSquareStatBadges(ctx, leftVal, rightVal, leftStyle, rightStyle, opts = {}) {
+  const radius = opts.radius ?? 44;
+  const fontSize = opts.fontSize ?? 40;
+  const cy = opts.cy ?? 430;
+  const leftX = opts.leftX ?? 78;
+  const rightX = opts.rightX ?? 434;
+  const gradTop = opts.gradTop ?? 360;
+  const grad = ctx.createLinearGradient(0, gradTop, 0, 500);
+  grad.addColorStop(0, 'rgba(10,12,18,0)');
+  grad.addColorStop(0.55, 'rgba(10,12,18,0.45)');
+  grad.addColorStop(1, 'rgba(10,12,18,0.88)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(28, gradTop, 456, 512 - gradTop - 12);
+  ctx.beginPath();
+  ctx.arc(leftX, cy, radius, 0, Math.PI * 2);
+  ctx.fillStyle = leftStyle.fill;
+  ctx.fill();
+  ctx.lineWidth = Math.max(5, Math.round(radius * 0.12));
+  ctx.strokeStyle = leftStyle.stroke;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(rightX, cy, radius, 0, Math.PI * 2);
+  ctx.fillStyle = rightStyle.fill;
+  ctx.fill();
+  ctx.strokeStyle = rightStyle.stroke;
+  ctx.stroke();
+  ctx.font = `bold ${fontSize}px "Source Sans 3", sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = leftStyle.text;
+  ctx.fillText(String(leftVal), leftX, cy + 2);
+  ctx.fillStyle = rightStyle.text;
+  ctx.fillText(String(rightVal), rightX, cy + 2);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+}
+
+function paintCanvasFromBuilder(canvas, builder) {
+  if (!canvas) return;
+  const src = builder();
+  const cssSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stageCard')) || 160;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const px = Math.max(src.width, Math.ceil(cssSize * dpr * 1.24));
+  const ctx = canvas.getContext('2d');
+  if (canvas.width !== px || canvas.height !== px) {
+    canvas.width = px;
+    canvas.height = px;
+  }
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.clearRect(0, 0, px, px);
+  ctx.drawImage(src, 0, 0, px, px);
+}
+
+function withStageFaceContext(drawFn) {
+  const canvas2d = document.createElement('canvas');
+  canvas2d.width = 512;
+  canvas2d.height = 512;
+  const ctx = canvas2d.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  drawFn(ctx);
+  return canvas2d;
+}
+
+function buildSquareLordFaceImage(hero, opts = {}) {
+  const armor = Math.max(0, opts.armor ?? 0);
+  const hp = Math.max(0, opts.hp ?? 0);
+  const key = `sqLord|v6|${hero.id}|${armor}|${hp}|${opts.accent || ''}`;
+  return getCachedUiCardImage(key, () => withStageFaceContext((ctx) => {
+    ctx.fillStyle = opts.accent || '#3a2f1c';
+    ctx.fillRect(0, 0, 512, 512);
+    ctx.fillStyle = '#120e18';
+    roundRect(ctx, 16, 16, 480, 480, 12);
+    ctx.fill();
+    drawArtCover(ctx, heroPortraitArt(hero), 28, 28, 456, 456);
+    ctx.strokeStyle = opts.accent || 'rgba(212,175,90,0.55)';
+    ctx.lineWidth = 4;
+    roundRect(ctx, 28, 28, 456, 456, 10);
+    ctx.stroke();
+    drawSquareStatBadges(
+      ctx,
+      armor,
+      hp,
+      { fill: '#3a404a', stroke: '#b0b6c0', text: '#e8eaf0' },
+      { fill: '#1a3a2a', stroke: '#7dcea0', text: '#e8fff2' }
+    );
+  }));
+}
+
+function buildSquareAbilityFaceImage(hero, opts = {}) {
+  const cost = hero.power?.cost ?? 0;
+  const key = `sqPower|v2|${hero.id}|${cost}|${opts.accent || ''}`;
+  return getCachedUiCardImage(key, () => withStageFaceContext((ctx) => {
+    ctx.fillStyle = opts.accent || '#2a3a5c';
+    ctx.fillRect(0, 0, 512, 512);
+    ctx.fillStyle = '#101828';
+    roundRect(ctx, 16, 16, 480, 480, 12);
+    ctx.fill();
+    const spellBg = ctx.createRadialGradient(256, 220, 40, 256, 240, 280);
+    spellBg.addColorStop(0, '#2a3f66');
+    spellBg.addColorStop(0.55, '#172438');
+    spellBg.addColorStop(1, '#101828');
+    ctx.fillStyle = spellBg;
+    roundRect(ctx, 28, 28, 456, 456, 10);
+    ctx.fill();
+    ctx.strokeStyle = opts.accent || '#8eb7ff';
+    ctx.lineWidth = 4;
+    roundRect(ctx, 28, 28, 456, 456, 10);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(159,216,255,0.16)';
+    ctx.beginPath();
+    ctx.moveTo(256, 120);
+    ctx.lineTo(320, 220);
+    ctx.lineTo(256, 320);
+    ctx.lineTo(192, 220);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(159,216,255,0.45)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    const grad = ctx.createLinearGradient(0, 360, 0, 500);
+    grad.addColorStop(0, 'rgba(10,12,18,0)');
+    grad.addColorStop(0.55, 'rgba(10,12,18,0.45)');
+    grad.addColorStop(1, 'rgba(10,12,18,0.88)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(28, 360, 456, 140);
+    drawGoldCostBadge(ctx, 256, 430, cost, 30);
+  }));
+}
+
+function buildSquareBobFaceImage(player) {
+  const tier = player?.tavernTier ?? 1;
+  const key = `sqBob|v2|${tier}|nolabel`;
+  return getCachedUiCardImage(key, () => withStageFaceContext((ctx) => {
+    ctx.fillStyle = '#3a2f1c';
+    ctx.fillRect(0, 0, 512, 512);
+    ctx.fillStyle = '#120e18';
+    roundRect(ctx, 16, 16, 480, 480, 12);
+    ctx.fill();
+    drawArtCover(ctx, ART_B, 28, 28, 456, 456);
+    ctx.strokeStyle = 'rgba(224,184,90,0.65)';
+    ctx.lineWidth = 4;
+    roundRect(ctx, 28, 28, 456, 456, 10);
+    ctx.stroke();
+    drawTierBadge(ctx, tier, 56, 56, 34);
+  }));
+}
+
+function paintSquareLordFace(canvas, hero, opts = {}) {
+  paintCanvasFromBuilder(canvas, () => buildSquareLordFaceImage(hero, opts));
+}
+
+function paintSquareAbilityFace(canvas, hero, opts = {}) {
+  paintCanvasFromBuilder(canvas, () => buildSquareAbilityFaceImage(hero, opts));
+}
+
+function paintSquareBobFace(canvas, player) {
+  paintCanvasFromBuilder(canvas, () => buildSquareBobFaceImage(player));
+}
+
+function buildLordPowerCardImage(hero) {
+  const key = `fullPower|${hero.id}|${hero.power?.cost ?? 0}|${hero.power?.name || ''}`;
+  return getCachedUiCardImage(key, () => {
+    const canvas2d = document.createElement('canvas');
+    canvas2d.width = 512;
+    canvas2d.height = 716;
+    const ctx = canvas2d.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.fillStyle = '#2a3a5c';
+    ctx.fillRect(0, 0, 512, 716);
+    ctx.fillStyle = '#101828';
+    roundRect(ctx, 18, 18, 476, 680, 12);
+    ctx.fill();
+    ctx.fillStyle = '#1b2b4a';
+    roundRect(ctx, 36, 36, 440, 280, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#8eb7ff';
+    ctx.lineWidth = 4;
+    roundRect(ctx, 36, 36, 440, 280, 8);
+    ctx.stroke();
+    ctx.fillStyle = '#9fd8ff';
+    ctx.font = 'bold 42px Metamorphous, serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('ABILITY', 256, 176);
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = 'rgba(10,12,18,0.92)';
+    roundRect(ctx, 36, 340, 440, 340, 8);
+    ctx.fill();
+    const powerName = hero.power?.name || 'Lord Power';
+    ctx.fillStyle = '#9fd8ff';
+    ctx.font = 'bold 36px Metamorphous, serif';
+    ctx.fillText(powerName.length > 20 ? powerName.slice(0, 19) + '…' : powerName, 56, 400);
+    ctx.fillStyle = '#b9a888';
+    ctx.font = 'bold 24px Source Sans 3, sans-serif';
+    ctx.fillText(hero.name || 'Lord', 56, 440);
+    ctx.fillStyle = '#eee2cb';
+    ctx.font = '26px Source Sans 3, sans-serif';
+    const lines = wrapText(ctx, hero.power?.text || '', 400);
+    lines.slice(0, 4).forEach((line, i) => ctx.fillText(line, 56, 490 + i * 34));
+    drawGoldCostBadge(ctx, 256, 640, hero.power?.cost ?? 0, 36);
+    return canvas2d;
+  });
+}
+
+function buildQuartermasterCardImage(player) {
+  const tier = player?.tavernTier ?? 1;
+  const upgrade = !player || player.tavernTier >= 6 ? 'Max' : String(player.upgradeCost);
+  const key = `fullBob|${tier}|${upgrade}`;
+  return getCachedUiCardImage(key, () => {
+    const canvas2d = document.createElement('canvas');
+    canvas2d.width = 512;
+    canvas2d.height = 716;
+    const ctx = canvas2d.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.fillStyle = '#3a2f1c';
+    ctx.fillRect(0, 0, 512, 716);
+    ctx.fillStyle = '#120e18';
+    roundRect(ctx, 18, 18, 476, 680, 12);
+    ctx.fill();
+    drawArtCover(ctx, ART_B, 36, 36, 440, 360);
+    ctx.strokeStyle = 'rgba(212,175,90,0.55)';
+    ctx.lineWidth = 4;
+    roundRect(ctx, 36, 36, 440, 360, 8);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(10,12,18,0.92)';
+    roundRect(ctx, 36, 410, 440, 270, 8);
+    ctx.fill();
+    ctx.fillStyle = '#e0b85a';
+    ctx.font = 'bold 32px Metamorphous, serif';
+    ctx.fillText('Quartermaster', 56, 452);
+    ctx.fillStyle = '#b9a888';
+    ctx.font = 'bold 22px Source Sans 3, sans-serif';
+    ctx.fillText('Recruitment Master', 56, 486);
+    ctx.fillStyle = '#eee2cb';
+    ctx.font = '22px Source Sans 3, sans-serif';
+    const lines = wrapText(ctx, 'Buy units and support from the Tavern. Drag a card here to sell it for 1 Gold.', 400);
+    lines.slice(0, 3).forEach((line, i) => ctx.fillText(line, 56, 528 + i * 28));
+    drawTierBadge(ctx, tier, 90, 640, 34);
+    ctx.beginPath();
+    ctx.arc(422, 640, 40, 0, Math.PI * 2);
+    ctx.fillStyle = '#5a3d12';
+    ctx.fill();
+    ctx.strokeStyle = '#e0b85a';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    ctx.fillStyle = '#fff4d8';
+    ctx.font = 'bold 28px Source Sans 3, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(upgrade, 422, 642);
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    return canvas2d;
+  });
+}
+
+function buildLiveLordCardImage(hero, opts = {}) {
+  const armor = Math.max(0, opts.armor ?? hero.armor ?? 0);
+  const hp = Math.max(0, opts.hp ?? 0);
+  const key = `fullLordLive|${hero.id}|${armor}|${hp}`;
+  return getCachedUiCardImage(key, () => {
+    const base = buildLordCardTexture(hero).image;
+    const canvas2d = document.createElement('canvas');
+    canvas2d.width = 512;
+    canvas2d.height = 716;
+    const ctx = canvas2d.getContext('2d');
+    ctx.drawImage(base, 0, 0);
+    ctx.beginPath();
+    ctx.arc(422, 640, 40, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a3a2a';
+    ctx.fill();
+    ctx.strokeStyle = '#7dcea0';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    ctx.fillStyle = '#e8fff2';
+    ctx.font = 'bold 34px Source Sans 3, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(hp), 422, 642);
+    ctx.beginPath();
+    ctx.arc(90, 640, 40, 0, Math.PI * 2);
+    ctx.fillStyle = '#3a404a';
+    ctx.fill();
+    ctx.strokeStyle = '#b0b6c0';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    ctx.fillStyle = '#e8eaf0';
+    ctx.fillText(String(armor), 90, 642);
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    return canvas2d;
+  });
 }
 
 function buildCardFrontTextureRaw(card, opts = {}) {
@@ -2478,33 +3311,32 @@ function buildCardFrontTextureRaw(card, opts = {}) {
   canvas2d.width = 512;
   canvas2d.height = 716;
   const ctx = canvas2d.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
   const frameHex = frameColors(card, opts);
   ctx.fillStyle = frameHex;
   ctx.fillRect(0, 0, 512, 716);
   ctx.fillStyle = spell ? '#101828' : '#120e18';
-  roundRect(ctx, 18, 18, 476, 680, 28);
+  roundRect(ctx, 18, 18, 476, 680, 12);
   ctx.fill();
   if (spell) {
     ctx.fillStyle = '#1b2b4a';
-    roundRect(ctx, 36, 36, 440, 280, 18);
+    roundRect(ctx, 36, 36, 440, 280, 8);
     ctx.fill();
     ctx.strokeStyle = '#8eb7ff';
     ctx.lineWidth = 4;
-    roundRect(ctx, 36, 36, 440, 280, 18);
+    roundRect(ctx, 36, 36, 440, 280, 8);
     ctx.stroke();
+    const supportKind = (card.category || card.tribe || 'Edict').toUpperCase();
     ctx.fillStyle = '#9fd8ff';
-    ctx.font = 'bold 34px Metamorphous, serif';
+    ctx.font = 'bold 42px Metamorphous, serif';
     ctx.textAlign = 'center';
-    ctx.fillText('TAVERN SPELL', 256, 120);
-    ctx.fillStyle = '#e0b85a';
-    ctx.font = 'bold 64px Metamorphous, serif';
-    ctx.fillText(`${card.cost}`, 256, 210);
-    ctx.fillStyle = '#b9a888';
-    ctx.font = 'bold 26px Source Sans 3, sans-serif';
-    ctx.fillText('GOLD', 256, 260);
+    ctx.textBaseline = 'middle';
+    ctx.fillText(supportKind, 256, 176);
     ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = 'rgba(10,12,18,0.92)';
-    roundRect(ctx, 36, 340, 440, 340, 18);
+    roundRect(ctx, 36, 340, 440, 340, 8);
     ctx.fill();
     ctx.fillStyle = '#9fd8ff';
     ctx.font = 'bold 36px Metamorphous, serif';
@@ -2512,15 +3344,16 @@ function buildCardFrontTextureRaw(card, opts = {}) {
     ctx.fillText(spellName, 56, 400);
     ctx.fillStyle = '#b9a888';
     ctx.font = 'bold 24px Source Sans 3, sans-serif';
-    ctx.fillText('Spell', 56, 440);
+    ctx.fillText(card.category || card.tribe || 'Edict', 56, 440);
     ctx.fillStyle = '#eee2cb';
     ctx.font = '26px Source Sans 3, sans-serif';
     const lines = wrapText(ctx, card.text || '', 400);
-    lines.slice(0, 5).forEach((line, i) => ctx.fillText(line, 56, 500 + i * 34));
+    lines.slice(0, 3).forEach((line, i) => ctx.fillText(line, 56, 500 + i * 34));
+    drawGoldCostBadge(ctx, 256, 640, card.cost, 36);
   } else {
     const artImg = textures[card.art]?.image || textures[ART_A]?.image;
     ctx.save();
-    roundRect(ctx, 36, 36, 440, 360, 18);
+    roundRect(ctx, 36, 36, 440, 360, 8);
     ctx.clip();
     if (artImg && artImg.width) {
       const scale = Math.max(440 / artImg.width, 360 / artImg.height);
@@ -2538,10 +3371,10 @@ function buildCardFrontTextureRaw(card, opts = {}) {
     ctx.restore();
     ctx.strokeStyle = card.golden ? '#ffd978' : 'rgba(212,175,90,0.55)';
     ctx.lineWidth = 4;
-    roundRect(ctx, 36, 36, 440, 360, 18);
+    roundRect(ctx, 36, 36, 440, 360, 8);
     ctx.stroke();
     ctx.fillStyle = 'rgba(10,12,18,0.92)';
-    roundRect(ctx, 36, 410, 440, 270, 18);
+    roundRect(ctx, 36, 410, 440, 270, 8);
     ctx.fill();
     ctx.fillStyle = card.golden ? '#ffd978' : '#e0b85a';
     ctx.font = 'bold 36px Metamorphous, serif';
@@ -2582,20 +3415,17 @@ function buildCardFrontTextureRaw(card, opts = {}) {
     if (card.divineShield || hasKeyword(card, 'DivineShield')) {
       ctx.strokeStyle = '#ffe08a';
       ctx.lineWidth = 8;
-      roundRect(ctx, 12, 12, 488, 692, 32);
+      roundRect(ctx, 12, 12, 488, 692, 14);
       ctx.stroke();
     }
     if (card.golden) {
       ctx.fillStyle = '#ffd978';
       ctx.font = 'bold 20px Metamorphous, serif';
-      ctx.fillText('GOLDEN', 56, 660);
+      ctx.fillText('ELITE', 56, 660);
     }
   }
   drawTierBadge(ctx, card.tier, 62, 62, 38);
-  const tex = new THREE.CanvasTexture(canvas2d);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
-  return tex;
+  return configureCardTexture(new THREE.CanvasTexture(canvas2d));
 }
 
 function wrapText(ctx, text, maxWidth) {
@@ -2628,16 +3458,16 @@ function getCardBackTexture() {
   ctx.fillRect(0, 0, 512, 716);
   ctx.strokeStyle = 'rgba(212,175,90,0.7)';
   ctx.lineWidth = 10;
-  roundRect(ctx, 22, 22, 468, 672, 32);
+  roundRect(ctx, 22, 22, 468, 672, 14);
   ctx.stroke();
   ctx.strokeStyle = 'rgba(212,175,90,0.35)';
   ctx.lineWidth = 4;
-  roundRect(ctx, 48, 48, 416, 620, 24);
+  roundRect(ctx, 48, 48, 416, 620, 10);
   ctx.stroke();
   for (let i = 0; i < 7; i++) {
     ctx.strokeStyle = `rgba(212,175,90,${0.08 + (i % 2) * 0.06})`;
     ctx.lineWidth = 2;
-    roundRect(ctx, 70 + i * 8, 70 + i * 10, 372 - i * 16, 576 - i * 20, 18);
+    roundRect(ctx, 70 + i * 8, 70 + i * 10, 372 - i * 16, 576 - i * 20, 8);
     ctx.stroke();
   }
   ctx.fillStyle = 'rgba(224,184,90,0.16)';
@@ -2660,9 +3490,7 @@ function getCardBackTexture() {
   ctx.font = 'bold 22px Metamorphous, serif';
   ctx.fillText('FLAG', 256, 520);
   ctx.fillText('BEARER', 256, 552);
-  cardBackTexture = new THREE.CanvasTexture(canvas2d);
-  cardBackTexture.colorSpace = THREE.SRGBColorSpace;
-  cardBackTexture.anisotropy = 4;
+  cardBackTexture = configureCardTexture(new THREE.CanvasTexture(canvas2d));
   return cardBackTexture;
 }
 
@@ -2670,7 +3498,7 @@ function makeCardMesh(card, zone, index, opts = {}) {
   const group = new THREE.Group();
   const faceDown = !!opts.faceDown;
   const isSelected = !faceDown && selected && selected.minion && selected.minion.instanceId === card.instanceId;
-  const isAttacker = opts.attackerId && opts.attackerId === card.instanceId;
+  const isDying = !faceDown && Array.isArray(opts.dyingIds) && opts.dyingIds.includes(card.instanceId);
   const frozenShop = !!opts.frozenShop;
   const square = isShortCardZone(zone);
   const { w, h } = cardSizeForZone(zone);
@@ -2678,37 +3506,25 @@ function makeCardMesh(card, zone, index, opts = {}) {
   if (card.golden) edgeColor = 0xd4af37;
   if (frozenShop) edgeColor = 0x6ec6ff;
   if (isSelected) edgeColor = 0x7ad0ff;
-  if (isAttacker) edgeColor = 0xff6b5a;
+  if (isDying) edgeColor = 0xff6b5a;
   if (faceDown) edgeColor = 0x2a3348;
-  const frontTex = faceDown ? getCardBackTexture() : buildCardFrontTexture(card, { frozenShop, isSelected, isAttacker, square });
-  const edgeMat = new THREE.MeshStandardMaterial({
-    color: edgeColor,
-    roughness: 0.45,
-    metalness: card.golden && !faceDown ? 0.55 : 0.2
-  });
-  const frontMat = new THREE.MeshStandardMaterial({
-    map: frontTex,
-    roughness: faceDown ? 0.55 : 0.42,
-    metalness: faceDown ? 0.12 : (card.golden ? 0.28 : 0.08)
-  });
-  const backMat = new THREE.MeshStandardMaterial({
+  const frontTex = faceDown ? getCardBackTexture() : buildCardFrontTexture(card, { frozenShop, isSelected, isDying, square });
+  const edgeMat = new THREE.MeshBasicMaterial({ color: edgeColor });
+  const frontMat = new THREE.MeshBasicMaterial({ map: frontTex });
+  const backMat = new THREE.MeshBasicMaterial({
     map: faceDown ? null : getCardBackTexture(),
-    color: faceDown ? 0x1a1424 : 0xffffff,
-    roughness: 0.7,
-    metalness: 0.05
+    color: faceDown ? 0x1a1424 : 0xffffff
   });
   const body = new THREE.Mesh(
-    new THREE.BoxGeometry(w, h, CARD_D),
+    getCardGeometry(w, h),
     [edgeMat, edgeMat, edgeMat, edgeMat, frontMat, backMat]
   );
-  body.castShadow = true;
-  body.receiveShadow = true;
   group.add(body);
-  if (isSelected || isAttacker) {
+  if (isSelected || isDying) {
     const glow = new THREE.Mesh(
-      new THREE.BoxGeometry(w + 0.16, h + 0.16, CARD_D + 0.02),
+      getGlowGeometry(w, h),
       new THREE.MeshBasicMaterial({
-        color: isAttacker ? 0xff4020 : 0x4aa8ff,
+        color: isDying ? 0xff4020 : 0x4aa8ff,
         transparent: true,
         opacity: 0.22,
         depthWrite: false
@@ -2721,7 +3537,175 @@ function makeCardMesh(card, zone, index, opts = {}) {
   return group;
 }
 
-function layoutRow(items, z, y, spacing, rotX = -0.68) {
+function disposeStageMesh(group) {
+  if (!group) return;
+  group.traverse(obj => {
+    if (!obj.isMesh) return;
+    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    for (const mat of mats) {
+      if (!mat) continue;
+      if (mat.map && mat.map !== cardBackTexture) mat.map.dispose();
+      mat.dispose();
+    }
+  });
+}
+
+function clearStageMeshes() {
+  while (stageCardGroup.children.length) {
+    const child = stageCardGroup.children[0];
+    stageCardGroup.remove(child);
+    disposeStageMesh(child);
+  }
+  stageMeshes.length = 0;
+}
+
+function makeStageCardMesh(imageCanvas, userData = {}) {
+  const group = new THREE.Group();
+  const w = BOARD_S;
+  const h = BOARD_S;
+  const frontTex = configureCardTexture(new THREE.CanvasTexture(imageCanvas));
+  const edgeMat = new THREE.MeshBasicMaterial({ color: 0x3a2f1c });
+  const frontMat = new THREE.MeshBasicMaterial({ map: frontTex });
+  const backMat = new THREE.MeshBasicMaterial({
+    map: getCardBackTexture(),
+    color: 0xffffff
+  });
+  const body = new THREE.Mesh(
+    getCardGeometry(w, h),
+    [edgeMat, edgeMat, edgeMat, edgeMat, frontMat, backMat]
+  );
+  group.add(body);
+  group.userData = {
+    zone: 'stage',
+    cardW: w,
+    cardH: h,
+    faceDown: false,
+    minion: null,
+    ...userData
+  };
+  return group;
+}
+
+function placeMeshAtDomElement(mesh, el) {
+  if (!mesh || !el) return;
+  const r = el.getBoundingClientRect();
+  if (r.width < 2 || r.height < 2) return;
+  const cx = r.left + r.width * 0.5;
+  const cy = r.top + r.height * 0.5;
+  pointer.x = (cx / window.innerWidth) * 2 - 1;
+  pointer.y = -(cy / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  stagePlacePlane.constant = -BOARD_ROW_Y;
+  if (!raycaster.ray.intersectPlane(stagePlacePlane, stagePlaceHit)) return;
+  mesh.position.set(stagePlaceHit.x, BOARD_ROW_Y, stagePlaceHit.z);
+  mesh.rotation.set(BOARD_ROW_ROTX, 0, 0);
+  mesh.userData.baseX = stagePlaceHit.x;
+  mesh.userData.baseY = BOARD_ROW_Y;
+  mesh.userData.baseZ = stagePlaceHit.z;
+  mesh.userData.baseRotX = BOARD_ROW_ROTX;
+  mesh.userData.baseRotY = 0;
+  if (hoveredCard !== mesh) mesh.scale.set(1, 1, 1);
+}
+
+function isDomStageVisible(el) {
+  if (!el) return false;
+  if (el.id === 'tavernMasterFrame' || el.id === 'combatEnemyFrame' || el.id === 'combatEnemyPower') {
+    if (!el.classList.contains('show')) return false;
+  }
+  const style = getComputedStyle(el);
+  if (style.display === 'none' || style.visibility === 'hidden') return false;
+  const r = el.getBoundingClientRect();
+  return r.width > 1 && r.height > 1;
+}
+
+function setStageMeshOpacity(mesh, opacity) {
+  if (!mesh) return;
+  mesh.traverse(obj => {
+    if (!obj.isMesh) return;
+    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    for (const mat of mats) {
+      if (!mat) continue;
+      mat.transparent = opacity < 1;
+      mat.opacity = opacity;
+    }
+  });
+}
+
+function addStageMeshFor(el, imageCanvas, userData) {
+  if (!isDomStageVisible(el) || !imageCanvas) return;
+  const mesh = makeStageCardMesh(imageCanvas, { ...userData, domEl: el });
+  placeMeshAtDomElement(mesh, el);
+  if (el.matches && el.matches('button:disabled')) setStageMeshOpacity(mesh, 0.45);
+  stageCardGroup.add(mesh);
+  stageMeshes.push(mesh);
+}
+
+function syncStageMeshes() {
+  if (hoveredCard && hoveredCard.userData?.zone === 'stage') {
+    resetCardHoverVisual(hoveredCard);
+    hoveredCard = null;
+  }
+  clearStageMeshes();
+  const p = human();
+  if (!p || document.getElementById('ui')?.classList.contains('hidden')) return;
+  const portraitSlot = document.getElementById('playerPortraitSlot');
+  const playerFrame = document.getElementById('playerHeroFrame');
+  const powerBtn = document.getElementById('btnHeroPower');
+  const bobFrame = document.getElementById('tavernMasterFrame');
+  const enemyFrame = document.getElementById('combatEnemyFrame');
+  const enemyPower = document.getElementById('combatEnemyPower');
+  if (portraitSlot && !portraitSlot.classList.contains('hidden')) {
+    addStageMeshFor(
+      playerFrame,
+      buildSquareLordFaceImage(p.hero, { armor: p.armor, hp: p.hp }),
+      { stageKind: 'playerLord' }
+    );
+    addStageMeshFor(
+      powerBtn,
+      buildSquareAbilityFaceImage(p.hero),
+      { stageKind: 'playerPower' }
+    );
+  }
+  if (bobFrame.classList.contains('show')) {
+    addStageMeshFor(
+      bobFrame,
+      buildSquareBobFaceImage(p),
+      { stageKind: 'bob' }
+    );
+  }
+  const enemy = getCombatEnemy();
+  if (enemyFrame.classList.contains('show') && enemy?.hero) {
+    addStageMeshFor(
+      enemyFrame,
+      buildSquareLordFaceImage(enemy.hero, { armor: enemy.armor, hp: enemy.hp }),
+      { stageKind: 'enemyLord' }
+    );
+    addStageMeshFor(
+      enemyPower,
+      buildSquareAbilityFaceImage(enemy.hero),
+      { stageKind: 'enemyPower' }
+    );
+  }
+}
+
+function syncStageMeshLayout() {
+  for (const mesh of stageMeshes) {
+    if (hoveredCard === mesh) continue;
+    placeMeshAtDomElement(mesh, mesh.userData.domEl);
+  }
+}
+
+function showStageMeshTooltip(mesh, clientX, clientY) {
+  const kind = mesh.userData.stageKind;
+  const anchor = mesh.userData.domEl;
+  if (kind === 'playerLord') showPlayerHeroFrameHover(clientX, clientY, anchor);
+  else if (kind === 'playerPower') showHeroPowerHover(clientX, clientY, anchor);
+  else if (kind === 'bob') showBobHover(clientX, clientY, anchor);
+  else if (kind === 'enemyLord') showCombatEnemyHover(clientX, clientY, anchor);
+  else if (kind === 'enemyPower') showCombatEnemyPowerHover(clientX, clientY, anchor);
+}
+
+function layoutRow(items, z, y, spacing, rotX = -Math.PI / 2) {
   const start = -((items.length - 1) * spacing) / 2;
   items.forEach((mesh, i) => {
     const x = start + i * spacing;
@@ -2746,10 +3730,15 @@ function resetCardHoverVisual(card) {
   card.scale.set(1, 1, 1);
 }
 
-function clearCardHover() {
+function isPointerOverStageCard(clientX, clientY) {
+  const el = document.elementFromPoint(clientX, clientY);
+  return !!(el && el.closest && el.closest('.stageCard'));
+}
+
+function clearCardHover(opts = {}) {
   resetCardHoverVisual(hoveredCard);
   hoveredCard = null;
-  hideCardTooltip();
+  if (!opts.keepTooltip) hideCardTooltip();
 }
 
 function applyCardHoverTilt(card, point) {
@@ -2759,10 +3748,11 @@ function applyCardHoverTilt(card, point) {
   const halfH = (card.userData.cardH || CARD_H) * 0.5;
   const tiltY = clamp(local.x / halfW, -1, 1) * 0.22;
   const tiltX = clamp(-local.y / halfH, -1, 1) * 0.14;
-  card.rotation.x = (card.userData.baseRotX ?? -0.68) + tiltX;
+  card.rotation.x = (card.userData.baseRotX ?? -Math.PI / 2) + tiltX;
   card.rotation.y = tiltY;
   card.position.y = (card.userData.baseY ?? card.position.y) + 0.22;
-  card.scale.setScalar(card.userData.zone === 'board' ? 1.24 : 1.16);
+  const boardLike = card.userData.zone === 'board' || card.userData.zone === 'support' || card.userData.zone === 'stage';
+  card.scale.setScalar(boardLike ? 1.24 : 1.16);
 }
 
 const handOverlayCenter = new THREE.Vector3();
@@ -2841,6 +3831,27 @@ function getHandScreenCardSize() {
   return { width, height };
 }
 
+function getBoardCardScreenSize() {
+  const rect = measureHandCardScreenSize(
+    0,
+    BOARD_ROW_Y,
+    BOARD_ROW_Z,
+    BOARD_ROW_ROTX,
+    BOARD_S,
+    BOARD_S,
+    null
+  );
+  const size = Math.round(Math.max(rect.width, rect.height));
+  return Math.max(120, Math.min(220, size));
+}
+
+function syncStageCardSize() {
+  if (typeof BOARD_S !== 'number') return;
+  const size = getBoardCardScreenSize();
+  document.documentElement.style.setProperty('--stageCard', `${size}px`);
+  syncStageMeshLayout();
+}
+
 function getPlayerHandCardScreenSize() {
   return getHandScreenCardSize();
 }
@@ -2896,26 +3907,14 @@ function rectsOverlap(a, b) {
 }
 
 function syncPortraitHandBlocking() {
-  const layer = document.getElementById('handOverlay');
   const nodes = [
-    document.querySelector('#playerPortraitSlot .playerSide'),
+    document.getElementById('btnHeroPower'),
     document.getElementById('playerHeroFrame')
   ];
+  const blocking = !!(dragState?.dragging);
   for (const node of nodes) {
     if (!node) continue;
-    if (!layer || !layer.classList.contains('show') || !layer.children.length) {
-      node.style.pointerEvents = 'auto';
-      continue;
-    }
-    const nr = node.getBoundingClientRect();
-    let overlap = false;
-    for (const el of layer.children) {
-      if (rectsOverlap(nr, el.getBoundingClientRect())) {
-        overlap = true;
-        break;
-      }
-    }
-    node.style.pointerEvents = overlap ? 'none' : 'auto';
+    node.style.pointerEvents = blocking ? 'none' : 'auto';
   }
 }
 
@@ -2979,6 +3978,9 @@ function syncEnemyHandOverlay(cards) {
   });
 }
 
+let handOverlayNeedsSync = true;
+let portraitBlockDirty = true;
+
 function syncHandOverlayLayer() {
   const layer = document.getElementById('handOverlay');
   if (!layer) return;
@@ -2986,6 +3988,7 @@ function syncHandOverlayLayer() {
   const handMeshes = cardMeshes.filter(m => m.userData.zone === 'hand');
   if (uiHidden || !handMeshes.length) {
     hideHandOverlay();
+    handOverlayNeedsSync = false;
     return;
   }
   layer.classList.add('show');
@@ -3003,6 +4006,7 @@ function syncHandOverlayLayer() {
   const totalW = handMeshes.length > 1 ? (handMeshes.length - 1) * spacing : 0;
   const startX = window.innerWidth * 0.5 - totalW * 0.5;
   const restCy = window.innerHeight;
+  let anyRaised = false;
   handMeshes.forEach((mesh, i) => {
     const el = layer.children[i];
     const canvas = el.firstChild;
@@ -3025,6 +4029,7 @@ function syncHandOverlayLayer() {
     const cardW = size.width * hoverScale;
     const cardH = size.height * hoverScale;
     const isDraggingThis = !!(dragState?.dragging && dragState.instanceId === minion.instanceId);
+    if (hoverT > 0.05 || isDraggingThis) anyRaised = true;
     let cx = startX + i * spacing;
     let cy = restCy - ease * size.height * HAND_SCREEN_HOVER_LIFT;
     if (isDraggingThis) {
@@ -3045,22 +4050,30 @@ function syncHandOverlayLayer() {
     el.style.zIndex = String(1 + Math.round(hoverT * 12) + (isDraggingThis ? 20 : 0));
     setHandMeshHiddenForOverlay(mesh, true);
   });
-  syncPortraitHandBlocking();
+  if (anyRaised || portraitBlockDirty) {
+    syncPortraitHandBlocking();
+    portraitBlockDirty = anyRaised;
+  }
+  handOverlayNeedsSync = false;
 }
 
 function updateHandHoverAnimation() {
   const draggingId = dragState?.dragging ? dragState.instanceId : null;
+  let animating = !!draggingId;
   for (const mesh of cardMeshes) {
     if (mesh.userData.zone !== 'hand') continue;
     if (draggingId && mesh.userData.minion?.instanceId === draggingId) {
       mesh.userData.hoverT = 0;
+      animating = true;
       continue;
     }
     const raised = hoveredCard === mesh;
     const target = raised ? 1 : 0;
     const prev = mesh.userData.hoverT ?? 0;
     const next = prev + (target - prev) * 0.2;
-    mesh.userData.hoverT = Math.abs(next - target) < 0.002 ? target : next;
+    const settled = Math.abs(next - target) < 0.002;
+    mesh.userData.hoverT = settled ? target : next;
+    if (!settled || prev !== mesh.userData.hoverT) animating = true;
     if (!dragState?.dragging || mesh.userData.minion?.instanceId !== dragState.instanceId) {
       mesh.position.x = mesh.userData.baseX ?? mesh.position.x;
       mesh.position.y = mesh.userData.baseY ?? HAND_ROW_Y;
@@ -3070,7 +4083,7 @@ function updateHandHoverAnimation() {
       mesh.scale.set(1, 1, 1);
     }
   }
-  syncHandOverlayLayer();
+  if (animating || handOverlayNeedsSync) syncHandOverlayLayer();
 }
 
 function renderHandRow(player, z = HAND_ROW_Z, y = HAND_ROW_Y) {
@@ -3102,38 +4115,61 @@ function renderBoardRow(cards, zone, z, y, opts = {}) {
 function renderCards() {
   if (dragState?.dragging) return;
   clearCardHover();
-  while (cardGroup.children.length) cardGroup.remove(cardGroup.children[0]);
-  cardMeshes.length = 0;
+  clearCardGroup();
+  handOverlayNeedsSync = true;
+  portraitBlockDirty = true;
   if (!state) return;
   const p = human();
   if (!p) return;
   if (phase === 'combat' && combatAnim) {
     const boardA = combatAnim.boardA || [];
     const boardB = combatAnim.boardB || [];
+    const supportA = combatAnim.supportA || [];
+    const supportB = combatAnim.supportB || [];
     const aIsYou = !!(combatAnim.a && (combatAnim.a.isHuman || combatAnim.a.id === p.id));
     const bIsYou = !!(combatAnim.b && (combatAnim.b.isHuman || combatAnim.b.id === p.id));
     let mine;
     let theirs;
+    let mySupport;
+    let theirSupport;
     let foe = null;
     if (aIsYou) {
       mine = boardA;
       theirs = boardB;
+      mySupport = supportA;
+      theirSupport = supportB;
       foe = combatAnim.b;
     } else if (bIsYou) {
       mine = boardB;
       theirs = boardA;
+      mySupport = supportB;
+      theirSupport = supportA;
       foe = combatAnim.a;
     } else {
       mine = boardA;
       theirs = boardB;
+      mySupport = supportA;
+      theirSupport = supportB;
       foe = combatAnim.b;
     }
-    renderBoardRow(theirs, 'enemy', TAVERN_ROW_Z, TAVERN_ROW_Y, {
+    renderBoardRow(theirSupport, 'enemySupport', ENEMY_SUPPORT_ROW_Z, TAVERN_ROW_Y, {
+      spacing: SUPPORT_ROW_SPACING,
+      rotX: SUPPORT_ROW_ROTX
+    });
+    renderBoardRow(theirs, 'enemy', ENEMY_BOARD_ROW_Z, TAVERN_ROW_Y, {
       attackerId: combatAnim.attackerId,
+      dyingIds: combatAnim.dyingIds || [],
       spacing: TAVERN_ROW_SPACING,
       rotX: TAVERN_ROW_ROTX
     });
-    renderBoardRow(mine, 'board', BOARD_ROW_Z, BOARD_ROW_Y, { attackerId: combatAnim.attackerId });
+    renderBoardRow(mine, 'board', BOARD_ROW_Z, BOARD_ROW_Y, {
+      attackerId: combatAnim.attackerId,
+      dyingIds: combatAnim.dyingIds || []
+    });
+    renderBoardRow(mySupport, 'support', SUPPORT_ROW_Z, SUPPORT_ROW_Y, {
+      spacing: SUPPORT_ROW_SPACING,
+      rotX: SUPPORT_ROW_ROTX
+    });
     renderHandRow(p);
     renderEnemyHandRow(foe?.hand || []);
     return;
@@ -3149,6 +4185,10 @@ function renderCards() {
   });
   layoutRow(shopMeshes, TAVERN_ROW_Z, p.frozen ? TAVERN_ROW_Y_FROZEN : TAVERN_ROW_Y, TAVERN_ROW_SPACING, TAVERN_ROW_ROTX);
   renderBoardRow(p.board, 'board', BOARD_ROW_Z, BOARD_ROW_Y);
+  renderBoardRow(p.support || [], 'support', SUPPORT_ROW_Z, SUPPORT_ROW_Y, {
+    spacing: SUPPORT_ROW_SPACING,
+    rotX: SUPPORT_ROW_ROTX
+  });
   renderHandRow(p);
 }
 
@@ -3160,19 +4200,59 @@ function hideCardTooltip() {
   if (tip) tip.classList.remove('show');
 }
 
-function positionCardTooltip(clientX, clientY) {
+function positionCardTooltip(clientX, clientY, anchorEl) {
   const tip = document.getElementById('cardTooltip');
   if (!tip || !tip.classList.contains('show')) return;
   const pad = 12;
   const tw = tip.offsetWidth || 210;
   const th = tip.offsetHeight || 294;
-  let left = clientX - tw - 72;
-  let top = clientY - th * 0.55;
-  if (left < pad) left = pad;
-  if (top < pad) top = pad;
-  if (top + th > window.innerHeight - pad) top = window.innerHeight - th - pad;
+  let left;
+  let top;
+  if (anchorEl) {
+    const r = anchorEl.getBoundingClientRect();
+    left = r.left - tw - 18;
+    if (left < pad) left = r.right + 18;
+    if (left + tw > window.innerWidth - pad) left = Math.max(pad, window.innerWidth - tw - pad);
+    const preferAbove = r.top + r.height * 0.5 > window.innerHeight * 0.45;
+    if (preferAbove) {
+      top = r.top - th - 14;
+      if (top < pad) top = pad;
+      if (top + th > r.top - 8) top = Math.max(pad, r.top - th - 14);
+    } else {
+      top = r.bottom + 14;
+      if (top + th > window.innerHeight - pad) {
+        top = r.top + r.height * 0.5 - th * 0.5;
+        if (top < pad) top = pad;
+        if (top + th > window.innerHeight - pad) top = window.innerHeight - th - pad;
+      }
+    }
+  } else {
+    left = clientX - tw - 72;
+    top = clientY - th * 0.55;
+    if (left < pad) left = pad;
+    if (left + tw > window.innerWidth - pad) left = Math.max(pad, window.innerWidth - tw - pad);
+    if (top < pad) top = pad;
+    if (top + th > window.innerHeight - pad) top = window.innerHeight - th - pad;
+  }
   tip.style.left = `${left}px`;
   tip.style.top = `${top}px`;
+}
+
+function showFullCardTooltip(key, src, clientX, clientY, anchorEl) {
+  const tip = document.getElementById('cardTooltip');
+  if (!tip || !src) return;
+  hideOppHover();
+  if (tooltipCardId !== key) {
+    tooltipCardId = key;
+    const canvas = document.getElementById('cardTooltipCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = src.width;
+    canvas.height = src.height;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(src, 0, 0);
+  }
+  tip.classList.add('show');
+  positionCardTooltip(clientX, clientY, anchorEl);
 }
 
 function showTooltipFor(minion, mesh, clientX, clientY) {
@@ -3182,22 +4262,10 @@ function showTooltipFor(minion, mesh, clientX, clientY) {
     hideCardTooltip();
     return;
   }
-  const id = minion.instanceId;
-  if (tooltipCardId !== id) {
-    tooltipCardId = id;
-    const frozenShop = mesh.userData.zone === 'shop' && !!human()?.frozen;
-    const isSelected = !!(selected && selected.minion && selected.minion.instanceId === minion.instanceId);
-    const tex = buildCardFrontTexture(minion, { frozenShop, isSelected, square: false });
-    const src = tex.image;
-    const canvas = document.getElementById('cardTooltipCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = src.width;
-    canvas.height = src.height;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(src, 0, 0);
-    tip.classList.add('show');
-  }
-  positionCardTooltip(clientX, clientY);
+  const frozenShop = mesh.userData.zone === 'shop' && !!human()?.frozen;
+  const isSelected = !!(selected && selected.minion && selected.minion.instanceId === minion.instanceId);
+  const tex = buildCardFrontTexture(minion, { frozenShop, isSelected, square: false });
+  showFullCardTooltip(`minion|${minion.instanceId}|${isSelected ? 1 : 0}|${frozenShop ? 1 : 0}`, tex.image, clientX, clientY);
 }
 
 let dragState = null;
@@ -3207,7 +4275,7 @@ const dragHit = new THREE.Vector3();
 function resolveCardHit(hits) {
   if (!hits.length) return null;
   let obj = hits[0].object;
-  while (obj && !(obj.userData && obj.userData.minion)) obj = obj.parent;
+  while (obj && !(obj.userData && (obj.userData.minion || obj.userData.zone === 'stage'))) obj = obj.parent;
   return obj || null;
 }
 
@@ -3227,15 +4295,21 @@ function isPointerOverPlayerPortrait(clientX, clientY) {
 }
 
 function isDropInHandBuyZone(mesh, clientX, clientY) {
-  if (mesh && mesh.position.z >= 5.6) return true;
+  if (mesh && mesh.position.z >= (SUPPORT_ROW_Z + HAND_ROW_Z) * 0.5) return true;
   if (isPointerOverPlayerPortrait(clientX, clientY)) return true;
   return false;
+}
+
+function isDropInSupportPlayZone(mesh) {
+  if (!mesh) return false;
+  const z = mesh.position.z;
+  return z > (BOARD_ROW_Z + SUPPORT_ROW_Z) * 0.5 && z < (SUPPORT_ROW_Z + HAND_ROW_Z) * 0.5;
 }
 
 function isDropInBoardPlayZone(mesh) {
   if (!mesh) return false;
   const z = mesh.position.z;
-  return z > -2.4 && z < 5.6;
+  return z > (TAVERN_ROW_Z + BOARD_ROW_Z) * 0.5 && z < (BOARD_ROW_Z + SUPPORT_ROW_Z) * 0.5;
 }
 
 function findDragMesh() {
@@ -3243,7 +4317,7 @@ function findDragMesh() {
   return cardMeshes.find(m => m.userData?.minion?.instanceId === dragState.instanceId) || null;
 }
 
-function resolveBoardDropIndex(clientX, clientY, draggedInstanceId, mesh, player) {
+function resolveRowDropIndex(clientX, clientY, draggedInstanceId, mesh, cards, zone) {
   pointer.x = (clientX / window.innerWidth) * 2 - 1;
   pointer.y = -(clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
@@ -3253,32 +4327,49 @@ function resolveBoardDropIndex(clientX, clientY, draggedInstanceId, mesh, player
     while (obj && !(obj.userData && obj.userData.minion)) obj = obj.parent;
     if (!obj) continue;
     if (obj.userData.minion?.instanceId === draggedInstanceId) continue;
-    if (obj.userData.zone === 'board') return obj.userData.index;
+    if (obj.userData.zone === zone) return obj.userData.index;
   }
   if (mesh) {
     const targets = cardMeshes
-      .filter(m => m.userData.zone === 'board' && m.userData.minion?.instanceId !== draggedInstanceId)
+      .filter(m => m.userData.zone === zone && m.userData.minion?.instanceId !== draggedInstanceId)
       .slice()
       .sort((a, b) => (a.userData.baseX ?? a.position.x) - (b.userData.baseX ?? b.position.x));
-    if (!targets.length) return player.board.length;
+    if (!targets.length) return cards.length;
     for (const target of targets) {
       const tx = target.userData.baseX ?? target.position.x;
       if (mesh.position.x < tx) return target.userData.index;
     }
     return targets[targets.length - 1].userData.index + 1;
   }
-  return player.board.length;
+  return cards.length;
+}
+
+function resolveBoardDropIndex(clientX, clientY, draggedInstanceId, mesh, player) {
+  return resolveRowDropIndex(clientX, clientY, draggedInstanceId, mesh, player.board, 'board');
+}
+
+function resolveSupportDropIndex(clientX, clientY, draggedInstanceId, mesh, player) {
+  return resolveRowDropIndex(clientX, clientY, draggedInstanceId, mesh, player.support || [], 'support');
+}
+
+function moveRowCard(cards, fromIndex, toIndex) {
+  if (!cards || fromIndex < 0 || fromIndex >= cards.length) return false;
+  const dest = clamp(toIndex, 0, cards.length);
+  if (dest === fromIndex || dest === fromIndex + 1) return false;
+  const [card] = cards.splice(fromIndex, 1);
+  let insertAt = dest;
+  if (insertAt > fromIndex) insertAt--;
+  cards.splice(insertAt, 0, card);
+  return true;
 }
 
 function moveBoardCard(player, fromIndex, toIndex) {
-  if (!player || fromIndex < 0 || fromIndex >= player.board.length) return false;
-  const dest = clamp(toIndex, 0, player.board.length);
-  if (dest === fromIndex || dest === fromIndex + 1) return false;
-  const [card] = player.board.splice(fromIndex, 1);
-  let insertAt = dest;
-  if (insertAt > fromIndex) insertAt--;
-  player.board.splice(insertAt, 0, card);
-  return true;
+  return moveRowCard(player.board, fromIndex, toIndex);
+}
+
+function moveSupportCard(player, fromIndex, toIndex) {
+  if (!player.support) player.support = [];
+  return moveRowCard(player.support, fromIndex, toIndex);
 }
 
 function updateDragCardPosition(clientX, clientY) {
@@ -3292,7 +4383,7 @@ function updateDragCardPosition(clientX, clientY) {
     mesh.position.x = dragHit.x;
     mesh.position.z = dragHit.z;
     mesh.position.y = (mesh.userData.baseY ?? 2) + 0.45;
-    mesh.rotation.x = mesh.userData.baseRotX ?? -0.64;
+    mesh.rotation.x = mesh.userData.baseRotX ?? -Math.PI / 2;
     mesh.rotation.y = 0;
   }
 }
@@ -3310,6 +4401,7 @@ function endCardDrag(clientX, clientY) {
   if (wasDragging) {
     const inBuyZone = isDropInHandBuyZone(mesh, clientX, clientY);
     const inBoardZone = isDropInBoardPlayZone(mesh);
+    const inSupportZone = isDropInSupportPlayZone(mesh);
     if (mesh) {
       mesh.position.x = mesh.userData.baseX ?? mesh.position.x;
       mesh.position.y = mesh.userData.baseY ?? mesh.position.y;
@@ -3321,7 +4413,7 @@ function endCardDrag(clientX, clientY) {
       const shopIdx = p.shop.findIndex(m => m && m.instanceId === minion.instanceId);
       if (shopIdx >= 0 && inBuyZone) {
         if (buyFromShop(p, shopIdx)) {
-          log(isSpell(minion) ? `Bought spell ${minion.name} (${minion.cost} gold) into Hand.` : `Bought ${minion.name} into Hand.`);
+          log(isSpell(minion) ? `Bought ${minion.category || 'support'} ${minion.name} (${minion.cost} gold) into Hand.` : `Bought ${minion.name} into Hand.`);
           selected = null;
           syncUI();
           renderCards();
@@ -3334,34 +4426,36 @@ function endCardDrag(clientX, clientY) {
       renderCards();
       return;
     }
-    if (p && (zone === 'hand' || zone === 'board') && isPointerOverBob(clientX, clientY)) {
-      const arr = zone === 'board' ? p.board : p.hand;
+    if (p && (zone === 'hand' || zone === 'board' || zone === 'support') && isPointerOverBob(clientX, clientY)) {
+      const arr = zone === 'board' ? p.board : zone === 'support' ? (p.support || []) : p.hand;
       const idx = arr.findIndex(m => m && m.instanceId === minion.instanceId);
       if (idx >= 0 && sellMinion(p, zone, idx)) {
-        log(`Sold ${minion.name} to Bartender Bob for 1 gold.`);
+        log(`Sold ${minion.name} to the Quartermaster for 1 gold.`);
         selected = null;
         syncUI();
         renderCards();
         return;
       }
     }
-    if (p && zone === 'hand' && inBoardZone) {
+    if (p && zone === 'hand' && (inBoardZone || inSupportZone)) {
       const handIdx = p.hand.findIndex(m => m && m.instanceId === minion.instanceId);
       if (handIdx >= 0) {
         if (isSpell(minion)) {
           if (playSpell(p, handIdx)) {
-            log(`Cast ${minion.name}.`);
+            log(`Played ${minion.name} to Support.`);
             selected = null;
           }
           syncUI();
           renderCards();
           return;
         }
-        const boardIndex = resolveBoardDropIndex(clientX, clientY, minion.instanceId, mesh, p);
-        if (playMinion(p, handIdx, boardIndex)) selected = null;
-        syncUI();
-        renderCards();
-        return;
+        if (inBoardZone || inSupportZone) {
+          const boardIndex = resolveBoardDropIndex(clientX, clientY, minion.instanceId, mesh, p);
+          if (playMinion(p, handIdx, boardIndex)) selected = null;
+          syncUI();
+          renderCards();
+          return;
+        }
       }
     }
     if (p && zone === 'board' && inBoardZone && !isPointerOverBob(clientX, clientY)) {
@@ -3377,11 +4471,27 @@ function endCardDrag(clientX, clientY) {
       renderCards();
       return;
     }
-    if (p && zone === 'hand' && !isPointerOverBob(clientX, clientY) && !inBoardZone) {
-      logHint(isSpell(minion) ? 'Drop on the Board to cast.' : 'Drop on the Board to play.');
+    if (p && zone === 'support' && inSupportZone && !isPointerOverBob(clientX, clientY)) {
+      const fromIdx = (p.support || []).findIndex(m => m && m.instanceId === minion.instanceId);
+      if (fromIdx >= 0) {
+        const toIdx = resolveSupportDropIndex(clientX, clientY, minion.instanceId, mesh, p);
+        if (moveSupportCard(p, fromIdx, toIdx)) {
+          selected = null;
+          log('Reordered support.');
+        }
+      }
+      syncUI();
+      renderCards();
+      return;
+    }
+    if (p && zone === 'hand' && !isPointerOverBob(clientX, clientY) && !inBoardZone && !inSupportZone) {
+      logHint(isSpell(minion) ? 'Drop on the Support row to play.' : 'Drop on the Unit row to muster.');
     }
     if (p && zone === 'board' && !isPointerOverBob(clientX, clientY) && !inBoardZone) {
-      logHint('Drop on the Board to reorder, or on Bob to sell.');
+      logHint('Drop on the Unit row to reorder, or on the Quartermaster to sell.');
+    }
+    if (p && zone === 'support' && !isPointerOverBob(clientX, clientY) && !inSupportZone) {
+      logHint('Drop on the Support row to reorder, or on the Quartermaster to sell.');
     }
     syncUI();
     renderCards();
@@ -3400,20 +4510,23 @@ function handleCardClick(zone, index, minion) {
     if (isSpell(minion)) {
       if (selected && selected.zone === 'hand' && selected.minion.instanceId === minion.instanceId) {
         if (playSpell(p, index)) {
-          log(`Cast ${minion.name}.`);
+          log(`Played ${minion.name} to Support.`);
           selected = null;
         }
       } else {
         selected = { zone: 'hand', index, minion };
-        logHint('Click again to cast, or drag onto the Board.');
+        logHint('Click again to play to Support, or drag onto the Support row.');
       }
     } else {
       selected = { zone: 'hand', index, minion };
-      logHint('Drag onto the Board to play.');
+      logHint('Drag onto the Unit row to play.');
     }
   } else if (zone === 'board') {
     selected = null;
-    logHint('Drag on the Board to reorder.');
+    logHint('Drag on the Unit row to reorder.');
+  } else if (zone === 'support') {
+    selected = null;
+    logHint('Drag on the Support row to reorder.');
   }
   syncUI();
   renderCards();
@@ -3430,18 +4543,21 @@ function onPointerMove(e) {
         logHint('Drop in your Hand to buy.');
       } else if (dragState.zone === 'hand') {
         document.getElementById('tavernMasterFrame').classList.add('sellTarget');
-        logHint(isSpell(dragState.minion) ? 'Drop on Board to cast, or on Bob to sell.' : 'Drop on Board to play, or on Bob to sell.');
+        logHint(isSpell(dragState.minion) ? 'Drop on Support to play, or on the Quartermaster to sell.' : 'Drop on Units to muster, or on the Quartermaster to sell.');
       } else if (dragState.zone === 'board') {
         document.getElementById('tavernMasterFrame').classList.add('sellTarget');
-        logHint('Drop on the Board to reorder, or on Bob to sell.');
+        logHint('Drop on the Unit row to reorder, or on the Quartermaster to sell.');
+      } else if (dragState.zone === 'support') {
+        document.getElementById('tavernMasterFrame').classList.add('sellTarget');
+        logHint('Drop on the Support row to reorder, or on the Quartermaster to sell.');
       } else {
         document.getElementById('tavernMasterFrame').classList.add('sellTarget');
-        logHint('Drop on Bartender Bob to sell (+1 Gold).');
+        logHint('Drop into Hand to buy.');
       }
     }
     if (dragState.dragging) {
       updateDragCardPosition(e.clientX, e.clientY);
-      if (dragState.zone === 'hand' || dragState.zone === 'board') {
+      if (dragState.zone === 'hand' || dragState.zone === 'board' || dragState.zone === 'support') {
         document.getElementById('tavernMasterFrame').classList.toggle('sellHot', isPointerOverBob(e.clientX, e.clientY));
       }
       return;
@@ -3454,21 +4570,24 @@ function onPointerMove(e) {
     pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
-    const hits = raycaster.intersectObjects(cardMeshes, true);
+    const hits = raycaster.intersectObjects(cardMeshes.concat(stageMeshes), true);
     obj = resolveCardHit(hits);
     if (obj && obj.userData.zone === 'hand') obj = null;
     if (obj) hitPoint = hits[0].point;
   }
   if (!obj || obj.userData.faceDown || obj.userData.zone === 'enemyHand') {
-    clearCardHover();
+    clearCardHover({ keepTooltip: isPointerOverStageCard(e.clientX, e.clientY) });
     return;
   }
   if (hoveredCard !== obj) {
     resetCardHoverVisual(hoveredCard);
-    hideCardTooltip();
     hoveredCard = obj;
   }
   if (hitPoint) applyCardHoverTilt(obj, hitPoint);
+  if (obj.userData.zone === 'stage') {
+    showStageMeshTooltip(obj, e.clientX, e.clientY);
+    return;
+  }
   showTooltipFor(obj.userData.minion, obj, e.clientX, e.clientY);
 }
 
@@ -3487,7 +4606,7 @@ function onPointerDown(e) {
   }
   if (!obj) { selected = null; syncUI(); renderCards(); return; }
   const { minion, zone, index } = obj.userData;
-  if ((zone === 'hand' || zone === 'board' || zone === 'shop') && minion) {
+  if ((zone === 'hand' || zone === 'board' || zone === 'support' || zone === 'shop') && minion) {
     dragState = {
       zone,
       index,
@@ -3522,19 +4641,38 @@ function startHeroDraft() {
   phase = 'draft';
   setGameUiVisible(false);
   document.getElementById('overlay').classList.remove('hidden');
-  const heroes = HERO_DB.slice().sort(() => Math.random() - 0.5);
-  const humanOptions = heroes.slice(0, 2);
+  const draftPool = HERO_DB.slice().sort(() => Math.random() - 0.5);
+  let humanOptions = draftPool.slice(0, 3);
+  let rerollUsed = false;
   const box = document.getElementById('overlayContent');
-  box.innerHTML = `<h1 class="chooseLord">Choose your Lord</h1><div class="heroGrid"></div>`;
-  const grid = box.querySelector('.heroGrid');
-  humanOptions.forEach(hero => {
-    const el = document.createElement('div');
-    el.className = 'heroCard';
-    const art = heroPortraitArt(hero);
-    el.innerHTML = `<img class="portrait" src="${art}" alt="${escapeHtml(hero.name)}"><h3>${escapeHtml(hero.name)}</h3><div class="meta">Armor ${hero.armor}</div><div class="power"><strong>${escapeHtml(hero.power.name)}</strong> (${hero.power.cost} Gold)<br>${escapeHtml(hero.power.text)}</div>`;
-    el.onclick = () => beginMatch(hero, heroes);
-    grid.appendChild(el);
-  });
+
+  function renderLordDraft() {
+    box.innerHTML = `<h1 class="chooseLord">Choose your Lord</h1><div class="heroGrid"></div><button id="btnRerollLords" type="button"${rerollUsed ? ' disabled' : ''}>${rerollUsed ? 'Reroll Used' : 'Reroll All'}</button>`;
+    const grid = box.querySelector('.heroGrid');
+    humanOptions.forEach(hero => {
+      const el = document.createElement('div');
+      el.className = 'heroCard';
+      const art = heroPortraitArt(hero);
+      el.innerHTML = `<img class="portrait" src="${art}" alt="${escapeHtml(hero.name)}"><h3>${escapeHtml(hero.name)}</h3><div class="meta">${escapeHtml(hero.nation)} · Armor ${hero.armor}</div><div class="power"><strong>${escapeHtml(hero.power.name)}</strong> (${hero.power.cost} Gold)<br>${escapeHtml(hero.power.text)}</div>`;
+      el.onclick = () => beginMatch(hero, draftPool);
+      grid.appendChild(el);
+    });
+    const rerollBtn = document.getElementById('btnRerollLords');
+    if (!rerollUsed) {
+      rerollBtn.onclick = () => {
+        const currentIds = new Set(humanOptions.map(h => h.id));
+        let next = draftPool.filter(h => !currentIds.has(h.id)).sort(() => Math.random() - 0.5).slice(0, 3);
+        if (next.length < 3) {
+          next = HERO_DB.filter(h => !currentIds.has(h.id)).sort(() => Math.random() - 0.5).slice(0, 3);
+        }
+        if (next.length) humanOptions = next;
+        rerollUsed = true;
+        renderLordDraft();
+      };
+    }
+  }
+
+  renderLordDraft();
 }
 
 function beginMatch(humanHero, allHeroes) {
@@ -3549,7 +4687,10 @@ function beginMatch(humanHero, allHeroes) {
   state = {
     players,
     pool: buildPool(),
-    turn: 1
+    turn: 1,
+    pendingPairs: null,
+    pendingGhosts: null,
+    nextOpponentId: null
   };
   discoverQueue = [];
   pendingDiscover = null;
@@ -3560,7 +4701,7 @@ function beginMatch(humanHero, allHeroes) {
   renderHistoryPanel();
   document.getElementById('overlay').classList.add('hidden');
   setGameUiVisible(true);
-  log('Match started. Buy minions, upgrade your tavern, and survive.');
+  log('Match started. Muster units, upgrade your tavern, and survive.');
   beginRecruitPhase();
 }
 
@@ -3588,14 +4729,10 @@ document.getElementById('btnHeroPower').onclick = () => {
   if (p.gold < p.hero.power.cost) { log('Not enough gold for Lord power.'); return; }
   if (useHeroPower(p)) { syncUI(); renderCards(); }
 };
-bindHoverTooltip(document.getElementById('btnHeroPower'), showHeroPowerHover);
 bindHoverTooltip(document.getElementById('btnUpgrade'), showUpgradeHover);
 bindHoverTooltip(document.getElementById('btnRefresh'), showRefreshHover);
 bindHoverTooltip(document.getElementById('btnFreeze'), showFreezeHover);
 document.getElementById('btnHistory').onclick = () => setHistoryOpen(!historyOpen);
-bindHoverTooltip(document.getElementById('playerHeroFrame'), showPlayerHeroFrameHover);
-bindHoverTooltip(document.getElementById('tavernMasterFrame'), showBobHover);
-bindHoverTooltip(document.getElementById('combatEnemyFrame'), showCombatEnemyHover);
 bindHoverTooltip(document.getElementById('btnEnd'), showEndTurnHover);
 document.getElementById('btnCodex').onclick = () => {
   if (document.getElementById('codexOverlay').classList.contains('open')) closeCodex();
@@ -3650,6 +4787,10 @@ window.addEventListener('pointerup', onPointerUp);
 window.addEventListener('pointercancel', onPointerUp);
 window.addEventListener('resize', () => {
   syncViewportCamera();
+  syncStageCardSize();
+  syncStageMeshes();
+  handOverlayNeedsSync = true;
+  portraitBlockDirty = true;
   syncHandOverlayLayer();
   if (phase === 'combat') {
     const foe = getCombatEnemy();
@@ -3659,25 +4800,35 @@ window.addEventListener('resize', () => {
 
 function animate() {
   requestAnimationFrame(animate);
+  if (document.hidden) return;
   updateHandHoverAnimation();
+  syncStageMeshLayout();
   if (combatAnim) {
     combatAnim.t = (combatAnim.t || 0) + 0.08;
-    cardGroup.children.forEach((c) => {
-      if (c === hoveredCard || c.userData.zone === 'hand') return;
-      const baseY = c.userData.baseY ?? c.position.y;
-      const baseZ = c.userData.baseZ ?? c.position.z;
-      if (combatAnim.attackerId && c.userData.minion?.instanceId === combatAnim.attackerId) {
-        c.position.y = baseY + Math.sin(combatAnim.t * 10) * 0.12;
-        c.position.z = baseZ + Math.sin(combatAnim.t * 10) * 0.35;
-      } else {
-        c.position.y = baseY;
-        c.position.z = baseZ;
+    const dyingIds = combatAnim.dyingIds || [];
+    const attackerId = combatAnim.attackerId || null;
+    if (attackerId || dyingIds.length) {
+      for (let i = 0; i < cardGroup.children.length; i++) {
+        const c = cardGroup.children[i];
+        if (c === hoveredCard || c.userData.zone === 'hand') continue;
+        const id = c.userData.minion?.instanceId;
+        const isAttacker = !!(attackerId && id === attackerId);
+        const isDying = dyingIds.includes(id);
+        if (!isAttacker && !isDying) continue;
+        const baseY = c.userData.baseY ?? c.position.y;
+        const baseZ = c.userData.baseZ ?? c.position.z;
+        const ampY = isDying ? 0.045 : 0.035;
+        const ampZ = isDying ? 0.11 : 0.09;
+        const speed = isDying ? 12 : 9;
+        c.position.y = baseY + Math.sin(combatAnim.t * speed) * ampY;
+        c.position.z = baseZ + Math.sin(combatAnim.t * speed) * ampZ;
       }
-    });
+    }
   }
   renderer.render(scene, camera);
 }
 
+syncStageCardSize();
 animate();
 showTitleScreen();
 </script>
