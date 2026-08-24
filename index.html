@@ -12,7 +12,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #ui{position:fixed;inset:0;pointer-events:none;z-index:10;display:flex;flex-direction:column}
 #ui>*{pointer-events:none}
 #ui button,#ui .opp,#ui #opponents,#ui #peekPanel,#ui #topRightActions,#ui #historyPanel,#ui #goldPanel,#ui #btnEnd,#ui #tavernMasterFrame,#ui #combatEnemyFrame,#ui #combatEnemyPower,#ui #stagePortraitSlot,#ui #stagePortraitCenter,#ui .tavernSide,#ui .stageCard{pointer-events:auto}
-#playerPortraitSlot{position:fixed;left:50%;bottom:calc(12px + var(--stageCard) * 0.55);transform:translateX(-50%);z-index:18;display:flex;align-items:center;gap:10px;width:auto;height:var(--stageCard);pointer-events:none;overflow:visible}
+#playerPortraitSlot{position:fixed;left:50%;bottom:calc(12px + var(--stageCard) * 0.85);transform:translateX(-50%);z-index:18;display:flex;align-items:center;gap:10px;width:auto;height:var(--stageCard);pointer-events:none;overflow:visible}
 #playerPortraitSlot .stageCard{pointer-events:auto}
 #handOverlay{position:fixed;inset:0;z-index:16;pointer-events:none;display:none}
 #handOverlay.show{display:block}
@@ -45,9 +45,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 .codexRace h2{font-family:Metamorphous,serif;font-size:18px;color:#e0b85a;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(212,175,90,.22);display:flex;align-items:baseline;gap:10px}
 .codexRace h2 span{font-family:'Source Sans 3',sans-serif;font-size:12px;color:#b9a888;font-weight:600}
 .codexGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
-.codexGrid.unitCards{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px;align-items:start}
-.codexUnitCard{border:none;background:transparent;border-radius:6px;overflow:visible;filter:drop-shadow(0 8px 16px rgba(0,0,0,.45))}
-.codexUnitCard canvas{width:100%;height:auto;aspect-ratio:512/716;display:block;border-radius:6px;border:1px solid rgba(212,175,90,.4);background:#0c1018}
+.codexGrid.unitCards{grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:14px;align-items:start;perspective:900px}
+.codexUnitCard{border:none;background:transparent;border-radius:6px;overflow:visible;cursor:pointer;transform-style:preserve-3d;transform:translateZ(0)}
+.codexUnitCard canvas{width:100%;height:auto;aspect-ratio:1/1;display:block;border-radius:6px;border:1px solid rgba(212,175,90,.4);background:#0c1018;box-shadow:0 8px 16px rgba(0,0,0,.45);backface-visibility:hidden;transform:translateZ(0)}
 .codexCard{border:1px solid rgba(212,175,90,.28);border-radius:10px;background:rgba(14,18,28,.92);overflow:hidden;display:flex;flex-direction:column;min-height:210px}
 .codexCard .art{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#1a2230}
 .codexCard .body{padding:8px 9px 10px;display:flex;flex-direction:column;gap:4px;flex:1}
@@ -83,7 +83,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 .opp .armorBarFill{height:100%;width:100%;background:linear-gradient(90deg,#6a6f78,#b0b6c0);box-shadow:0 0 8px rgba(176,182,192,.28)}
 .opp.dead .hpBarFill,.opp.dead .armorBarFill{box-shadow:none;width:0%!important}
 .oppFlag{width:56px;height:56px;object-fit:contain;display:block;pointer-events:none;flex:0 0 auto;margin-left:-10px;position:relative;z-index:2;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
-#oppHover{position:fixed;z-index:26;display:none;width:240px;padding:12px 14px;pointer-events:none!important;background:rgba(12,16,24,.96);border:1px solid rgba(212,175,90,.45);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.5)}
+#oppHover{position:fixed;z-index:30;display:none;width:240px;padding:12px 14px;pointer-events:none!important;background:rgba(12,16,24,.96);border:1px solid rgba(212,175,90,.45);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.5)}
 #oppHover.show{display:block}
 #oppHover.cardPair{width:auto;max-width:none;padding:0;background:transparent;border:none;border-radius:0;box-shadow:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.7));display:none;gap:10px;align-items:flex-start}
 #oppHover.cardPair.show{display:flex}
@@ -132,7 +132,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;color:#f2e8d
 #goldPanel .label{color:#d4af5a;font-family:Metamorphous,serif;font-size:11px;letter-spacing:.08em}
 #goldPanel .value{font-size:28px;font-weight:700;line-height:1.1;color:#f2e8d5;margin-top:2px}
 #btnEnd{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:15;padding:14px 18px;font-size:13px;min-width:108px}
-#cardTooltip{position:fixed;z-index:26;display:none;pointer-events:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.7))}
+#cardTooltip{position:fixed;z-index:30;display:none;pointer-events:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.7))}
 #cardTooltip.show{display:block}
 #cardTooltip canvas{width:min(210px,46vw);height:auto;border-radius:6px;border:1px solid rgba(212,175,90,.45);background:#0c1018}
 button{font-family:Metamorphous,serif;font-weight:700;letter-spacing:.04em;border:1px solid rgba(212,175,90,.55);background:linear-gradient(180deg,#3a2a14,#1c140a);color:#f2e8d5;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:11px}
@@ -182,6 +182,7 @@ button.stageCard:disabled{opacity:.45}
 <div id="handOverlay"></div>
 <div id="enemyHandOverlay"></div>
 <div id="oppHover"></div>
+<div id="cardTooltip"><canvas id="cardTooltipCanvas" width="512" height="716"></canvas></div>
 <div id="ui" class="hidden">
   <div id="topStack">
     <div id="phaseRow">
@@ -196,7 +197,6 @@ button.stageCard:disabled{opacity:.45}
     <div class="empty">No history yet.</div>
   </div>
   <div id="opponents"></div>
-  <div id="cardTooltip"><canvas id="cardTooltipCanvas" width="512" height="716"></canvas></div>
   <div id="playfield">
     <div id="stagePortraitSlot">
       <div id="tavernSideLeft" class="tavernSide">
@@ -274,6 +274,14 @@ import * as THREE from 'three';
 
 const ART_A = 'test-cards-2.png';
 const ART_B = 'test-cards-2.png';
+const ART_BRITANNIA = 'test-cards-3.png';
+const ART_NORTH_SEA = 'test-cards-4.png';
+
+function artForTribe(tribe) {
+  if (tribe === 'Britannia Major') return ART_BRITANNIA;
+  if (tribe === 'North Sea Empire') return ART_NORTH_SEA;
+  return TRIBES.indexOf(tribe) % 2 === 0 ? ART_A : ART_B;
+}
 const SHOP_SIZE = [0, 3, 4, 4, 5, 5, 6];
 const UPGRADE_BASE = [0, 0, 5, 7, 8, 10, 10];
 const COPY_COUNTS = [0, 16, 15, 13, 11, 9, 7];
@@ -284,6 +292,22 @@ const MAX_BOARD = 7;
 const MAX_SUPPORT = 7;
 const MAX_HAND = 10;
 const START_HP = 30;
+const CARD_HOVER_TILT = {
+  yaw: 0.22,
+  pitch: 0.14,
+  raiseHalf: 0.48,
+  raiseFull: 0.3,
+  scaleHalf: 1.24,
+  scaleFull: 1.16
+};
+const RAD_TO_DEG = 180 / Math.PI;
+
+function getCardHoverTiltAxes(nx, ny) {
+  return {
+    yaw: clamp(nx, -1, 1) * CARD_HOVER_TILT.yaw,
+    pitch: clamp(-ny, -1, 1) * CARD_HOVER_TILT.pitch
+  };
+}
 const TRIBES = [
   'Britannia Major',
   'Eastern Roman Empire',
@@ -564,7 +588,7 @@ function createCardDatabase() {
         startOfCombat,
         avenge,
         goldenUpgrade,
-        art: TRIBES.indexOf(tribe) % 2 === 0 ? ART_A : ART_B,
+        art: artForTribe(tribe),
         isToken: false
       });
       made++;
@@ -611,105 +635,83 @@ const CARD_DB = createCardDatabase();
 const CARD_BY_ID = Object.fromEntries(CARD_DB.map(c => [c.id, c]));
 
 const SPELL_DB = [
-  { id: 'sp_coin', name: 'Market Stall', category: 'Building', tier: 1, cost: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' },
-  { id: 'sp_tollhouse', name: 'Tollhouse', category: 'Building', tier: 1, cost: 2, effect: { id: 'gainGold', params: { amount: 2 } }, text: 'Gain 2 Gold.' },
-  { id: 'sp_watchpost', name: 'Watch Post', category: 'Building', tier: 1, cost: 2, effect: { id: 'summonToken', params: { tokenId: 'token_1_1', count: 1 } }, text: 'Summon a 1/1 Levy Spearmen.' },
-  { id: 'sp_crane', name: 'Harbor Crane', category: 'Building', tier: 1, cost: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' },
-  { id: 'sp_brace', name: 'Barricade', category: 'Building', tier: 2, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly unit Guard.' },
-  { id: 'sp_feast', name: 'Field Kitchen', category: 'Building', tier: 2, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 1 } }, text: 'Give your units +1/+1.' },
-  { id: 'sp_stable', name: 'Wayfarer Stable', category: 'Building', tier: 2, cost: 2, effect: { id: 'buffShop', params: { attack: 1, health: 0 } }, text: 'Give Tavern units +1 Attack.' },
-  { id: 'sp_bakehouse', name: 'Bakehouse', category: 'Building', tier: 2, cost: 2, effect: { id: 'buffFriendlyAll', params: { attack: 0, health: 1 } }, text: 'Give your units +0/+1.' },
-  { id: 'sp_chapel', name: 'Camp Chapel', category: 'Building', tier: 2, cost: 2, effect: { id: 'healHero', params: { amount: 3 } }, text: 'Restore 3 Health to your Lord.' },
-  { id: 'sp_brood', name: 'Muster Yard', category: 'Building', tier: 3, cost: 3, effect: { id: 'summonToken', params: { tokenId: 'token_2_2', count: 2 } }, text: 'Summon two 2/2 Militia Guards.' },
-  { id: 'sp_granary', name: 'Granary', category: 'Building', tier: 3, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 0, health: 2 } }, text: 'Give your units +0/+2.' },
-  { id: 'sp_tannery', name: 'Tannery', category: 'Building', tier: 3, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 0, health: 3 } }, text: 'Give a random friendly unit +0/+3.' },
-  { id: 'sp_siegeyard', name: 'Siege Workshop', category: 'Building', tier: 3, cost: 3, effect: { id: 'buffShop', params: { attack: 2, health: 0 } }, text: 'Give Tavern units +2 Attack.' },
-  { id: 'sp_forge', name: 'Armory', category: 'Building', tier: 4, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 2 } }, text: 'Give your units +2/+2.' },
-  { id: 'sp_smithy', name: 'Village Smithy', category: 'Building', tier: 4, cost: 3, effect: { id: 'buffShop', params: { attack: 1, health: 1 } }, text: 'Give Tavern units +1/+1.' },
-  { id: 'sp_training', name: 'Training Hall', category: 'Building', tier: 4, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 0 } }, text: 'Give your units +2 Attack.' },
-  { id: 'sp_moat', name: 'Moat Works', category: 'Building', tier: 4, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield' } }, text: 'Give a random friendly unit Pavise.' },
-  { id: 'sp_titan', name: 'Drill Ground', category: 'Building', tier: 5, cost: 5, effect: { id: 'summonToken', params: { tokenId: 'token_5_5', count: 1 } }, text: 'Summon a 5/5 Veteran Serjeants.' },
-  { id: 'sp_hospital', name: 'Field Hospital', category: 'Building', tier: 5, cost: 3, effect: { id: 'healHero', params: { amount: 4 } }, text: 'Restore 4 Health to your Lord.' },
-  { id: 'sp_warcollege', name: 'War College', category: 'Building', tier: 5, cost: 3, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a unit from your tier.' },
-  { id: 'sp_ballista', name: 'Ballista Yard', category: 'Building', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 3, health: 0 } }, text: 'Give your units +3 Attack.' },
-  { id: 'sp_colossus', name: 'Keep Barracks', category: 'Building', tier: 6, cost: 6, effect: { id: 'summonToken', params: { tokenId: 'token_8_8', count: 1 } }, text: 'Summon an 8/8 Household Guard.' },
-  { id: 'sp_citadel', name: 'Citadel Gate', category: 'Building', tier: 6, cost: 5, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt', all: true } }, text: 'Give your units Guard.' },
-  { id: 'sp_foundry', name: 'Royal Foundry', category: 'Building', tier: 6, cost: 5, effect: { id: 'buffShop', params: { attack: 2, health: 2 } }, text: 'Give Tavern units +2/+2.' },
-  { id: 'sp_keep', name: 'Inner Keep', category: 'Building', tier: 6, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn', all: true } }, text: 'Give your units Reserves.' },
+  { id: 'sp_coin', name: 'Market Stall', category: 'Support', tier: 1, cost: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' },
+  { id: 'sp_tollhouse', name: 'Tollhouse', category: 'Support', tier: 1, cost: 2, effect: { id: 'gainGold', params: { amount: 2 } }, text: 'Gain 2 Gold.' },
+  { id: 'sp_watchpost', name: 'Watch Post', category: 'Support', tier: 1, cost: 2, effect: { id: 'summonToken', params: { tokenId: 'token_1_1', count: 1 } }, text: 'Summon a 1/1 Levy Spearmen.' },
+  { id: 'sp_crane', name: 'Harbor Crane', category: 'Support', tier: 1, cost: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' },
+  { id: 'sp_brace', name: 'Barricade', category: 'Support', tier: 2, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly unit Guard.' },
+  { id: 'sp_feast', name: 'Field Kitchen', category: 'Support', tier: 2, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 1 } }, text: 'Give your units +1/+1.' },
+  { id: 'sp_stable', name: 'Wayfarer Stable', category: 'Support', tier: 2, cost: 2, effect: { id: 'buffShop', params: { attack: 1, health: 0 } }, text: 'Give Tavern units +1 Attack.' },
+  { id: 'sp_bakehouse', name: 'Bakehouse', category: 'Support', tier: 2, cost: 2, effect: { id: 'buffFriendlyAll', params: { attack: 0, health: 1 } }, text: 'Give your units +0/+1.' },
+  { id: 'sp_chapel', name: 'Camp Chapel', category: 'Support', tier: 2, cost: 2, effect: { id: 'healHero', params: { amount: 3 } }, text: 'Restore 3 Health to your Lord.' },
+  { id: 'sp_brood', name: 'Muster Yard', category: 'Support', tier: 3, cost: 3, effect: { id: 'summonToken', params: { tokenId: 'token_2_2', count: 2 } }, text: 'Summon two 2/2 Militia Guards.' },
+  { id: 'sp_granary', name: 'Granary', category: 'Support', tier: 3, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 0, health: 2 } }, text: 'Give your units +0/+2.' },
+  { id: 'sp_tannery', name: 'Tannery', category: 'Support', tier: 3, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 0, health: 3 } }, text: 'Give a random friendly unit +0/+3.' },
+  { id: 'sp_siegeyard', name: 'Siege Workshop', category: 'Support', tier: 3, cost: 3, effect: { id: 'buffShop', params: { attack: 2, health: 0 } }, text: 'Give Tavern units +2 Attack.' },
+  { id: 'sp_forge', name: 'Armory', category: 'Support', tier: 4, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 2 } }, text: 'Give your units +2/+2.' },
+  { id: 'sp_smithy', name: 'Village Smithy', category: 'Support', tier: 4, cost: 3, effect: { id: 'buffShop', params: { attack: 1, health: 1 } }, text: 'Give Tavern units +1/+1.' },
+  { id: 'sp_training', name: 'Training Hall', category: 'Support', tier: 4, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 0 } }, text: 'Give your units +2 Attack.' },
+  { id: 'sp_moat', name: 'Moat Works', category: 'Support', tier: 4, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield' } }, text: 'Give a random friendly unit Pavise.' },
+  { id: 'sp_titan', name: 'Drill Ground', category: 'Support', tier: 5, cost: 5, effect: { id: 'summonToken', params: { tokenId: 'token_5_5', count: 1 } }, text: 'Summon a 5/5 Veteran Serjeants.' },
+  { id: 'sp_hospital', name: 'Field Hospital', category: 'Support', tier: 5, cost: 3, effect: { id: 'healHero', params: { amount: 4 } }, text: 'Restore 4 Health to your Lord.' },
+  { id: 'sp_warcollege', name: 'War College', category: 'Support', tier: 5, cost: 3, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a unit from your tier.' },
+  { id: 'sp_ballista', name: 'Ballista Yard', category: 'Support', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 3, health: 0 } }, text: 'Give your units +3 Attack.' },
+  { id: 'sp_colossus', name: 'Keep Barracks', category: 'Support', tier: 6, cost: 6, effect: { id: 'summonToken', params: { tokenId: 'token_8_8', count: 1 } }, text: 'Summon an 8/8 Household Guard.' },
+  { id: 'sp_citadel', name: 'Citadel Gate', category: 'Support', tier: 6, cost: 5, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt', all: true } }, text: 'Give your units Guard.' },
+  { id: 'sp_foundry', name: 'Royal Foundry', category: 'Support', tier: 6, cost: 5, effect: { id: 'buffShop', params: { attack: 2, health: 2 } }, text: 'Give Tavern units +2/+2.' },
+  { id: 'sp_keep', name: 'Inner Keep', category: 'Support', tier: 6, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn', all: true } }, text: 'Give your units Reserves.' },
 
-  { id: 'sp_whet', name: 'Whetstone', category: 'Item', tier: 1, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 1, health: 1 } }, text: 'Give a random friendly unit +1/+1.' },
-  { id: 'sp_boots', name: 'Marching Boots', category: 'Item', tier: 1, cost: 1, effect: { id: 'buffRandomFriendly', params: { attack: 1, health: 0 } }, text: 'Give a random friendly unit +1 Attack.' },
-  { id: 'sp_sword', name: 'Short Sword', category: 'Item', tier: 1, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 2, health: 0 } }, text: 'Give a random friendly unit +2 Attack.' },
-  { id: 'sp_mail', name: 'Padded Mail', category: 'Item', tier: 2, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 0, health: 2 } }, text: 'Give a random friendly unit +0/+2.' },
-  { id: 'sp_buckler', name: 'Heater Buckler', category: 'Item', tier: 2, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly unit Guard.' },
-  { id: 'sp_quiver', name: 'Archer\'s Quiver', category: 'Item', tier: 2, cost: 2, effect: { id: 'buffShop', params: { attack: 0, health: 1 } }, text: 'Give Tavern units +0/+1.' },
-  { id: 'sp_shine', name: 'Pavise Shield', category: 'Item', tier: 3, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield' } }, text: 'Give a random friendly unit Pavise.' },
-  { id: 'sp_surge', name: 'War Horn', category: 'Item', tier: 3, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 0 } }, text: 'Give your units +2 Attack.' },
-  { id: 'sp_longsword', name: 'Longsword', category: 'Item', tier: 3, cost: 3, effect: { id: 'buffRandomFriendly', params: { attack: 2, health: 2 } }, text: 'Give a random friendly unit +2/+2.' },
-  { id: 'sp_coif', name: 'Chain Coif', category: 'Item', tier: 3, cost: 2, effect: { id: 'buffRandomFriendly', params: { attack: 1, health: 2 } }, text: 'Give a random friendly unit +1/+2.' },
-  { id: 'sp_lance', name: 'Tournament Lance', category: 'Item', tier: 4, cost: 3, effect: { id: 'buffRandomFriendly', params: { attack: 3, health: 1 } }, text: 'Give a random friendly unit +3/+1.' },
-  { id: 'sp_reliquary', name: 'Reliquary', category: 'Item', tier: 4, cost: 2, effect: { id: 'healHero', params: { amount: 3 } }, text: 'Restore 3 Health to your Lord.' },
-  { id: 'sp_spike', name: 'Spiked Shield', category: 'Item', tier: 4, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Poisonous' } }, text: 'Give a random friendly unit Venomed.' },
-  { id: 'sp_storm', name: 'Flanged Mace', category: 'Item', tier: 5, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Windfury' } }, text: 'Give a random friendly unit Double Strike.' },
-  { id: 'sp_poison', name: 'Venomed Blade', category: 'Item', tier: 5, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Poisonous' } }, text: 'Give a random friendly unit Venomed.' },
-  { id: 'sp_standard', name: 'Host Standard', category: 'Item', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 2 } }, text: 'Give your units +1/+2.' },
-  { id: 'sp_tabard', name: 'Captain\'s Tabard', category: 'Item', tier: 5, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn' } }, text: 'Give a random friendly unit Reserves.' },
-  { id: 'sp_plate', name: 'Plate Harness', category: 'Item', tier: 6, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 0, health: 3 } }, text: 'Give your units +0/+3.' },
-  { id: 'sp_crown', name: 'War Crown', category: 'Item', tier: 6, cost: 5, effect: { id: 'buffRandomFriendly', params: { attack: 4, health: 4 } }, text: 'Give a random friendly unit +4/+4.' },
-  { id: 'sp_greaves', name: 'Steel Greaves', category: 'Item', tier: 6, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 1 } }, text: 'Give your units +1/+1.' },
-  { id: 'sp_axe', name: 'Bearded Axe', category: 'Item', tier: 6, cost: 5, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Windfury', all: true } }, text: 'Give your units Double Strike.' },
-
-  { id: 'sp_reroll', name: 'Fresh Recruits', category: 'Edict', tier: 1, cost: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' },
-  { id: 'sp_ration', name: 'Ration Order', category: 'Edict', tier: 1, cost: 1, effect: { id: 'healHero', params: { amount: 2 } }, text: 'Restore 2 Health to your Lord.' },
-  { id: 'sp_scout', name: 'Scout Report', category: 'Edict', tier: 1, cost: 1, effect: { id: 'buffShop', params: { attack: 0, health: 1 } }, text: 'Give Tavern units +0/+1.' },
-  { id: 'sp_chill', name: 'Hold the Line', category: 'Edict', tier: 2, cost: 1, effect: { id: 'freezeShop', params: {} }, text: 'Freeze the Tavern.' },
-  { id: 'sp_levy', name: 'Levy Call', category: 'Edict', tier: 2, cost: 2, effect: { id: 'summonToken', params: { tokenId: 'token_1_1', count: 2 } }, text: 'Summon two 1/1 Levy Spearmen.' },
-  { id: 'sp_billet', name: 'Billeting Order', category: 'Edict', tier: 2, cost: 2, effect: { id: 'healHero', params: { amount: 3 } }, text: 'Restore 3 Health to your Lord.' },
-  { id: 'sp_tax', name: 'Muster Tax', category: 'Edict', tier: 2, cost: 2, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' },
-  { id: 'sp_drill', name: 'Drill Order', category: 'Edict', tier: 3, cost: 2, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 0 } }, text: 'Give your units +1 Attack.' },
-  { id: 'sp_pay', name: 'Pay Day', category: 'Edict', tier: 3, cost: 2, effect: { id: 'gainGold', params: { amount: 2 } }, text: 'Gain 2 Gold.' },
-  { id: 'sp_conscript', name: 'Conscription', category: 'Edict', tier: 3, cost: 3, effect: { id: 'summonToken', params: { tokenId: 'token_2_2', count: 1 } }, text: 'Summon a 2/2 Militia Guards.' },
-  { id: 'sp_nightwatch', name: 'Night Watch', category: 'Edict', tier: 3, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly unit Guard.' },
-  { id: 'sp_study', name: 'Recruitment Roll', category: 'Edict', tier: 4, cost: 2, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a unit from your tier.' },
-  { id: 'sp_reborn', name: 'Reserve Orders', category: 'Edict', tier: 4, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn' } }, text: 'Give a random friendly unit Reserves.' },
-  { id: 'sp_inspect', name: 'Camp Inspection', category: 'Edict', tier: 4, cost: 3, effect: { id: 'buffShop', params: { attack: 2, health: 0 } }, text: 'Give Tavern units +2 Attack.' },
-  { id: 'sp_herald', name: 'Herald\'s Call', category: 'Edict', tier: 4, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 0 } }, text: 'Give your units +2 Attack.' },
-  { id: 'sp_amnesty', name: 'Amnesty', category: 'Edict', tier: 4, cost: 3, effect: { id: 'healHero', params: { amount: 5 } }, text: 'Restore 5 Health to your Lord.' },
-  { id: 'sp_rally', name: 'War Council', category: 'Edict', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 3, health: 3 } }, text: 'Give your units +3/+3.' },
-  { id: 'sp_march', name: 'Forced March', category: 'Edict', tier: 5, cost: 3, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' },
-  { id: 'sp_feastedict', name: 'Victory Feast', category: 'Edict', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 2 } }, text: 'Give your units +2/+2.' },
-  { id: 'sp_writ', name: 'Quartermaster Writ', category: 'Edict', tier: 5, cost: 3, effect: { id: 'buffShop', params: { attack: 1, health: 2 } }, text: 'Give Tavern units +1/+2.' },
-  { id: 'sp_feudal', name: 'Feudal Duty', category: 'Edict', tier: 5, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn', all: true } }, text: 'Give your units Reserves.' },
-  { id: 'sp_apex', name: 'Royal Decree', category: 'Edict', tier: 6, cost: 5, effect: { id: 'buffFriendlyAll', params: { attack: 4, health: 4 } }, text: 'Give your units +4/+4.' },
-  { id: 'sp_sanctum', name: 'Shield Wall Order', category: 'Edict', tier: 6, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield', all: true } }, text: 'Give your units Pavise.' },
-  { id: 'sp_tribute', name: 'Tribute Levy', category: 'Edict', tier: 6, cost: 4, effect: { id: 'gainGold', params: { amount: 3 } }, text: 'Gain 3 Gold.' },
-  { id: 'sp_standing', name: 'Standing Orders', category: 'Edict', tier: 6, cost: 5, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 4 } }, text: 'Give your units +2/+4.' },
-  { id: 'sp_ban', name: 'Arms Ban Lifted', category: 'Edict', tier: 6, cost: 4, effect: { id: 'summonToken', params: { tokenId: 'token_5_5', count: 1 } }, text: 'Summon a 5/5 Veteran Serjeants.' }
+  { id: 'sp_reroll', name: 'Fresh Recruits', category: 'Support', tier: 1, cost: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' },
+  { id: 'sp_ration', name: 'Ration Order', category: 'Support', tier: 1, cost: 1, effect: { id: 'healHero', params: { amount: 2 } }, text: 'Restore 2 Health to your Lord.' },
+  { id: 'sp_scout', name: 'Scout Report', category: 'Support', tier: 1, cost: 1, effect: { id: 'buffShop', params: { attack: 0, health: 1 } }, text: 'Give Tavern units +0/+1.' },
+  { id: 'sp_chill', name: 'Hold the Line', category: 'Support', tier: 2, cost: 1, effect: { id: 'freezeShop', params: {} }, text: 'Freeze the Tavern.' },
+  { id: 'sp_levy', name: 'Levy Call', category: 'Support', tier: 2, cost: 2, effect: { id: 'summonToken', params: { tokenId: 'token_1_1', count: 2 } }, text: 'Summon two 1/1 Levy Spearmen.' },
+  { id: 'sp_billet', name: 'Billeting Order', category: 'Support', tier: 2, cost: 2, effect: { id: 'healHero', params: { amount: 3 } }, text: 'Restore 3 Health to your Lord.' },
+  { id: 'sp_tax', name: 'Muster Tax', category: 'Support', tier: 2, cost: 2, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' },
+  { id: 'sp_drill', name: 'Drill Order', category: 'Support', tier: 3, cost: 2, effect: { id: 'buffFriendlyAll', params: { attack: 1, health: 0 } }, text: 'Give your units +1 Attack.' },
+  { id: 'sp_pay', name: 'Pay Day', category: 'Support', tier: 3, cost: 2, effect: { id: 'gainGold', params: { amount: 2 } }, text: 'Gain 2 Gold.' },
+  { id: 'sp_conscript', name: 'Conscription', category: 'Support', tier: 3, cost: 3, effect: { id: 'summonToken', params: { tokenId: 'token_2_2', count: 1 } }, text: 'Summon a 2/2 Militia Guards.' },
+  { id: 'sp_nightwatch', name: 'Night Watch', category: 'Support', tier: 3, cost: 2, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly unit Guard.' },
+  { id: 'sp_study', name: 'Recruitment Roll', category: 'Support', tier: 4, cost: 2, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a unit from your tier.' },
+  { id: 'sp_reborn', name: 'Reserve Orders', category: 'Support', tier: 4, cost: 3, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn' } }, text: 'Give a random friendly unit Reserves.' },
+  { id: 'sp_inspect', name: 'Camp Inspection', category: 'Support', tier: 4, cost: 3, effect: { id: 'buffShop', params: { attack: 2, health: 0 } }, text: 'Give Tavern units +2 Attack.' },
+  { id: 'sp_herald', name: 'Herald\'s Call', category: 'Support', tier: 4, cost: 3, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 0 } }, text: 'Give your units +2 Attack.' },
+  { id: 'sp_amnesty', name: 'Amnesty', category: 'Support', tier: 4, cost: 3, effect: { id: 'healHero', params: { amount: 5 } }, text: 'Restore 5 Health to your Lord.' },
+  { id: 'sp_rally', name: 'War Council', category: 'Support', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 3, health: 3 } }, text: 'Give your units +3/+3.' },
+  { id: 'sp_march', name: 'Forced March', category: 'Support', tier: 5, cost: 3, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' },
+  { id: 'sp_feastedict', name: 'Victory Feast', category: 'Support', tier: 5, cost: 4, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 2 } }, text: 'Give your units +2/+2.' },
+  { id: 'sp_writ', name: 'Quartermaster Writ', category: 'Support', tier: 5, cost: 3, effect: { id: 'buffShop', params: { attack: 1, health: 2 } }, text: 'Give Tavern units +1/+2.' },
+  { id: 'sp_feudal', name: 'Feudal Duty', category: 'Support', tier: 5, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Reborn', all: true } }, text: 'Give your units Reserves.' },
+  { id: 'sp_apex', name: 'Royal Decree', category: 'Support', tier: 6, cost: 5, effect: { id: 'buffFriendlyAll', params: { attack: 4, health: 4 } }, text: 'Give your units +4/+4.' },
+  { id: 'sp_sanctum', name: 'Shield Wall Order', category: 'Support', tier: 6, cost: 4, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield', all: true } }, text: 'Give your units Pavise.' },
+  { id: 'sp_tribute', name: 'Tribute Levy', category: 'Support', tier: 6, cost: 4, effect: { id: 'gainGold', params: { amount: 3 } }, text: 'Gain 3 Gold.' },
+  { id: 'sp_standing', name: 'Standing Orders', category: 'Support', tier: 6, cost: 5, effect: { id: 'buffFriendlyAll', params: { attack: 2, health: 4 } }, text: 'Give your units +2/+4.' },
+  { id: 'sp_ban', name: 'Arms Ban Lifted', category: 'Support', tier: 6, cost: 4, effect: { id: 'summonToken', params: { tokenId: 'token_5_5', count: 1 } }, text: 'Summon a 5/5 Veteran Serjeants.' }
 ];
 const SPELL_BY_ID = Object.fromEntries(SPELL_DB.map(s => [s.id, s]));
 const SPELL_COPIES = [0, 5, 7, 9, 11, 7, 5];
 
 const HERO_DB = [
-  { id: 'h1', name: 'Aldric of Ravensmarch', nation: 'Britannia Major', armor: 18, power: { name: 'Norman Charge', cost: 1, uses: 1, effect: { id: 'buffRandomFriendly', params: { attack: 2, health: 1 } }, text: 'Give a random friendly unit +2/+1.' } },
+  { id: 'h1', name: 'Aldric Ravensmarch', nation: 'Britannia Major', armor: 18, power: { name: 'Norman Charge', cost: 1, uses: 1, effect: { id: 'buffRandomFriendly', params: { attack: 2, health: 1 } }, text: 'Give a random friendly unit +2/+1.' } },
   { id: 'h2', name: 'Elowen Greyhaft', nation: 'Britannia Major', armor: 16, power: { name: 'Longbow Levy', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Britannia Major', attack: 1, health: 0 } }, text: 'Give your Britannia Major units +1 Attack.' } },
-  { id: 'h3', name: 'Konstantios of Chrysa', nation: 'Eastern Roman Empire', armor: 15, power: { name: 'Codex Reform', cost: 0, uses: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' } },
-  { id: 'h4', name: 'Irene of Galata', nation: 'Eastern Roman Empire', armor: 17, power: { name: 'Tagmata Drill', cost: 2, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Eastern Roman Empire', attack: 1, health: 1 } }, text: 'Give your Eastern Roman Empire units +1/+1.' } },
-  { id: 'h5', name: 'Bogen of Black Banner', nation: 'Mongol Empire', armor: 14, power: { name: 'Ordu Muster', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Mongol Empire', attack: 1, health: 1 } }, text: 'Give your Mongol Empire units +1/+1.' } },
+  { id: 'h3', name: 'Konstantios Chrysas', nation: 'Eastern Roman Empire', armor: 15, power: { name: 'Codex Reform', cost: 0, uses: 1, effect: { id: 'refreshShop', params: {} }, text: 'Refresh the Tavern.' } },
+  { id: 'h4', name: 'Irene Galata', nation: 'Eastern Roman Empire', armor: 17, power: { name: 'Tagmata Drill', cost: 2, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Eastern Roman Empire', attack: 1, health: 1 } }, text: 'Give your Eastern Roman Empire units +1/+1.' } },
+  { id: 'h5', name: 'Bogen Ordu', nation: 'Mongol Empire', armor: 14, power: { name: 'Ordu Muster', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Mongol Empire', attack: 1, health: 1 } }, text: 'Give your Mongol Empire units +1/+1.' } },
   { id: 'h6', name: 'Saran Stormhoof', nation: 'Mongol Empire', armor: 13, power: { name: 'Forced March', cost: 1, uses: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' } },
-  { id: 'h7', name: 'Shen of Jade Gate', nation: 'Tang Dynasty', armor: 16, power: { name: 'Equal Field', cost: 2, uses: 1, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a unit from your tier.' } },
-  { id: 'h8', name: 'Mei of West Corridor', nation: 'Tang Dynasty', armor: 14, power: { name: 'Court Appointment', cost: 1, uses: 1, effect: { id: 'buffShop', params: { attack: 1, health: 1 } }, text: 'Give units in the Tavern +1/+1.' } },
-  { id: 'h9', name: 'Faris of Rayy', nation: 'Abbasid Caliphate', armor: 15, power: { name: 'House of Wisdom', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Abbasid Caliphate', attack: 1, health: 1 } }, text: 'Give your Abbasid Caliphate units +1/+1.' } },
-  { id: 'h10', name: 'Layla of Green Dome', nation: 'Abbasid Caliphate', armor: 18, power: { name: 'Ghulam Guard', cost: 1, uses: 1, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly unit Guard.' } },
-  { id: 'h11', name: 'Han of River Forts', nation: 'Song Dynasty', armor: 15, power: { name: 'Crossbow Corps', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Song Dynasty', attack: 1, health: 0 } }, text: 'Give your Song Dynasty units +1 Attack.' } },
-  { id: 'h12', name: 'Qiu of Bian Gate', nation: 'Song Dynasty', armor: 17, power: { name: 'Loyalty Oath', cost: 1, uses: 1, effect: { id: 'buffSelf', params: { attack: 0, health: 0 } }, text: 'Give your left-most unit +1/+2.', special: 'leftmost' } },
-  { id: 'h13', name: 'Reinhardt of Aachenmarch', nation: 'Holy Roman Empire', armor: 20, power: { name: 'Imperial Banner', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Holy Roman Empire', attack: 1, health: 1 } }, text: 'Give your Holy Roman Empire units +1/+1.' } },
-  { id: 'h14', name: 'Adelheid of Rheinfels', nation: 'Holy Roman Empire', armor: 16, power: { name: 'Hold Camp', cost: 1, uses: 1, effect: { id: 'freezeShop', params: {} }, text: 'Freeze the Tavern.' } },
-  { id: 'h15', name: 'Amir of Red Fort', nation: 'Delhi Sultanate', armor: 16, power: { name: 'Market Control', cost: 0, uses: 1, effect: { id: 'healHero', params: { amount: 2 } }, text: 'Restore 2 Health to your Lord.' } },
-  { id: 'h16', name: 'Noor of Yamuna', nation: 'Delhi Sultanate', armor: 14, power: { name: 'Delhi Levy', cost: 2, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Delhi Sultanate', attack: 1, health: 1 } }, text: 'Give your Delhi Sultanate units +1/+1.' } },
-  { id: 'h17', name: 'Erik of Grey Sails', nation: 'North Sea Empire', armor: 18, power: { name: 'Shield Wall', cost: 1, uses: 1, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield' } }, text: 'Give a random friendly unit Pavise.' } },
-  { id: 'h18', name: 'Astrid of Whitecrest', nation: 'North Sea Empire', armor: 15, power: { name: 'Sea Raid', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'North Sea Empire', attack: 1, health: 0 } }, text: 'Give your North Sea Empire units +1 Attack.' } },
-  { id: 'h19', name: 'Ajaw Tun of High Ceiba', nation: 'The Maya', armor: 15, power: { name: 'Temple Muster', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'The Maya', attack: 1, health: 1 } }, text: 'Give your The Maya units +1/+1.' } },
-  { id: 'h20', name: 'Lady Sacnicte of Red Road', nation: 'The Maya', armor: 13, power: { name: 'City Stores', cost: 1, uses: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' } }
+  { id: 'h7', name: 'Shen Jade', nation: 'Tang Dynasty', armor: 16, power: { name: 'Equal Field', cost: 2, uses: 1, effect: { id: 'discoverCurrentTier', params: {} }, text: 'Discover a unit from your tier.' } },
+  { id: 'h8', name: 'Mei West', nation: 'Tang Dynasty', armor: 14, power: { name: 'Court Appointment', cost: 1, uses: 1, effect: { id: 'buffShop', params: { attack: 1, health: 1 } }, text: 'Give units in the Tavern +1/+1.' } },
+  { id: 'h9', name: 'Faris Rayy', nation: 'Abbasid Caliphate', armor: 15, power: { name: 'House of Wisdom', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Abbasid Caliphate', attack: 1, health: 1 } }, text: 'Give your Abbasid Caliphate units +1/+1.' } },
+  { id: 'h10', name: 'Layla Greendome', nation: 'Abbasid Caliphate', armor: 18, power: { name: 'Ghulam Guard', cost: 1, uses: 1, effect: { id: 'giveKeywordFriendly', params: { keyword: 'Taunt' } }, text: 'Give a random friendly unit Guard.' } },
+  { id: 'h11', name: 'Han Bian', nation: 'Song Dynasty', armor: 15, power: { name: 'Crossbow Corps', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Song Dynasty', attack: 1, health: 0 } }, text: 'Give your Song Dynasty units +1 Attack.' } },
+  { id: 'h12', name: 'Qiu River', nation: 'Song Dynasty', armor: 17, power: { name: 'Loyalty Oath', cost: 1, uses: 1, effect: { id: 'buffSelf', params: { attack: 0, health: 0 } }, text: 'Give your left-most unit +1/+2.', special: 'leftmost' } },
+  { id: 'h13', name: 'Reinhardt Aachen', nation: 'Holy Roman Empire', armor: 20, power: { name: 'Imperial Banner', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Holy Roman Empire', attack: 1, health: 1 } }, text: 'Give your Holy Roman Empire units +1/+1.' } },
+  { id: 'h14', name: 'Adelheid Rheinfels', nation: 'Holy Roman Empire', armor: 16, power: { name: 'Hold Camp', cost: 1, uses: 1, effect: { id: 'freezeShop', params: {} }, text: 'Freeze the Tavern.' } },
+  { id: 'h15', name: 'Amir Redfort', nation: 'Delhi Sultanate', armor: 16, power: { name: 'Market Control', cost: 0, uses: 1, effect: { id: 'healHero', params: { amount: 2 } }, text: 'Restore 2 Health to your Lord.' } },
+  { id: 'h16', name: 'Noor Yamuna', nation: 'Delhi Sultanate', armor: 14, power: { name: 'Delhi Levy', cost: 2, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'Delhi Sultanate', attack: 1, health: 1 } }, text: 'Give your Delhi Sultanate units +1/+1.' } },
+  { id: 'h17', name: 'Erik Greysail', nation: 'North Sea Empire', armor: 18, power: { name: 'Shield Wall', cost: 1, uses: 1, effect: { id: 'giveKeywordFriendly', params: { keyword: 'DivineShield' } }, text: 'Give a random friendly unit Pavise.' } },
+  { id: 'h18', name: 'Astrid Whitecrest', nation: 'North Sea Empire', armor: 15, power: { name: 'Sea Raid', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'North Sea Empire', attack: 1, health: 0 } }, text: 'Give your North Sea Empire units +1 Attack.' } },
+  { id: 'h19', name: 'Tun Ceiba', nation: 'The Maya', armor: 15, power: { name: 'Temple Muster', cost: 1, uses: 1, effect: { id: 'buffFriendlyTribe', params: { tribe: 'The Maya', attack: 1, health: 1 } }, text: 'Give your The Maya units +1/+1.' } },
+  { id: 'h20', name: 'Sacnicte Redroad', nation: 'The Maya', armor: 13, power: { name: 'City Stores', cost: 1, uses: 1, effect: { id: 'gainGold', params: { amount: 1 } }, text: 'Gain 1 Gold.' } }
 ];
 
 function describeCard(def) {
@@ -858,7 +860,6 @@ function setHistoryOpen(open) {
   const panel = document.getElementById('historyPanel');
   panel.classList.toggle('open', historyOpen);
   document.getElementById('btnHistory').classList.toggle('active', historyOpen);
-  document.getElementById('btnHistory').textContent = historyOpen ? 'Close History' : 'History';
   if (historyOpen) panel.scrollTop = panel.scrollHeight;
 }
 
@@ -886,8 +887,8 @@ function renderCodexUnits() {
   }
   return [...byTribe.entries()].filter(([, list]) => list.length).map(([tribe, list]) => {
     const cards = list.map(card => `
-      <div class="codexUnitCard" title="${escapeHtml(card.name)}">
-        <canvas class="codexUnitCanvas" data-card-id="${escapeHtml(card.id)}" width="512" height="716" aria-label="${escapeHtml(card.name)}"></canvas>
+      <div class="codexUnitCard" role="button" aria-label="${escapeHtml(card.name)}">
+        <canvas class="codexUnitCanvas" data-card-id="${escapeHtml(card.id)}" width="${HALF_TEX}" height="${HALF_TEX}" aria-hidden="true"></canvas>
       </div>
     `).join('');
     return `<section class="codexRace"><h2>${escapeHtml(tribe)} <span>${list.length}</span></h2><div class="codexGrid unitCards">${cards}</div></section>`;
@@ -904,15 +905,15 @@ function paintCodexCanvas(canvas) {
   if (cardId) {
     const def = CARD_BY_ID[cardId];
     if (!def) return;
-    src = buildCardFrontTexture(createMinionFromDef(def), { square: false }).image;
+    src = buildCardFrontTexture(createMinionFromDef(def), { half: true }).image;
   } else if (spellId) {
     const def = SPELL_BY_ID[spellId];
     if (!def) return;
-    src = buildCardFrontTexture(createSpellCard(def), { square: false }).image;
+    src = buildCardFrontTexture(createSpellCard(def), { half: true }).image;
   } else if (heroId) {
     const hero = HERO_DB.find(h => h.id === heroId);
     if (!hero) return;
-    src = buildLordCardTexture(hero).image;
+    src = buildSquareLordFaceImage(hero, { armor: hero.armor ?? 0, hp: START_HP });
   }
   if (!src) return;
   const ctx = canvas.getContext('2d');
@@ -937,10 +938,79 @@ function paintCodexCardCanvases() {
   requestAnimationFrame(paintBatch);
 }
 
+function showCodexHeroHover(hero, clientX, clientY, anchorEl) {
+  if (!hero) return;
+  showOppHoverCards([
+    buildLiveLordCardImage(hero, { armor: hero.armor ?? 0, hp: START_HP }),
+    buildLordPowerCardImage(hero)
+  ], clientX, clientY, anchorEl);
+}
+
+function showCodexCardHover(canvas, clientX, clientY, anchorEl) {
+  if (!canvas) return;
+  const cardId = canvas.getAttribute('data-card-id');
+  const spellId = canvas.getAttribute('data-spell-id');
+  const heroId = canvas.getAttribute('data-hero-id');
+  if (heroId) {
+    showCodexHeroHover(HERO_DB.find(h => h.id === heroId), clientX, clientY, anchorEl);
+    return;
+  }
+  if (cardId) {
+    const def = CARD_BY_ID[cardId];
+    if (!def) return;
+    const tex = buildCardFrontTexture(createMinionFromDef(def), { half: false });
+    showOppHoverCards([tex.image], clientX, clientY, anchorEl);
+    return;
+  }
+  if (spellId) {
+    const def = SPELL_BY_ID[spellId];
+    if (!def) return;
+    const tex = buildCardFrontTexture(createSpellCard(def), { half: false });
+    showOppHoverCards([tex.image], clientX, clientY, anchorEl);
+  }
+}
+
+function applyCodexCardTilt(cardEl, clientX, clientY) {
+  if (!cardEl) return;
+  const r = cardEl.getBoundingClientRect();
+  if (r.width < 1 || r.height < 1) return;
+  const nx = ((clientX - r.left) / r.width) * 2 - 1;
+  const ny = ((clientY - r.top) / r.height) * 2 - 1;
+  const tilt = getCardHoverTiltAxes(nx, ny);
+  cardEl.style.transform = `translateZ(0) rotateX(${(tilt.pitch * RAD_TO_DEG).toFixed(2)}deg) rotateY(${(tilt.yaw * RAD_TO_DEG).toFixed(2)}deg)`;
+}
+
+function clearCodexCardTilt(cardEl) {
+  if (!cardEl) return;
+  cardEl.style.transform = 'translateZ(0)';
+}
+
+function bindCodexCardHovers() {
+  document.querySelectorAll('#codexBody .codexUnitCard').forEach(cardEl => {
+    const canvas = cardEl.querySelector('.codexUnitCanvas');
+    if (!canvas) return;
+    cardEl.onmouseenter = (e) => {
+      applyCodexCardTilt(cardEl, e.clientX, e.clientY);
+      showCodexCardHover(canvas, e.clientX, e.clientY, cardEl);
+    };
+    cardEl.onmousemove = (e) => {
+      applyCodexCardTilt(cardEl, e.clientX, e.clientY);
+      if (document.getElementById('oppHover')?.classList.contains('show')) {
+        positionOppHover(e.clientX, e.clientY, cardEl);
+      }
+    };
+    cardEl.onmouseleave = () => {
+      clearCodexCardTilt(cardEl);
+      hideCardTooltip();
+      hideOppHover();
+    };
+  });
+}
+
 function renderCodexHeroes() {
   const cards = HERO_DB.map(hero => `
-      <div class="codexUnitCard" title="${escapeHtml(hero.name)}">
-        <canvas class="codexUnitCanvas" data-hero-id="${escapeHtml(hero.id)}" width="512" height="716" aria-label="${escapeHtml(hero.name)}"></canvas>
+      <div class="codexUnitCard" role="button" aria-label="${escapeHtml(hero.name)}">
+        <canvas class="codexUnitCanvas" data-hero-id="${escapeHtml(hero.id)}" width="${HALF_TEX}" height="${HALF_TEX}" aria-hidden="true"></canvas>
       </div>
     `).join('');
   return `<section class="codexRace"><h2>Lords <span>${HERO_DB.length}</span></h2><div class="codexGrid unitCards">${cards}</div></section>`;
@@ -948,32 +1018,30 @@ function renderCodexHeroes() {
 
 function renderCodexSpells() {
   const spells = SPELL_DB.slice().sort((a, b) => {
-    if (a.category !== b.category) return String(a.category).localeCompare(String(b.category));
     if (a.tier !== b.tier) return a.tier - b.tier;
     if (a.cost !== b.cost) return a.cost - b.cost;
     return a.name.localeCompare(b.name);
   });
-  const byCategory = new Map();
-  for (const spell of spells) {
-    const key = spell.category || 'Edict';
-    if (!byCategory.has(key)) byCategory.set(key, []);
-    byCategory.get(key).push(spell);
-  }
-  return [...byCategory.entries()].map(([category, list]) => {
-    const cards = list.map(spell => `
-      <div class="codexUnitCard" title="${escapeHtml(spell.name)}">
-        <canvas class="codexUnitCanvas" data-spell-id="${escapeHtml(spell.id)}" width="512" height="716" aria-label="${escapeHtml(spell.name)}"></canvas>
+  const cards = spells.map(spell => `
+      <div class="codexUnitCard" role="button" aria-label="${escapeHtml(spell.name)}">
+        <canvas class="codexUnitCanvas" data-spell-id="${escapeHtml(spell.id)}" width="${HALF_TEX}" height="${HALF_TEX}" aria-hidden="true"></canvas>
       </div>
     `).join('');
-    return `<section class="codexRace"><h2>${escapeHtml(category)} <span>${list.length}</span></h2><div class="codexGrid unitCards">${cards}</div></section>`;
-  }).join('');
+  return `<section class="codexRace"><h2>Support <span>${spells.length}</span></h2><div class="codexGrid unitCards">${cards}</div></section>`;
 }
 
 function renderCodexBody() {
   const body = document.getElementById('codexBody');
+  hideCardTooltip();
+  hideOppHover();
   if (codexTab === 'heroes') body.innerHTML = renderCodexHeroes();
   else if (codexTab === 'spells') body.innerHTML = renderCodexSpells();
   else body.innerHTML = renderCodexUnits();
+  body.onscroll = () => {
+    hideCardTooltip();
+    hideOppHover();
+  };
+  bindCodexCardHovers();
   paintCodexCardCanvases();
   document.getElementById('codexTabUnits').classList.toggle('active', codexTab === 'units');
   document.getElementById('codexTabSpells').classList.toggle('active', codexTab === 'spells');
@@ -989,6 +1057,8 @@ function openCodex(tab = 'units') {
 }
 
 function closeCodex() {
+  hideCardTooltip();
+  hideOppHover();
   document.getElementById('codexOverlay').classList.remove('open');
   document.getElementById('btnCodex').classList.remove('active');
 }
@@ -1097,7 +1167,6 @@ function isSpell(card) {
   return !!card && card.kind === 'spell';}
 
 function createSpellCard(def) {
-  const category = def.category || 'Edict';
   return {
     kind: 'spell',
     instanceId: uid(),
@@ -1107,8 +1176,8 @@ function createSpellCard(def) {
     cost: def.cost,
     attack: 0,
     health: 0,
-    tribe: category,
-    category,
+    tribe: 'Support',
+    category: 'Support',
     keywords: [],
     effect: { ...def.effect, params: { ...(def.effect.params || {}) } },
     text: def.text,
@@ -1701,7 +1770,7 @@ function useHeroPower(player) {
 function createPlayer(hero, isHuman, index) {
   return {
     id: index,
-    name: isHuman ? 'You' : `AI ${index}`,
+    name: isHuman ? 'You' : (hero?.name || 'Opponent'),
     isHuman,
     hero,
     hp: START_HP,
@@ -2244,9 +2313,14 @@ function positionOppHover(clientX, clientY, anchorEl) {
   let top;
   if (tip.classList.contains('cardPair') && anchorEl) {
     const r = anchorEl.getBoundingClientRect();
-    left = r.right + 14;
+    const preferLeft = r.left + r.width * 0.5 > window.innerWidth * 0.55;
+    const leftPos = r.left - tw - 14;
+    const rightPos = r.right + 14;
+    if (preferLeft && leftPos >= pad) left = leftPos;
+    else if (rightPos + tw <= window.innerWidth - pad) left = rightPos;
+    else if (leftPos >= pad) left = leftPos;
+    else left = Math.max(pad, Math.min(rightPos, window.innerWidth - tw - pad));
     top = r.top + r.height * 0.5 - th * 0.5;
-    if (left + tw > window.innerWidth - pad) left = Math.max(pad, r.left - tw - 14);
     if (top < pad) top = pad;
     if (top + th > window.innerHeight - pad) top = window.innerHeight - th - pad;
   } else {
@@ -2269,14 +2343,14 @@ function revealOppHover(clientX, clientY) {
   positionOppHover(clientX, clientY);
 }
 
-function paintOppHoverCardPair(lordSrc, powerSrc) {
+function paintOppHoverCards(sources) {
   const tip = document.getElementById('oppHover');
+  const list = (sources || []).filter(Boolean);
   tip.classList.add('cardPair');
-  tip.innerHTML = '<canvas></canvas><canvas></canvas>';
+  tip.innerHTML = list.map(() => '<canvas></canvas>').join('');
   const canvases = tip.querySelectorAll('canvas');
-  const sources = [lordSrc, powerSrc];
   for (let i = 0; i < canvases.length; i++) {
-    const src = sources[i];
+    const src = list[i];
     const canvas = canvases[i];
     const ctx = canvas.getContext('2d');
     canvas.width = src.width;
@@ -2286,20 +2360,29 @@ function paintOppHoverCardPair(lordSrc, powerSrc) {
   }
 }
 
-function showOppLordCardPair(player, clientX, clientY, anchorEl) {
-  if (!player?.hero) return;
+function paintOppHoverCardPair(lordSrc, powerSrc) {
+  paintOppHoverCards([lordSrc, powerSrc]);
+}
+
+function showOppHoverCards(sources, clientX, clientY, anchorEl) {
   hideCardTooltip();
   const tip = document.getElementById('oppHover');
-  const lordSrc = buildLiveLordCardImage(player.hero, {
-    armor: player.armor,
-    hp: player.hp
-  });
-  const powerSrc = buildLordPowerCardImage(player.hero);
-  paintOppHoverCardPair(lordSrc, powerSrc);
+  paintOppHoverCards(sources);
   tip.style.display = 'flex';
   tip.classList.add('show');
   positionOppHover(clientX, clientY, anchorEl);
   requestAnimationFrame(() => positionOppHover(clientX, clientY, anchorEl));
+}
+
+function showOppLordCardPair(player, clientX, clientY, anchorEl) {
+  if (!player?.hero) return;
+  showOppHoverCards([
+    buildLiveLordCardImage(player.hero, {
+      armor: player.armor,
+      hp: player.hp
+    }),
+    buildLordPowerCardImage(player.hero)
+  ], clientX, clientY, anchorEl);
 }
 
 function showBobHover(clientX, clientY, anchorEl) {
@@ -2600,7 +2683,9 @@ function onCardArtLoaded(tex) {
 }
 const textures = {
   [ART_A]: textureLoader.load(ART_A, onCardArtLoaded),
-  [ART_B]: textureLoader.load(ART_B, onCardArtLoaded)
+  [ART_B]: textureLoader.load(ART_B, onCardArtLoaded),
+  [ART_BRITANNIA]: textureLoader.load(ART_BRITANNIA, onCardArtLoaded),
+  [ART_NORTH_SEA]: textureLoader.load(ART_NORTH_SEA, onCardArtLoaded)
 };
 
 const raycaster = new THREE.Raycaster();
@@ -2617,17 +2702,18 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-const CARD_W = 2.45;
-const CARD_H = 3.42;
-const HAND_W = 2.05;
-const HAND_H = 2.86;
+const FULL_CARD_W = 2.05;
+const FULL_CARD_H = 2.86;
+const HALF_CARD = 2.75;
+const FULL_TEX_W = 512;
+const FULL_TEX_H = 716;
+const HALF_TEX = 512;
 const HAND_ROW_Z = 7.4;
 const HAND_ROW_Y = 0.14;
 const HAND_ROW_SPACING = 1.45;
 const HAND_ROW_ROTX = -Math.PI / 2;
 const HAND_SCREEN_HOVER_LIFT = 0.64;
 const HAND_SCREEN_HOVER_SCALE = 0.26;
-const BOARD_S = 2.75;
 const BOARD_ROW_Z = 2.6;
 const BOARD_ROW_Y = 0.14;
 const BOARD_ROW_SPACING = 3.05;
@@ -2638,7 +2724,6 @@ const SUPPORT_ROW_SPACING = 3.05;
 const SUPPORT_ROW_ROTX = -Math.PI / 2;
 const ENEMY_BOARD_ROW_Z = 0.1;
 const ENEMY_SUPPORT_ROW_Z = -2.4;
-const SHOP_S = 2.75;
 const TAVERN_ROW_Z = -2.4;
 const TAVERN_ROW_Y = 0.14;
 const TAVERN_ROW_Y_FROZEN = 0.2;
@@ -2651,15 +2736,13 @@ function isBoardZone(zone) {
   return zone === 'board' || zone === 'enemy' || zone === 'support' || zone === 'enemySupport';
 }
 
-function isShortCardZone(zone) {
-  return isBoardZone(zone) || zone === 'shop';
+function isHalfCardZone(zone) {
+  return isBoardZone(zone) || zone === 'shop' || zone === 'stage';
 }
 
 function cardSizeForZone(zone) {
-  if (zone === 'shop' || zone === 'enemy' || zone === 'enemySupport') return { w: SHOP_S, h: SHOP_S };
-  if (zone === 'board' || zone === 'support') return { w: BOARD_S, h: BOARD_S };
-  if (zone === 'hand' || zone === 'enemyHand') return { w: HAND_W, h: HAND_H };
-  return { w: CARD_W, h: CARD_H };
+  if (isHalfCardZone(zone)) return { w: HALF_CARD, h: HALF_CARD };
+  return { w: FULL_CARD_W, h: FULL_CARD_H };
 }
 
 function frameColors(card, opts = {}) {
@@ -2711,10 +2794,10 @@ function drawGoldCostBadge(ctx, cx, cy, cost, radius = 28) {
   ctx.textBaseline = 'alphabetic';
 }
 
-function buildSquareBoardTexture(card, opts = {}) {
+function buildHalfCardTexture(card, opts = {}) {
   const canvas2d = document.createElement('canvas');
-  canvas2d.width = 512;
-  canvas2d.height = 512;
+  canvas2d.width = HALF_TEX;
+  canvas2d.height = HALF_TEX;
   const ctx = canvas2d.getContext('2d');
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
@@ -2722,7 +2805,7 @@ function buildSquareBoardTexture(card, opts = {}) {
   const spell = isSpell(card);
   const frameHex = frameColors(card, opts);
   ctx.fillStyle = frameHex;
-  ctx.fillRect(0, 0, 512, 512);
+  ctx.fillRect(0, 0, HALF_TEX, HALF_TEX);
   ctx.fillStyle = spell ? '#101828' : '#120e18';
   roundRect(ctx, 16, 16, 480, 480, 12);
   ctx.fill();
@@ -2842,7 +2925,7 @@ function cardTextureKey(card, opts = {}) {
     (card.keywords || []).join(','),
     card.art,
     artImg && artImg.width ? 1 : 0,
-    opts.square ? 'sq512' : 0,
+    opts.half ? 'half' : 'full',
     opts.frozenShop ? 1 : 0,
     opts.isSelected ? 1 : 0,
     opts.isDying ? 1 : 0
@@ -2892,7 +2975,7 @@ function clearCardTextureCache() {
 const lordCardTextureCache = new Map();
 
 function buildLordCardTexture(hero) {
-  const key = hero.id;
+  const key = `${hero.id}|${hero.name}`;
   let tex = lordCardTextureCache.get(key);
   if (tex) return tex;
   const canvas2d = document.createElement('canvas');
@@ -3060,8 +3143,8 @@ function paintCanvasFromBuilder(canvas, builder) {
 
 function withStageFaceContext(drawFn) {
   const canvas2d = document.createElement('canvas');
-  canvas2d.width = 512;
-  canvas2d.height = 512;
+  canvas2d.width = HALF_TEX;
+  canvas2d.height = HALF_TEX;
   const ctx = canvas2d.getContext('2d');
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
@@ -3166,7 +3249,7 @@ function paintSquareBobFace(canvas, player) {
 }
 
 function buildLordPowerCardImage(hero) {
-  const key = `fullPower|${hero.id}|${hero.power?.cost ?? 0}|${hero.power?.name || ''}`;
+  const key = `fullPower|${hero.id}|${hero.name}|${hero.power?.cost ?? 0}|${hero.power?.name || ''}`;
   return getCachedUiCardImage(key, () => {
     const canvas2d = document.createElement('canvas');
     canvas2d.width = 512;
@@ -3215,7 +3298,7 @@ function buildLordPowerCardImage(hero) {
 function buildQuartermasterCardImage(player) {
   const tier = player?.tavernTier ?? 1;
   const upgrade = !player || player.tavernTier >= 6 ? 'Max' : String(player.upgradeCost);
-  const key = `fullBob|${tier}|${upgrade}`;
+  const key = `fullBob|v3|${tier}|${upgrade}`;
   return getCachedUiCardImage(key, () => {
     const canvas2d = document.createElement('canvas');
     canvas2d.width = 512;
@@ -3238,10 +3321,10 @@ function buildQuartermasterCardImage(player) {
     ctx.fill();
     ctx.fillStyle = '#e0b85a';
     ctx.font = 'bold 32px Metamorphous, serif';
-    ctx.fillText('Quartermaster', 56, 452);
+    ctx.fillText('Robert Coinwright', 56, 452);
     ctx.fillStyle = '#b9a888';
     ctx.font = 'bold 22px Source Sans 3, sans-serif';
-    ctx.fillText('Recruitment Master', 56, 486);
+    ctx.fillText('Quartermaster', 56, 486);
     ctx.fillStyle = '#eee2cb';
     ctx.font = '22px Source Sans 3, sans-serif';
     const lines = wrapText(ctx, 'Buy units and support from the Tavern. Drag a card here to sell it for 1 Gold.', 400);
@@ -3268,7 +3351,7 @@ function buildQuartermasterCardImage(player) {
 function buildLiveLordCardImage(hero, opts = {}) {
   const armor = Math.max(0, opts.armor ?? hero.armor ?? 0);
   const hp = Math.max(0, opts.hp ?? 0);
-  const key = `fullLordLive|${hero.id}|${armor}|${hp}`;
+  const key = `fullLordLive|${hero.id}|${hero.name}|${armor}|${hp}`;
   return getCachedUiCardImage(key, () => {
     const base = buildLordCardTexture(hero).image;
     const canvas2d = document.createElement('canvas');
@@ -3304,12 +3387,12 @@ function buildLiveLordCardImage(hero, opts = {}) {
 }
 
 function buildCardFrontTextureRaw(card, opts = {}) {
-  if (opts.square) return buildSquareBoardTexture(card, opts);
+  if (opts.half) return buildHalfCardTexture(card, opts);
   const frozenShop = !!opts.frozenShop;
   const spell = isSpell(card);
   const canvas2d = document.createElement('canvas');
-  canvas2d.width = 512;
-  canvas2d.height = 716;
+  canvas2d.width = FULL_TEX_W;
+  canvas2d.height = FULL_TEX_H;
   const ctx = canvas2d.getContext('2d');
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
@@ -3327,12 +3410,11 @@ function buildCardFrontTextureRaw(card, opts = {}) {
     ctx.lineWidth = 4;
     roundRect(ctx, 36, 36, 440, 280, 8);
     ctx.stroke();
-    const supportKind = (card.category || card.tribe || 'Edict').toUpperCase();
     ctx.fillStyle = '#9fd8ff';
     ctx.font = 'bold 42px Metamorphous, serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(supportKind, 256, 176);
+    ctx.fillText('SUPPORT', 256, 176);
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = 'rgba(10,12,18,0.92)';
@@ -3344,7 +3426,7 @@ function buildCardFrontTextureRaw(card, opts = {}) {
     ctx.fillText(spellName, 56, 400);
     ctx.fillStyle = '#b9a888';
     ctx.font = 'bold 24px Source Sans 3, sans-serif';
-    ctx.fillText(card.category || card.tribe || 'Edict', 56, 440);
+    ctx.fillText(card.category || card.tribe || 'Support', 56, 440);
     ctx.fillStyle = '#eee2cb';
     ctx.font = '26px Source Sans 3, sans-serif';
     const lines = wrapText(ctx, card.text || '', 400);
@@ -3494,21 +3576,10 @@ function getCardBackTexture() {
   return cardBackTexture;
 }
 
-function makeCardMesh(card, zone, index, opts = {}) {
+function createCardMeshGroup(w, h, frontTex, opts = {}) {
   const group = new THREE.Group();
   const faceDown = !!opts.faceDown;
-  const isSelected = !faceDown && selected && selected.minion && selected.minion.instanceId === card.instanceId;
-  const isDying = !faceDown && Array.isArray(opts.dyingIds) && opts.dyingIds.includes(card.instanceId);
-  const frozenShop = !!opts.frozenShop;
-  const square = isShortCardZone(zone);
-  const { w, h } = cardSizeForZone(zone);
-  let edgeColor = isSpell(card) ? 0x2a3a5c : 0x3a2f1c;
-  if (card.golden) edgeColor = 0xd4af37;
-  if (frozenShop) edgeColor = 0x6ec6ff;
-  if (isSelected) edgeColor = 0x7ad0ff;
-  if (isDying) edgeColor = 0xff6b5a;
-  if (faceDown) edgeColor = 0x2a3348;
-  const frontTex = faceDown ? getCardBackTexture() : buildCardFrontTexture(card, { frozenShop, isSelected, isDying, square });
+  const edgeColor = opts.edgeColor ?? 0x3a2f1c;
   const edgeMat = new THREE.MeshBasicMaterial({ color: edgeColor });
   const frontMat = new THREE.MeshBasicMaterial({ map: frontTex });
   const backMat = new THREE.MeshBasicMaterial({
@@ -3520,11 +3591,11 @@ function makeCardMesh(card, zone, index, opts = {}) {
     [edgeMat, edgeMat, edgeMat, edgeMat, frontMat, backMat]
   );
   group.add(body);
-  if (isSelected || isDying) {
+  if (opts.glowColor != null) {
     const glow = new THREE.Mesh(
       getGlowGeometry(w, h),
       new THREE.MeshBasicMaterial({
-        color: isDying ? 0xff4020 : 0x4aa8ff,
+        color: opts.glowColor,
         transparent: true,
         opacity: 0.22,
         depthWrite: false
@@ -3533,8 +3604,38 @@ function makeCardMesh(card, zone, index, opts = {}) {
     glow.position.z = -0.01;
     group.add(glow);
   }
-  group.userData = { minion: card, zone, index, cardW: w, cardH: h, faceDown };
+  group.userData = {
+    cardW: w,
+    cardH: h,
+    faceDown,
+    ...(opts.userData || {})
+  };
   return group;
+}
+
+function makeCardMesh(card, zone, index, opts = {}) {
+  const faceDown = !!opts.faceDown;
+  const isSelected = !faceDown && selected && selected.minion && selected.minion.instanceId === card.instanceId;
+  const isDying = !faceDown && Array.isArray(opts.dyingIds) && opts.dyingIds.includes(card.instanceId);
+  const frozenShop = !!opts.frozenShop;
+  const half = isHalfCardZone(zone);
+  const { w, h } = cardSizeForZone(zone);
+  let edgeColor = isSpell(card) ? 0x2a3a5c : 0x3a2f1c;
+  if (card.golden) edgeColor = 0xd4af37;
+  if (frozenShop) edgeColor = 0x6ec6ff;
+  if (isSelected) edgeColor = 0x7ad0ff;
+  if (isDying) edgeColor = 0xff6b5a;
+  if (faceDown) edgeColor = 0x2a3348;
+  const frontTex = faceDown ? getCardBackTexture() : buildCardFrontTexture(card, { frozenShop, isSelected, isDying, half });
+  let glowColor = null;
+  if (isSelected) glowColor = 0x4aa8ff;
+  if (isDying) glowColor = 0xff4020;
+  return createCardMeshGroup(w, h, frontTex, {
+    faceDown,
+    edgeColor,
+    glowColor,
+    userData: { minion: card, zone, index }
+  });
 }
 
 function disposeStageMesh(group) {
@@ -3560,30 +3661,16 @@ function clearStageMeshes() {
 }
 
 function makeStageCardMesh(imageCanvas, userData = {}) {
-  const group = new THREE.Group();
-  const w = BOARD_S;
-  const h = BOARD_S;
+  const { w, h } = cardSizeForZone('stage');
   const frontTex = configureCardTexture(new THREE.CanvasTexture(imageCanvas));
-  const edgeMat = new THREE.MeshBasicMaterial({ color: 0x3a2f1c });
-  const frontMat = new THREE.MeshBasicMaterial({ map: frontTex });
-  const backMat = new THREE.MeshBasicMaterial({
-    map: getCardBackTexture(),
-    color: 0xffffff
+  return createCardMeshGroup(w, h, frontTex, {
+    edgeColor: 0x3a2f1c,
+    userData: {
+      zone: 'stage',
+      minion: null,
+      ...userData
+    }
   });
-  const body = new THREE.Mesh(
-    getCardGeometry(w, h),
-    [edgeMat, edgeMat, edgeMat, edgeMat, frontMat, backMat]
-  );
-  group.add(body);
-  group.userData = {
-    zone: 'stage',
-    cardW: w,
-    cardH: h,
-    faceDown: false,
-    minion: null,
-    ...userData
-  };
-  return group;
 }
 
 function placeMeshAtDomElement(mesh, el) {
@@ -3744,15 +3831,14 @@ function clearCardHover(opts = {}) {
 function applyCardHoverTilt(card, point) {
   if (card.userData.zone === 'hand') return;
   const local = card.worldToLocal(point.clone());
-  const halfW = (card.userData.cardW || CARD_W) * 0.5;
-  const halfH = (card.userData.cardH || CARD_H) * 0.5;
-  const tiltY = clamp(local.x / halfW, -1, 1) * 0.22;
-  const tiltX = clamp(-local.y / halfH, -1, 1) * 0.14;
-  card.rotation.x = (card.userData.baseRotX ?? -Math.PI / 2) + tiltX;
-  card.rotation.y = tiltY;
-  card.position.y = (card.userData.baseY ?? card.position.y) + 0.22;
-  const boardLike = card.userData.zone === 'board' || card.userData.zone === 'support' || card.userData.zone === 'stage';
-  card.scale.setScalar(boardLike ? 1.24 : 1.16);
+  const halfW = (card.userData.cardW || FULL_CARD_W) * 0.5;
+  const halfH = (card.userData.cardH || FULL_CARD_H) * 0.5;
+  const tilt = getCardHoverTiltAxes(local.x / halfW, local.y / halfH);
+  const boardLike = isHalfCardZone(card.userData.zone);
+  card.rotation.x = (card.userData.baseRotX ?? -Math.PI / 2) + tilt.pitch;
+  card.rotation.y = tilt.yaw;
+  card.position.y = (card.userData.baseY ?? card.position.y) + (boardLike ? CARD_HOVER_TILT.raiseHalf : CARD_HOVER_TILT.raiseFull);
+  card.scale.setScalar(boardLike ? CARD_HOVER_TILT.scaleHalf : CARD_HOVER_TILT.scaleFull);
 }
 
 const handOverlayCenter = new THREE.Vector3();
@@ -3819,26 +3905,26 @@ function getHandCardBaseScreenRect(mesh) {
     mesh.userData.baseY ?? HAND_ROW_Y,
     mesh.userData.baseZ ?? HAND_ROW_Z,
     mesh.userData.baseRotX ?? HAND_ROW_ROTX,
-    mesh.userData.cardW || HAND_W,
-    mesh.userData.cardH || HAND_H,
+    mesh.userData.cardW || FULL_CARD_W,
+    mesh.userData.cardH || FULL_CARD_H,
     mesh.parent
   );
 }
 
 function getHandScreenCardSize() {
   const height = Math.min(230, Math.max(130, window.innerHeight * 0.26));
-  const width = height * (HAND_W / HAND_H);
+  const width = height * (FULL_CARD_W / FULL_CARD_H);
   return { width, height };
 }
 
-function getBoardCardScreenSize() {
+function getHalfCardScreenSize() {
   const rect = measureHandCardScreenSize(
     0,
     BOARD_ROW_Y,
     BOARD_ROW_Z,
     BOARD_ROW_ROTX,
-    BOARD_S,
-    BOARD_S,
+    HALF_CARD,
+    HALF_CARD,
     null
   );
   const size = Math.round(Math.max(rect.width, rect.height));
@@ -3846,8 +3932,8 @@ function getBoardCardScreenSize() {
 }
 
 function syncStageCardSize() {
-  if (typeof BOARD_S !== 'number') return;
-  const size = getBoardCardScreenSize();
+  if (typeof HALF_CARD !== 'number') return;
+  const size = getHalfCardScreenSize();
   document.documentElement.style.setProperty('--stageCard', `${size}px`);
   syncStageMeshLayout();
 }
@@ -3947,7 +4033,7 @@ function syncEnemyHandOverlay(cards) {
     return;
   }
   const size = getPlayerHandCardScreenSize();
-  const overlap = size.width * (1 - HAND_ROW_SPACING / HAND_W);
+  const overlap = size.width * (1 - HAND_ROW_SPACING / FULL_CARD_W);
   layer.style.setProperty('--enemy-hand-overlap', `${-overlap}px`);
   layer.style.left = '50%';
   layer.style.top = '0px';
@@ -4002,7 +4088,7 @@ function syncHandOverlayLayer() {
     layer.removeChild(layer.lastChild);
   }
   const size = getHandScreenCardSize();
-  const spacing = size.width * (HAND_ROW_SPACING / HAND_W);
+  const spacing = size.width * (HAND_ROW_SPACING / FULL_CARD_W);
   const totalW = handMeshes.length > 1 ? (handMeshes.length - 1) * spacing : 0;
   const startX = window.innerWidth * 0.5 - totalW * 0.5;
   const restCy = window.innerHeight;
@@ -4015,7 +4101,7 @@ function syncHandOverlayLayer() {
     const key = handCardArtKey(minion, isSelected);
     if (el.dataset.key !== key) {
       el.dataset.key = key;
-      const tex = buildCardFrontTexture(minion, { isSelected, square: false });
+      const tex = buildCardFrontTexture(minion, { isSelected, half: false });
       const src = tex.image;
       const ctx = canvas.getContext('2d');
       canvas.width = src.width;
@@ -4258,13 +4344,13 @@ function showFullCardTooltip(key, src, clientX, clientY, anchorEl) {
 function showTooltipFor(minion, mesh, clientX, clientY) {
   const tip = document.getElementById('cardTooltip');
   if (!tip) return;
-  if (!minion || !mesh || !isShortCardZone(mesh.userData.zone) || mesh.userData.faceDown) {
+  if (!minion || !mesh || !isHalfCardZone(mesh.userData.zone) || mesh.userData.faceDown) {
     hideCardTooltip();
     return;
   }
   const frozenShop = mesh.userData.zone === 'shop' && !!human()?.frozen;
   const isSelected = !!(selected && selected.minion && selected.minion.instanceId === minion.instanceId);
-  const tex = buildCardFrontTexture(minion, { frozenShop, isSelected, square: false });
+  const tex = buildCardFrontTexture(minion, { frozenShop, isSelected, half: false });
   showFullCardTooltip(`minion|${minion.instanceId}|${isSelected ? 1 : 0}|${frozenShop ? 1 : 0}`, tex.image, clientX, clientY);
 }
 
@@ -4533,6 +4619,7 @@ function handleCardClick(zone, index, minion) {
 }
 
 function onPointerMove(e) {
+  if (document.getElementById('codexOverlay')?.classList.contains('open')) return;
   if (dragState) {
     const dx = e.clientX - dragState.startX;
     const dy = e.clientY - dragState.startY;
@@ -4771,7 +4858,7 @@ document.getElementById('btnEnd').onclick = async () => {
   document.querySelectorAll('.tavernSide').forEach(el => el.classList.remove('show'));
   document.getElementById('tavernMasterFrame').classList.remove('show');
   document.getElementById('combatEnemyFrame').classList.remove('show');
-  log('AI opponents taking their turns...');
+  log('Opponents taking their turns...');
   await sleep(350);
   for (const p of state.players) {
     if (!p.alive || p.isHuman) continue;
